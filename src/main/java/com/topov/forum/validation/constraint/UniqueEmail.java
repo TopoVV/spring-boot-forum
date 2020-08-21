@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import java.lang.annotation.*;
 
 @Constraint(validatedBy = UniqueEmailConstraintValidator.class)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueEmail {
     String message() default "The specified email is already in use";

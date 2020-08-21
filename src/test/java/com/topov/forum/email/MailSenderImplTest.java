@@ -6,16 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class MailSenderImplTest {
-    private final EmailSender emailSender;
+    private final MailSender mailSender;
 
     @Autowired
-    MailSenderImplTest(EmailSender emailSender) {
-        this.emailSender = emailSender;
+    MailSenderImplTest(MailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     @Test
     public void sendEmail() {
         final var email = new Mail("Registration",  "boxeci5626@trufilth.com", "Hello");
-        emailSender.sendEmail(email);
+        mailSender.sendMail(email);
     }
 }

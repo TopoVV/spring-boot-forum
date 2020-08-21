@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import java.lang.annotation.*;
 
 @Constraint(validatedBy = UniqueUsernameConstraintValidator.class)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueUsername {
     String message() default "The specified username is already in use";

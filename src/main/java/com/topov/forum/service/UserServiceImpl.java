@@ -2,7 +2,7 @@ package com.topov.forum.service;
 
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
-import com.topov.forum.repository.ForumUserRepository;
+import com.topov.forum.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,10 +12,10 @@ import static com.topov.forum.model.Role.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final ForumUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(ForumUserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -4,7 +4,7 @@ Configuration:
     console:
       name: ConsoleAppender
       patternLayout:
-        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n}{WARN=Yellow, INFO=Green, ERROR=Red, DEBUG=Cyan}"
+        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n}{WARN=Magenta, INFO=Green, ERROR=Red, DEBUG=Cyan}"
   loggers:
     logger:
       name: com.topov.forum

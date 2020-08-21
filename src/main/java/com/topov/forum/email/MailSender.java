@@ -1,5 +1,5 @@
 package com.topov.forum.email;
 
-public interface EmailSender {
-    void sendEmail(Mail mail);
+public interface MailSender {
+    void sendMail(Mail mail);
 }

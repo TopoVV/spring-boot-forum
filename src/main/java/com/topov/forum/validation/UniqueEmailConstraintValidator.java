@@ -1,29 +1,22 @@
 package com.topov.forum.validation;
 
 import com.topov.forum.dto.request.RegistrationRequest;
-import com.topov.forum.repository.ForumUserRepository;
+import com.topov.forum.repository.UserRepository;
 import com.topov.forum.validation.constraint.UniqueEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class UniqueEmailConstraintValidator implements ConstraintValidator<UniqueEmail, RegistrationRequest> {
-   private ForumUserRepository userRepository;
+public class UniqueEmailConstraintValidator implements ConstraintValidator<UniqueEmail, String> {
+   private UserRepository userRepository;
 
-   public boolean isValid(RegistrationRequest registrationRequest, ConstraintValidatorContext ctx) {
-      if(userRepository.existsByEmail(registrationRequest.getEmail())) {
-         ctx.disableDefaultConstraintViolation();
-         ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
-            .addPropertyNode("email")
-            .addConstraintViolation();
-         return false;
-      }
-      return true;
+   public boolean isValid(String email, ConstraintValidatorContext ctx) {
+      return !userRepository.existsByEmail(email);
    }
 
    @Autowired
-   public void setUserRepository(ForumUserRepository userRepository) {
+   public void setUserRepository(UserRepository userRepository) {
       this.userRepository = userRepository;
    }
 }

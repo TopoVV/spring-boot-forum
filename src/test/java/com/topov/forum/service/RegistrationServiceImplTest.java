@@ -2,8 +2,8 @@ package com.topov.forum.service;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.email.Mail;
-import com.topov.forum.email.EmailSender;
-import com.topov.forum.email.EmailSenderImpl;
+import com.topov.forum.email.MailSender;
+import com.topov.forum.email.MailSenderImpl;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.token.RegistrationToken;
 import org.junit.jupiter.api.Test;
@@ -26,21 +26,21 @@ import static org.mockito.Mockito.*;
     @MockBean(TokenServiceImpl.class)
 })
 @SpyBeans({
-    @SpyBean(EmailSenderImpl.class)
+    @SpyBean(MailSenderImpl.class)
 })
 class RegistrationServiceImplTest {
     private final RegistrationService registrationService;
-    private final EmailSender emailSender;
+    private final MailSender mailSender;
     private final UserService userService;
     private final TokenService tokenService;
 
     @Autowired
     RegistrationServiceImplTest(RegistrationService registrationService,
-                                EmailSender emailSender,
+                                MailSender mailSender,
                                 UserService userService,
                                 TokenService tokenService) {
         this.registrationService = registrationService;
-        this.emailSender = emailSender;
+        this.mailSender = mailSender;
         this.userService = userService;
         this.tokenService = tokenService;
     }
@@ -55,7 +55,7 @@ class RegistrationServiceImplTest {
         doThrow(DataIntegrityViolationException.class).when(userService).addRegularUser(forumUser);
 
         assertThrows(RuntimeException.class, () -> registrationService.registerUser(registrationRequestMock));
-        verifyNoInteractions(emailSender);
+        verifyNoInteractions(mailSender);
     }
 
     @Test
@@ -73,7 +73,7 @@ class RegistrationServiceImplTest {
 
         final ArgumentCaptor<Mail> email = ArgumentCaptor.forClass(Mail.class);
 
-        verify(emailSender).sendEmail(email.capture());
+        verify(mailSender).sendMail(email.capture());
         assertEquals(registrationRequestMock.getEmail(), email.getValue().getRecipient());
         assertTrue(email.getValue().getContent().contains("123456789"));
     }

@@ -10,7 +10,7 @@ class RegistrationTokenTest {
     @Test
     public void whenCreatedMoreThen5MinutesAgo_ThenReturnFalse() {
         RegistrationToken registrationToken = new RegistrationToken("username");
-        registrationToken.setCreationTime(LocalDateTime.of(2020, 8, 21, 15, 10));
+        registrationToken.setCreationTime(LocalDateTime.now().minusMinutes(10));
         assertFalse(registrationToken.isTokenValid());
     }
     @Test

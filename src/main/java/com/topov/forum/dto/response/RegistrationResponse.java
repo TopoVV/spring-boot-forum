@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import javax.persistence.MapsId;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,5 +31,6 @@ public class RegistrationResponse {
     }
     public RegistrationResponse(String message) {
         this.message = message;
+        this.inputErrors = new HashMap<>();
     }
 }

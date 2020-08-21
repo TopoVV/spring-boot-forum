@@ -1,7 +1,5 @@
 package com.topov.forum.initialization;
 
-import com.topov.forum.email.Mail;
-import com.topov.forum.email.EmailSender;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.RoleRepository;
 import lombok.extern.log4j.Log4j2;
