@@ -72,4 +72,8 @@ public class ForumUser {
     public int hashCode() {
         return Objects.hash(username);
     }
+
+    public void enable() {
+        this.enabled = true;
+    }
 }

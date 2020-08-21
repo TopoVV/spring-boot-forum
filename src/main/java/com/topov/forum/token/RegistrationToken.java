@@ -33,7 +33,7 @@ public class RegistrationToken {
         this.username = forUser;
     }
 
-    public boolean confirmRegistration() {
+    public boolean verifyToken() {
         if (isUsed || Duration.between(creationTime, LocalDateTime.now()).toMinutes() > 5) {
            return false;
         }

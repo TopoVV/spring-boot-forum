@@ -11,18 +11,18 @@ class RegistrationTokenTest {
     public void whenCreatedMoreThen5MinutesAgo_ThenReturnFalse() {
         RegistrationToken registrationToken = new RegistrationToken("username");
         registrationToken.setCreationTime(LocalDateTime.of(2020, 8, 21, 15, 10));
-        assertFalse(registrationToken.confirmRegistration());
+        assertFalse(registrationToken.verifyToken());
     }
     @Test
     public void whenCreatedLessThen5MinutesAgo_ThenReturnFalse() {
         RegistrationToken registrationToken = new RegistrationToken("username");
-        assertTrue(registrationToken.confirmRegistration());
+        assertTrue(registrationToken.verifyToken());
     }
     @Test
     public void whenTokenAlreadyUsed_ThenReturnFalse() {
         RegistrationToken registrationToken = new RegistrationToken("username");
         registrationToken.setIsUsed(true);
-        assertFalse(registrationToken.confirmRegistration());
+        assertFalse(registrationToken.verifyToken());
     }
 
 }
