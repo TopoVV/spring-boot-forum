@@ -19,6 +19,7 @@
         <lombok.version>1.18.12</lombok.version>
         <h2.version>1.4.200</h2.version>
         <postgresql.version>42.2.14</postgresql.version>
+        <jackson.yml.dataformat.version>2.11.2</jackson.yml.dataformat.version>
     </properties>
 
     <dependencies>
@@ -53,6 +54,11 @@
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.yml.dataformat.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

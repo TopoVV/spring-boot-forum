@@ -1,7 +1,5 @@
-package com.topov.forum.service;
-
-import com.topov.forum.email.Email;
+package com.topov.forum.email;
 
 public interface EmailSender {
-    sendEmail(Email email);
+    void sendEmail(Email email);
 }
