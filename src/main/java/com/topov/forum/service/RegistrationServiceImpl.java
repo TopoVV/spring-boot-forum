@@ -1,16 +1,14 @@
 package com.topov.forum.service;
 
 import com.topov.forum.dto.request.RegistrationRequest;
-import com.topov.forum.email.Email;
+import com.topov.forum.email.Mail;
 import com.topov.forum.email.EmailSender;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.model.Role;
 import com.topov.forum.token.RegistrationToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.topov.forum.model.Role.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Log4j2
 @Service
@@ -31,11 +29,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final ForumUser newUser = new ForumUser(registrationRequest);
-            newUser.addRole(new Role(Roles.USER));
-            userService.addUser(newUser);
-            final var registrationToken = tokenService.createRegistrationToken(registrationRequest.getUsername());
-            final String emailContent = "Please, confirm the registration: " + registrationToken.getToken();
-            emailSender.sendEmail(new Email(registrationRequest.getEmail(), emailContent));
+            final String confirmationUrl = createRegistrationConfirmationUrl(registrationRequest);
+            final String emailContent = "Please, confirm the registration: " + confirmationUrl;
+
+            userService.addRegularUser(newUser);
+            final var email = new Mail("Registration", registrationRequest.getEmail(), emailContent);
+            emailSender.sendEmail(email);
         } catch(Exception e) {
             log.error("An exception happened during registration", e);
             throw new RuntimeException("Cannot register the user. Please, try again later");
@@ -46,11 +45,24 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     @Transactional
     public boolean confirmRegistration(String token) {
+        log.debug("Confirmation of the registered user");
         final RegistrationToken registrationToken = tokenService.getToken(token);
-        if(registrationToken.verifyToken()) {
+        if(registrationToken.isTokenValid()) {
             userService.enableUser(registrationToken.getUsername());
             return true;
         }
         return false;
+    }
+
+    private String createRegistrationConfirmationUrl(RegistrationRequest registrationRequest) {
+        final var registrationToken = tokenService.createRegistrationToken(registrationRequest.getUsername());
+        final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getToken());
+        return UriComponentsBuilder.newInstance()
+                                   .scheme("http")
+                                   .host("localhost")
+                                   .port("8080")
+                                   .path(tokenConfirmationPath)
+                                   .build()
+                                   .toString();
     }
 }

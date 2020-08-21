@@ -42,7 +42,8 @@ public class ForumUser {
     @OneToMany(
         cascade = CascadeType.ALL,
         fetch = FetchType.LAZY,
-        orphanRemoval = true
+        orphanRemoval = true,
+        mappedBy = "creator"
     )
     private Set<Post> posts = new HashSet<>();
 

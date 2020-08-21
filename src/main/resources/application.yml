@@ -11,3 +11,11 @@ spring:
     properties:
       hibernate:
         format-sql: true
+  mail:
+    host: smtp.mailtrap.io
+    port: 587
+    username: f7c6241b14b772
+    password: 0fbc58b10fc5d9
+
+
+

@@ -21,6 +21,10 @@ public class Post {
     @Column(name = "title", unique = true)
     private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private ForumUser creator;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

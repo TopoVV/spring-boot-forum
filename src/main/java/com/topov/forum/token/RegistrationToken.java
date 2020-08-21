@@ -2,6 +2,7 @@ package com.topov.forum.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Duration;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "registration_tokens")
 @SequenceGenerator(name = "registration_token_id_seq", allocationSize = 1)
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationToken {
     @Id
@@ -33,11 +35,11 @@ public class RegistrationToken {
         this.username = forUser;
     }
 
-    public boolean verifyToken() {
-        if (isUsed || Duration.between(creationTime, LocalDateTime.now()).toMinutes() > 5) {
-           return false;
+    public boolean isTokenValid() {
+        if (!isUsed || Duration.between(creationTime, LocalDateTime.now()).toMinutes() < 5) {
+            this.isUsed = true;
+            return true;
         }
-        this.isUsed = true;
-        return true;
+       return false;
     }
 }

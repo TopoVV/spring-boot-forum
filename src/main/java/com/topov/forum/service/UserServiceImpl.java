@@ -1,11 +1,14 @@
 package com.topov.forum.service;
 
 import com.topov.forum.model.ForumUser;
+import com.topov.forum.model.Role;
 import com.topov.forum.repository.ForumUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import static com.topov.forum.model.Role.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,8 +20,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(ForumUser user) {
-        userRepository.save(user);
+    public void addRegularUser(ForumUser newUser) {
+        newUser.addRole(new Role(Roles.USER));
+        userRepository.save(newUser);
     }
 
     @Override
