@@ -6,7 +6,6 @@ import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
-import com.topov.forum.model.ForumUser;
 import com.topov.forum.dto.response.AccountConfirmation;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
@@ -37,14 +36,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.superuserTokenService = superuserTokenService;
     }
 
-    @Override
     @Transactional
-    public void registerUser(RegistrationRequest registrationRequest) {
+    public void registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
-
-            userService.saveRegularUser(new ForumUser(registrationRequest));
+            userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
@@ -57,12 +54,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     @Transactional
-    public RegistrationResponse registerUser(SuperuserRegistrationRequest registrationRequest) {
+    public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
             if(superuserTokenService.checkSuperuserToken(registrationRequest.getToken())) {
                 superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
-                userService.saveSuperuser(new ForumUser(registrationRequest));
+                userService.createSuperuser(registrationRequest);
                return new RegistrationResponse("The superuser has been successfully registered");
             }
            return new RegistrationResponse("Invalid token");

@@ -41,7 +41,7 @@ public class RegistrationController {
             var response = new RegistrationResponse("Cannot perform registration! Invalid input", bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
-        registrationService.registerUser(registrationRequest);
+        registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(new RegistrationResponse("You've been successfully registered!"));
     }
 
@@ -60,7 +60,7 @@ public class RegistrationController {
             var response = new RegistrationResponse("Cannot perform registration! Invalid input", bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
-        RegistrationResponse response = registrationService.registerUser(registrationRequest);
+        RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }
 

@@ -23,6 +23,8 @@ public class ForumUser {
     private Long userId;
     @Column(name = "username", unique = true)
     private String username;
+    @Column(name = "password")
+    private String password;
     @Column(name = "email", unique = true)
     private String email;
     @Column(name = "enabled")
@@ -46,11 +48,6 @@ public class ForumUser {
         mappedBy = "creator"
     )
     private Set<Post> posts = new HashSet<>();
-
-    public ForumUser(RegistrationRequest registrationRequest) {
-        this.username = registrationRequest.getUsername();
-        this.email = registrationRequest.getEmail();
-    }
 
     public void addRole(Role role) {
         this.roles.add(role);
