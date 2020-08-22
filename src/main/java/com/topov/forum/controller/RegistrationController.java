@@ -4,6 +4,7 @@ import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;
 import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.service.RegistrationService;
+import com.topov.forum.dto.response.AccountConfirmation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -65,8 +66,12 @@ public class RegistrationController {
 
     @ResponseBody
     @GetMapping("/registration/{token}")
-    public ResponseEntity<String> confirmRegistrationGet(@PathVariable String token) {
-        registrationService.confirmRegistration(token);
-        return ResponseEntity.ok("Registration confirmed");
+    public ResponseEntity<AccountConfirmation> confirmAccountGet(@PathVariable String token) {
+        final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);
+        if(accountConfirmation.isConfirmed()) {
+            return ResponseEntity.ok(accountConfirmation);
+        } else {
+            return ResponseEntity.badRequest().body(accountConfirmation);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.topov.forum.repository;
 
-import com.topov.forum.token.RegistrationToken;
 import com.topov.forum.token.SuperuserToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

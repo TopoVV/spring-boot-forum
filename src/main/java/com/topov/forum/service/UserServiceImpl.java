@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveRegularUser(ForumUser newUser) {
         newUser.addRole(new Role(Roles.USER));
+        newUser.setEnabled(false);
         userRepository.save(newUser);
     }
 
@@ -31,13 +32,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveSuperuser(ForumUser newUser) {
         newUser.addRole(new Role(Roles.SUPERUSER));
+        newUser.setEnabled(true);
         userRepository.save(newUser);
     }
 
     @Override
+    @Transactional
     public void enableUser(String username) {
         userRepository.findByUsername(username)
-                      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user doesn't exist"))
+                      .orElseThrow(() -> new RuntimeException("Cannot confirm: the user doesn't exist"))
                       .enable();
     }
 }

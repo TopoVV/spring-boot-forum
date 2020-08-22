@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 public class MailSenderImpl implements MailSender {
+    private static final String MAIL_SENDER = "vladtopov2001@gmail.com";
     private final JavaMailSender mailSender;
 
     @Autowired
@@ -18,8 +19,9 @@ public class MailSenderImpl implements MailSender {
 
     @Override
     public void sendMail(Mail mail) {
+        log.debug("Sending a mail to {}", mail.getRecipient());
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("vladtopov2001@gmail.com");
+        message.setFrom(MAIL_SENDER);
         message.setTo(mail.getRecipient());
         message.setSubject(mail.getSubject());
         message.setText(mail.getContent());

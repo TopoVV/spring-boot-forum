@@ -4,8 +4,9 @@ import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.email.MailSenderImpl;
+import com.topov.forum.exception.RegistrationException;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.token.RegistrationToken;
+import com.topov.forum.token.ConfirmationToken;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,16 @@ import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.mock.mockito.SpyBeans;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @MockBeans({
     @MockBean(UserServiceImpl.class),
     @MockBean(TokenServiceImpl.class)
@@ -64,10 +69,10 @@ class RegistrationServiceImplTest {
         when(registrationRequestMock.getUsername()).thenReturn("username");
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
 
-        final RegistrationToken registrationTokenMock = mock(RegistrationToken.class);
-        when(registrationTokenMock.getToken()).thenReturn("123456789");
+        final ConfirmationToken confirmationTokenMock = mock(ConfirmationToken.class);
+        when(confirmationTokenMock.getToken()).thenReturn("123456789");
 
-        when(tokenService.createRegistrationToken(any())).thenReturn(registrationTokenMock);
+        when(tokenService.createAccountConfirmationToken(any())).thenReturn(confirmationTokenMock);
 
         registrationService.registerUser(registrationRequestMock);
 
@@ -76,5 +81,17 @@ class RegistrationServiceImplTest {
         verify(mailSender).sendMail(email.capture());
         assertEquals(registrationRequestMock.getEmail(), email.getValue().getRecipient());
         assertTrue(email.getValue().getContent().contains("123456789"));
+    }
+
+    @Test
+    public void whenConfirmAccountUserNotFound_ThenThrowRegistrationException() {
+        final ConfirmationToken confirmationTokenMock = mock(ConfirmationToken.class);
+        when(confirmationTokenMock.isTokenValid()).thenReturn(true);
+        when(confirmationTokenMock.getUsername()).thenReturn("username");
+
+        when(tokenService.getAccountConfirmationToken("token")).thenReturn(Optional.of(confirmationTokenMock));
+        doThrow(RuntimeException.class).when(userService).enableUser("username");
+
+        assertThrows(RegistrationException.class, () -> registrationService.confirmAccount("token"));
     }
 }
