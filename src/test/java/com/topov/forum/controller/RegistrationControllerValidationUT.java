@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Log4j2
 @SpringBootTest
 @AutoConfigureMockMvc
-class RegistrationControllerTest {
+class RegistrationControllerValidationUT {
     private final ObjectMapper mapper;
     private final MockMvc mvc;
 
@@ -31,7 +31,7 @@ class RegistrationControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    public RegistrationControllerTest(ObjectMapper mapper, MockMvc mvc) {
+    public RegistrationControllerValidationUT(ObjectMapper mapper, MockMvc mvc) {
         this.mapper = mapper;
         this.mvc = mvc;
     }
@@ -63,7 +63,7 @@ class RegistrationControllerTest {
     }
 
     @Test
-    void whenToken_ThenNoOtherFieldsValidated() throws Exception {
+    void whenInvalidToken_ThenNoOtherFieldsValidated() throws Exception {
         final SuperuserRegistrationRequest request = new SuperuserRegistrationRequest("", "", "email@email.com");
         final String jsonRequest = mapper.writeValueAsString(request);
 

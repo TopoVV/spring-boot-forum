@@ -1,6 +1,6 @@
 package com.topov.forum.initialization;
 
-import com.topov.forum.service.TokenService;
+import com.topov.forum.service.SuperuserTokenService;
 import com.topov.forum.token.SuperuserToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("!test")
 public class SuperuserTokenInitialization implements ApplicationRunner {
-    private final TokenService tokenService;
+    private final SuperuserTokenService superuserTokenService;
 
     @Autowired
-    public SuperuserTokenInitialization(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public SuperuserTokenInitialization(SuperuserTokenService superuserTokenService) {
+        this.superuserTokenService = superuserTokenService;
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        SuperuserToken superuserToken = tokenService.createSuperuserToken();
+        SuperuserToken superuserToken = superuserTokenService.createSuperuserToken();
         log.warn("SUPERUSER TOKEN: {}", superuserToken.getToken());
     }
 }

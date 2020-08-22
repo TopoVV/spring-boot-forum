@@ -28,26 +28,26 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @MockBeans({
     @MockBean(UserServiceImpl.class),
-    @MockBean(TokenServiceImpl.class)
+    @MockBean(ConfirmationTokenService.class)
 })
 @SpyBeans({
     @SpyBean(MailSenderImpl.class)
 })
-class RegistrationServiceImplTest {
+class RegistrationServiceUT {
     private final RegistrationService registrationService;
     private final MailSender mailSender;
     private final UserService userService;
-    private final TokenService tokenService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Autowired
-    RegistrationServiceImplTest(RegistrationService registrationService,
-                                MailSender mailSender,
-                                UserService userService,
-                                TokenService tokenService) {
+    RegistrationServiceUT(RegistrationService registrationService,
+                          MailSender mailSender,
+                          UserService userService,
+                          ConfirmationTokenService confirmationTokenService) {
         this.registrationService = registrationService;
         this.mailSender = mailSender;
         this.userService = userService;
-        this.tokenService = tokenService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     @Test
@@ -72,7 +72,7 @@ class RegistrationServiceImplTest {
         final ConfirmationToken confirmationTokenMock = mock(ConfirmationToken.class);
         when(confirmationTokenMock.getToken()).thenReturn("123456789");
 
-        when(tokenService.createAccountConfirmationToken(any())).thenReturn(confirmationTokenMock);
+        when(confirmationTokenService.createAccountConfirmationToken(any())).thenReturn(confirmationTokenMock);
 
         registrationService.registerUser(registrationRequestMock);
 
@@ -89,7 +89,7 @@ class RegistrationServiceImplTest {
         when(confirmationTokenMock.isTokenValid()).thenReturn(true);
         when(confirmationTokenMock.getUsername()).thenReturn("username");
 
-        when(tokenService.getAccountConfirmationToken("token")).thenReturn(Optional.of(confirmationTokenMock));
+        when(confirmationTokenService.getAccountConfirmationToken("token")).thenReturn(Optional.of(confirmationTokenMock));
         doThrow(RuntimeException.class).when(userService).enableUser("username");
 
         assertThrows(RegistrationException.class, () -> registrationService.confirmAccount("token"));

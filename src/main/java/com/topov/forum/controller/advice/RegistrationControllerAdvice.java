@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RegistrationControllerAdvice {
     @ExceptionHandler(value = RegistrationException.class)
-    public ResponseEntity<RegistrationResponse> handleRegistrationException(RegistrationException e) {
+    public ResponseEntity<String> handleRegistrationException(RegistrationException e) {
         log.error("Registration exception", e);
-        final RegistrationResponse response = new RegistrationResponse(e.getCause().getMessage());
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

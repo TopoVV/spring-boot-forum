@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void enableUser(String username) {
         userRepository.findByUsername(username)
-                      .orElseThrow(() -> new RuntimeException("Cannot confirm: the user doesn't exist"))
+                      .orElseThrow(() -> new RuntimeException("The user doesn't exist"))
                       .enable();
     }
 }

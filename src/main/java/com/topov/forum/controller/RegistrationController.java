@@ -60,18 +60,14 @@ public class RegistrationController {
             var response = new RegistrationResponse("Cannot perform registration! Invalid input", bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
-        registrationService.registerUser(registrationRequest);
-        return ResponseEntity.ok(new RegistrationResponse("You've been successfully registered!"));
+        RegistrationResponse response = registrationService.registerUser(registrationRequest);
+        return ResponseEntity.ok(response);
     }
 
     @ResponseBody
     @GetMapping("/registration/{token}")
     public ResponseEntity<AccountConfirmation> confirmAccountGet(@PathVariable String token) {
         final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);
-        if(accountConfirmation.isConfirmed()) {
-            return ResponseEntity.ok(accountConfirmation);
-        } else {
-            return ResponseEntity.badRequest().body(accountConfirmation);
-        }
+        return ResponseEntity.ok(accountConfirmation);
     }
 }
