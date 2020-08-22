@@ -1,10 +1,10 @@
 package com.topov.forum.service;
 
 import com.topov.forum.dto.request.RegistrationRequest;
+import com.topov.forum.dto.request.SuperuserRegistrationRequest;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.token.RegistrationToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,24 +31,38 @@ public class RegistrationServiceImpl implements RegistrationService {
             final ForumUser newUser = new ForumUser(registrationRequest);
             final String confirmationUrl = createRegistrationConfirmationUrl(registrationRequest);
             final String emailContent = "Please, confirm the registration: " + confirmationUrl;
+            final  Mail email = new Mail("Registration", registrationRequest.getEmail(), emailContent);
 
-            userService.addRegularUser(newUser);
-            final var email = new Mail("Registration", registrationRequest.getEmail(), emailContent);
+            userService.saveRegularUser(newUser);
             mailSender.sendMail(email);
         } catch(Exception e) {
             log.error("An exception happened during registration", e);
             throw new RuntimeException("Cannot register the user. Please, try again later");
         }
+    }
 
+    @Override
+    @Transactional
+    public void registerUser(SuperuserRegistrationRequest registrationRequest) {
+        log.debug("Superuser registration");
+        try {
+            final ForumUser newUser = new ForumUser(registrationRequest);
+            tokenService.revokeSuperuserToken(registrationRequest.getToken());
+            userService.saveRegularUser(newUser);
+        } catch(Exception e) {
+            log.error("An exception happened during registration", e);
+            throw new RuntimeException("Cannot register the user. Please, try again later");
+        }
     }
 
     @Override
     @Transactional
     public boolean confirmRegistration(String token) {
         log.debug("Confirmation of the registered user");
-        final RegistrationToken registrationToken = tokenService.getRegistrationToken(token);
+        final var registrationToken = tokenService.getRegistrationToken(token);
         if(registrationToken.isTokenValid()) {
             userService.enableUser(registrationToken.getUsername());
+            registrationToken.revoke();
             return true;
         }
         return false;

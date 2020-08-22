@@ -6,6 +6,7 @@ import com.topov.forum.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import static com.topov.forum.model.Role.*;
@@ -20,8 +21,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addRegularUser(ForumUser newUser) {
+    @Transactional
+    public void saveRegularUser(ForumUser newUser) {
         newUser.addRole(new Role(Roles.USER));
+        userRepository.save(newUser);
+    }
+
+    @Override
+    @Transactional
+    public void saveSuperuser(ForumUser newUser) {
+        newUser.addRole(new Role(Roles.SUPERUSER));
         userRepository.save(newUser);
     }
 

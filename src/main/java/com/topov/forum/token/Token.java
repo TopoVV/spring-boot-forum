@@ -17,8 +17,12 @@ public abstract class Token {
     protected String token;
     @Column(name = "created_at")
     protected LocalDateTime creationTime;
-    @Column(name = "is_used")
-    protected Boolean isUsed;
+    @Column(name = "is_enabled")
+    protected Boolean isEnabled;
+
+    public void revoke() {
+        this.isEnabled = false;
+    }
 
     public abstract boolean isTokenValid();
 

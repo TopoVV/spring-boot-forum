@@ -52,7 +52,7 @@ class RegistrationServiceImplTest {
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
 
         final ForumUser forumUser = new ForumUser(registrationRequestMock);
-        doThrow(DataIntegrityViolationException.class).when(userService).addRegularUser(forumUser);
+        doThrow(DataIntegrityViolationException.class).when(userService).saveRegularUser(forumUser);
 
         assertThrows(RuntimeException.class, () -> registrationService.registerUser(registrationRequestMock));
         verifyNoInteractions(mailSender);

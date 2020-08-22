@@ -7,4 +7,5 @@ public interface TokenService {
     RegistrationToken createRegistrationToken(String username);
     RegistrationToken getRegistrationToken(String token);
     SuperuserToken createSuperuserToken();
+    void revokeSuperuserToken(String token);
 }

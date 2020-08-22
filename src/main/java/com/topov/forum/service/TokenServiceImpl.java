@@ -35,6 +35,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void revokeSuperuserToken(String token) {
+        log.debug("Revoking of the superuser token");
+        superuserTokenRepository.findTokenByTokenValue(token)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                                .revoke();
+    }
+
+    @Override
     public RegistrationToken getRegistrationToken(String token) {
         return registrationTokenRepository.findTokenByTokenValue(token)
                                           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

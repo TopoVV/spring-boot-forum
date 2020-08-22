@@ -1,9 +1,7 @@
 package com.topov.forum.token;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Duration;
@@ -21,16 +19,12 @@ public class SuperuserToken extends Token {
     public SuperuserToken() {
         this.creationTime = LocalDateTime.now();
         this.token = UUID.randomUUID().toString();
-        this.isUsed = false;
+        this.isEnabled = true;
     }
 
     @Override
     public boolean isTokenValid() {
         final long timeLived = Duration.between(creationTime, LocalDateTime.now()).toMinutes();
-        if (!isUsed && timeLived < DEFAULT_LIFE_TIME_MINUTES) {
-            this.isUsed = true;
-            return true;
-        }
-        return false;
+        return isEnabled && timeLived < DEFAULT_LIFE_TIME_MINUTES;
     }
 }
