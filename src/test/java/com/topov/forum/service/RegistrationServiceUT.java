@@ -56,10 +56,9 @@ class RegistrationServiceUT {
         when(registrationRequestMock.getUsername()).thenReturn("username");
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
 
-        final ForumUser forumUser = new ForumUser(registrationRequestMock);
-        doThrow(DataIntegrityViolationException.class).when(userService).createRegularUser(forumUser);
+        doThrow(DataIntegrityViolationException.class).when(userService).createRegularUser(registrationRequestMock);
 
-        assertThrows(RuntimeException.class, () -> registrationService.registerSuperuser(registrationRequestMock));
+        assertThrows(RuntimeException.class, () -> registrationService.registerRegularUser(registrationRequestMock));
         verifyNoInteractions(mailSender);
     }
 
@@ -74,7 +73,7 @@ class RegistrationServiceUT {
 
         when(confirmationTokenService.createAccountConfirmationToken(any())).thenReturn(confirmationTokenMock);
 
-        registrationService.registerSuperuser(registrationRequestMock);
+        registrationService.registerRegularUser(registrationRequestMock);
 
         final ArgumentCaptor<Mail> email = ArgumentCaptor.forClass(Mail.class);
 

@@ -18,8 +18,8 @@ public class SuperuserRegistrationRequest extends RegistrationRequest {
         groups = SuperuserTokenGroup.class
     )
     private String token;
-    public SuperuserRegistrationRequest(String token, String username, String email) {
-        super(username, email);
+    public SuperuserRegistrationRequest(String token, String username, String password, String email) {
+        super(username, password, email);
         this.token =  token;
     }
 

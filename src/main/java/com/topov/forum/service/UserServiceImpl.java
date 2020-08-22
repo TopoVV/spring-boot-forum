@@ -37,6 +37,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void createSuperuser(RegistrationRequest registrationRequest) {
         final ForumUser newUser = assembleUser(registrationRequest);
+        newUser.addRole(new Role(Roles.USER));
+        newUser.addRole(new Role(Roles.ADMIN));
         newUser.addRole(new Role(Roles.SUPERUSER));
         newUser.setEnabled(true);
         userRepository.save(newUser);

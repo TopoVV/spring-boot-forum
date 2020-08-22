@@ -38,7 +38,7 @@ class RegistrationControllerValidationUT {
 
     @Test
     void whenUsernameNotUnique_ThenResponseMustContainEmailBindingError() throws Exception {
-        final RegistrationRequest request = new RegistrationRequest("username", "email@email.com");
+        final RegistrationRequest request = new RegistrationRequest("username", "password", "email@email.com");
         when(userRepository.existsByUsername("username")).thenReturn(true);
         final String jsonRequest = mapper.writeValueAsString(request);
 
@@ -51,7 +51,7 @@ class RegistrationControllerValidationUT {
 
     @Test
     void whenEmailNotUnique_ThenResponseMustContainUsernameBindingError() throws Exception {
-        final RegistrationRequest request = new RegistrationRequest("username", "email@email.com");
+        final RegistrationRequest request = new RegistrationRequest("username", "password", "email@email.com");
         when(userRepository.existsByEmail("email@email.com")).thenReturn(true);
         final String jsonRequest = mapper.writeValueAsString(request);
 
@@ -64,7 +64,7 @@ class RegistrationControllerValidationUT {
 
     @Test
     void whenInvalidToken_ThenNoOtherFieldsValidated() throws Exception {
-        final SuperuserRegistrationRequest request = new SuperuserRegistrationRequest("", "", "email@email.com");
+        final SuperuserRegistrationRequest request = new SuperuserRegistrationRequest("", "", "password", "email@email.com");
         final String jsonRequest = mapper.writeValueAsString(request);
 
         when(userRepository.existsByEmail("email@email.com")).thenReturn(true);
