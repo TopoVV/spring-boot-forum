@@ -46,8 +46,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void enableUser(String username) {
         userRepository.findByUsername(username)
-                      .orElseThrow(() -> new RuntimeException("The user doesn't exist"))
-                      .enable();
+            .orElseThrow(() -> new RuntimeException("The user doesn't exist"))
+            .enable();
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {

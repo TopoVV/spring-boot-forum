@@ -34,7 +34,8 @@ public class ConfirmationTokenService {
     @Transactional
     public void revokeConfirmationToken(String token) {
         log.debug("Revoking a token");
-        confirmationTokenRepository.findTokenByTokenValue(token).ifPresent(ConfirmationToken::revoke);
+        confirmationTokenRepository.findTokenByTokenValue(token)
+            .ifPresent(ConfirmationToken::revoke);
     }
 
 }

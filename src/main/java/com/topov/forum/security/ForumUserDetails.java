@@ -19,12 +19,12 @@ public class ForumUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles()
-                   .stream()
-                   .map(Role::getRole)
-                   .map(Role.Roles::toString)
-                   .map("ROLE_"::concat)
-                   .map(SimpleGrantedAuthority::new)
-                   .collect(Collectors.toList());
+            .stream()
+            .map(Role::getRole)
+            .map(Role.Roles::toString)
+            .map("ROLE_"::concat)
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
     }
 
     @Override

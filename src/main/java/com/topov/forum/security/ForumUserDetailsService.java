@@ -23,10 +23,10 @@ public class ForumUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Fetching user: {}", username);
         ForumUser forumUser = userRepository.findByUsername(username)
-                                            .orElseThrow(() -> {
-                                                log.error("User {} not found", username);
-                                                return new UsernameNotFoundException("User not found");
-                                            });
+            .orElseThrow(() -> {
+                log.error("User {} not found", username);
+                return new UsernameNotFoundException("User not found");
+            });
 
         return new ForumUserDetails(forumUser);
     }

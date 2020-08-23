@@ -1,5 +1,6 @@
 package com.topov.forum.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,22 +15,24 @@ import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
-public class RegistrationResponse {
+public class CreatePostResponse {
     private String message;
+    private Long createdPostId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, List<String>> inputErrors;
 
-    public RegistrationResponse(String message, BindingResult bindingResult) {
+    public CreatePostResponse(String message, BindingResult bindingResult) {
         this.message = message;
         this.inputErrors = bindingResult.getFieldErrors()
-                                        .stream()
-                                        .collect(groupingBy(
-                                            FieldError::getField,
-                                            mapping(FieldError::getDefaultMessage, toList())
-                                        ));
+            .stream()
+            .collect(groupingBy(
+                FieldError::getField,
+                mapping(FieldError::getDefaultMessage, toList())
+            ));
     }
 
-    public RegistrationResponse(String message) {
+    public CreatePostResponse(String message, Long postId) {
         this.message = message;
+        this.createdPostId = postId;
     }
 }

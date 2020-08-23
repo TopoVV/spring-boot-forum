@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 public class AuthenticatedUserServiceImpl implements AuthenticatedUserService {
     @Override
     public ForumUserDetails getAuthenticatedUser() {
-        return (ForumUserDetails) SecurityContextHolder.getContext()
-                                                       .getAuthentication()
-                                                       .getPrincipal();
+        final Object principal = SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getPrincipal();
+        return (ForumUserDetails) principal;
     }
 }

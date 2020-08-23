@@ -3,6 +3,7 @@ package com.topov.forum.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Table(name = "forum_users")
 @SequenceGenerator(name = "user_id_seq", allocationSize = 1)
 @Data
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ForumUser {
@@ -72,5 +74,10 @@ public class ForumUser {
 
     public void enable() {
         this.enabled = true;
+    }
+
+    public void addPost(Post newPost) {
+        this.posts.add(newPost);
+        newPost.setCreator(this);
     }
 }

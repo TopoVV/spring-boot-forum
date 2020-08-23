@@ -26,13 +26,14 @@ public class SuperuserTokenService {
     @Transactional
     public boolean checkSuperuserToken(String token) {
         return superuserTokenRepository.findTokenByTokenValue(token)
-                                       .map(SuperuserToken::isTokenValid)
-                                       .orElse(false);
+            .map(SuperuserToken::isTokenValid)
+            .orElse(false);
     }
 
     @Transactional
     public void revokeSuperuserToken(String token) {
         log.debug("Revoking a token");
-        superuserTokenRepository.findTokenByTokenValue(token).ifPresent(SuperuserToken::revoke);
+        superuserTokenRepository.findTokenByTokenValue(token)
+            .ifPresent(SuperuserToken::revoke);
     }
 }

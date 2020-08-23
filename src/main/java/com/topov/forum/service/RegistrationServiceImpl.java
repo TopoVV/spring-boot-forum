@@ -78,8 +78,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Confirmation of the account");
         try {
             return confirmationTokenService.getAccountConfirmationToken(token)
-                               .map(this::doConfirmation)
-                               .orElse(AccountConfirmation.failed("The specified confirmation token doesn't exist"));
+                .map(this::doConfirmation)
+                .orElse(AccountConfirmation.failed("The specified confirmation token doesn't exist"));
         } catch (RuntimeException e) {
             log.error("Error during the account confirmation", e);
             throw new RegistrationException(String.format("Account confirmation failed! %s", e.getMessage()), e);

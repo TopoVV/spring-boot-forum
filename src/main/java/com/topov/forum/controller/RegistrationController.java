@@ -35,7 +35,8 @@ public class RegistrationController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<RegistrationResponse>
-    regPost(@Valid @RequestBody RegistrationRequest registrationRequest, BindingResult bindingResult) {
+    regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
+                   BindingResult bindingResult) {
         log.debug("Handling a registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
             final var response = new RegistrationResponse("Invalid input", bindingResult);
@@ -52,9 +53,8 @@ public class RegistrationController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<RegistrationResponse>
-    regSuperuserPost(@Validated(SuperuserRegistrationValidationSequence.class)
-                     @RequestBody SuperuserRegistrationRequest registrationRequest,
-                     BindingResult bindingResult) {
+    regSuperuser(@Validated(SuperuserRegistrationValidationSequence.class) @RequestBody SuperuserRegistrationRequest registrationRequest,
+                 BindingResult bindingResult) {
         log.debug("Handling a superuser registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
             final var response = new RegistrationResponse("Invalid input", bindingResult);

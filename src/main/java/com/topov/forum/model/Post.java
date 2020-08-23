@@ -18,9 +18,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_id_seq")
     @Column(name = "post_id")
     private Long postId;
-    @Column(name = "title", unique = true)
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
-
+    @Column(name = "text", nullable = false, length = 2500)
+    private String text;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
