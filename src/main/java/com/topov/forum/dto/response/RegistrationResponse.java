@@ -26,6 +26,7 @@ public class RegistrationResponse {
                                             mapping(FieldError::getDefaultMessage, toList())
                                         ));
     }
+
     public RegistrationResponse(String message) {
         this.message = message;
         this.inputErrors = new HashMap<>();

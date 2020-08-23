@@ -56,4 +56,6 @@ public class ForumUserDetails implements UserDetails {
     public boolean isEnabled() {
         return user.getEnabled();
     }
+
+    public Long getId() { return user.getUserId(); }
 }
