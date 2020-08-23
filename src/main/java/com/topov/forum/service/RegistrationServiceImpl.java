@@ -2,11 +2,11 @@ package com.topov.forum.service;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;
+import com.topov.forum.dto.response.AccountConfirmation;
 import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
-import com.topov.forum.dto.response.AccountConfirmation;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Log4j2
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
+    private static final String SUCCESSFUL_REGISTRATION_TEMPLATE = "You've been successfully registered! " +
+        "Please, confirm your account by clicking the link that was sent to %s";
     private static final String CONFIRMATION_MAIL_TEMPLATE = "Welcome to Forum, %s. " +
         "To confirm your account follow this link: %s";
 
@@ -37,12 +39,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Transactional
-    public void registerRegularUser(RegistrationRequest registrationRequest) {
+    public RegistrationResponse registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
             userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
+            return new RegistrationResponse(String.format(SUCCESSFUL_REGISTRATION_TEMPLATE, mail.getRecipient()));
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
             throw new RegistrationException("Cannot register the user. Failed to send the account confirmation mail", e);

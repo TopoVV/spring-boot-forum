@@ -3,7 +3,9 @@ package com.topov.forum.token;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;

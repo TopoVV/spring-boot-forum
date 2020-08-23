@@ -2,9 +2,9 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;
+import com.topov.forum.dto.response.AccountConfirmation;
 import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.service.RegistrationService;
-import com.topov.forum.dto.response.AccountConfirmation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.topov.forum.dto.request.SuperuserRegistrationRequest.*;
+import static com.topov.forum.dto.request.SuperuserRegistrationRequest.SuperuserRegistrationValidationSequence;
 
 @Log4j2
 @Controller
@@ -38,11 +38,11 @@ public class RegistrationController {
     regPost(@Valid @RequestBody RegistrationRequest registrationRequest, BindingResult bindingResult) {
         log.debug("Handling a registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            var response = new RegistrationResponse("Cannot perform registration! Invalid input", bindingResult);
+            final var response = new RegistrationResponse("Invalid input", bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
-        registrationService.registerRegularUser(registrationRequest);
-        return ResponseEntity.ok(new RegistrationResponse("You've been successfully registered!"));
+        final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
+        return ResponseEntity.ok(response);
     }
 
     @ResponseBody
@@ -57,7 +57,7 @@ public class RegistrationController {
                      BindingResult bindingResult) {
         log.debug("Handling a superuser registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            var response = new RegistrationResponse("Cannot perform registration! Invalid input", bindingResult);
+            final var response = new RegistrationResponse("Invalid input", bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);

@@ -1,6 +1,5 @@
 package com.topov.forum.validation;
 
-import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.validation.constraint.UniqueEmail;
 import org.springframework.beans.factory.annotation.Autowired;

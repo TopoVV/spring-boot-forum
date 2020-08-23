@@ -1,6 +1,5 @@
 package com.topov.forum.model;
 
-import com.topov.forum.dto.request.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
