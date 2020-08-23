@@ -3,7 +3,9 @@ package com.topov.forum.controller;
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;
 import com.topov.forum.dto.response.AccountConfirmation;
+import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.RegistrationResponse;
+import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.RegistrationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,11 @@ public class RegistrationController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<RegistrationResponse>
-    regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
-                   BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
+                                                            BindingResult bindingResult) {
         log.debug("Handling a registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            final var response = new RegistrationResponse("Invalid input", bindingResult);
+            final ValidationError response = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
@@ -52,12 +53,12 @@ public class RegistrationController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<RegistrationResponse>
-    regSuperuser(@Validated(SuperuserRegistrationValidationSequence.class) @RequestBody SuperuserRegistrationRequest registrationRequest,
-                 BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidationSequence.class)
+                                                          @RequestBody SuperuserRegistrationRequest registrationRequest,
+                                                          BindingResult bindingResult) {
         log.debug("Handling a superuser registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            final var response = new RegistrationResponse("Invalid input", bindingResult);
+            final ValidationError response = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(response);
         }
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);

@@ -50,8 +50,7 @@ class RegistrationServiceUT {
         this.confirmationTokenService = confirmationTokenService;
     }
 
-    @Test
-    public void whenUserServiceThrows_ThenRethrowException() {
+    @Test void whenUserServiceThrows_ThenRethrowException() {
         final RegistrationRequest registrationRequestMock = mock(RegistrationRequest.class);
         when(registrationRequestMock.getUsername()).thenReturn("username");
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
@@ -63,7 +62,7 @@ class RegistrationServiceUT {
     }
 
     @Test
-    public void whenCreateUser_ThenSendEmail() {
+    void whenCreateUser_ThenSendEmail() {
         final RegistrationRequest registrationRequestMock = mock(RegistrationRequest.class);
         when(registrationRequestMock.getUsername()).thenReturn("username");
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
@@ -83,7 +82,7 @@ class RegistrationServiceUT {
     }
 
     @Test
-    public void whenConfirmAccountUserNotFound_ThenThrowRegistrationException() {
+    void whenConfirmAccountUserNotFound_ThenThrowRegistrationException() {
         final ConfirmationToken confirmationTokenMock = mock(ConfirmationToken.class);
         when(confirmationTokenMock.isTokenValid()).thenReturn(true);
         when(confirmationTokenMock.getUsername()).thenReturn("username");

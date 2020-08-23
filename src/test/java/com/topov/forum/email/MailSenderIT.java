@@ -15,7 +15,7 @@ class MailSenderIT {
     }
 
     @Test
-    public void sendEmail() {
+    void sendEmail() {
         final var email = new Mail("Registration",  "boxeci5626@trufilth.com", "Hello");
         Assertions.assertDoesNotThrow(() -> mailSender.sendMail(email));
     }

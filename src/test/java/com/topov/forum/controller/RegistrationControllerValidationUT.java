@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,17 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Log4j2
 @SpringBootTest
 @AutoConfigureMockMvc
+@MockBeans({ @MockBean(UserRepository.class) })
 class RegistrationControllerValidationUT {
     private final ObjectMapper mapper;
     private final MockMvc mvc;
-
-    @MockBean
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public RegistrationControllerValidationUT(ObjectMapper mapper, MockMvc mvc) {
+    RegistrationControllerValidationUT(ObjectMapper mapper, MockMvc mvc, UserRepository repository) {
         this.mapper = mapper;
         this.mvc = mvc;
+        userRepository = repository;
     }
 
     @Test

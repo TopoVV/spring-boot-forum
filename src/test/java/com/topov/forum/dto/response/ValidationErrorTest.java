@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RegistrationResponseTest {
+class ValidationErrorTest {
     @Test
     void bindingResultToMapOfStringListStringConversion() {
 
@@ -37,7 +37,7 @@ class RegistrationResponseTest {
         final BindingResult bindingResultMock = mock(BindingResult.class);
         when(bindingResultMock.getFieldErrors()).thenReturn(List.of(fieldError1, fieldError2, fieldError3));
 
-        final RegistrationResponse response = new RegistrationResponse("message", bindingResultMock);
+        final ValidationError response = new ValidationError(bindingResultMock);
         final Map<String, List<String>> inputErrors = response.getInputErrors();
 
         assertEquals(2, inputErrors.get(field1).size());

@@ -23,7 +23,6 @@ import static org.mockito.Mockito.mock;
 @MockBeans({ @MockBean(UserRepository.class) })
 class PostServiceImplTest {
     private final UserRepository userRepository;
-
     private final PostService postService;
 
     @Autowired
@@ -34,7 +33,7 @@ class PostServiceImplTest {
 
     @Test
     @WithMockForumUserDetails(username = "user")
-    public void createPost() {
+    void createPost() {
         final CreatePostRequest createPostRequestMock = mock(CreatePostRequest.class);
         when(createPostRequestMock.getTitle()).thenReturn("post title");
         when(createPostRequestMock.getText()).thenReturn("post text");
@@ -44,7 +43,6 @@ class PostServiceImplTest {
 
         final CreatePostResponse response = postService.createPost(createPostRequestMock);
         verify(forumUserMock, only()).addPost(any());
-        Assertions.assertNull(response.getInputErrors());
 
     }
 }

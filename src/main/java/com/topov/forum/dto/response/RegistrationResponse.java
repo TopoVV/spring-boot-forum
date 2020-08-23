@@ -2,6 +2,7 @@ package com.topov.forum.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -14,22 +15,9 @@ import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
-public class RegistrationResponse {
-    private String message;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, List<String>> inputErrors;
-
-    public RegistrationResponse(String message, BindingResult bindingResult) {
-        this.message = message;
-        this.inputErrors = bindingResult.getFieldErrors()
-                                        .stream()
-                                        .collect(groupingBy(
-                                            FieldError::getField,
-                                            mapping(FieldError::getDefaultMessage, toList())
-                                        ));
-    }
-
+@EqualsAndHashCode(callSuper = true)
+public class RegistrationResponse extends OperationResponse {
     public RegistrationResponse(String message) {
-        this.message = message;
+        super(message);
     }
 }
