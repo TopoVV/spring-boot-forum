@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.topov.forum.dto.request.SuperuserRegistrationRequest.SuperuserRegistrationValidationSequence;
+import static com.topov.forum.dto.request.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
 
 @Log4j2
 @Controller
@@ -40,8 +40,8 @@ public class RegistrationController {
                                                             BindingResult bindingResult) {
         log.debug("Handling a registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            final ValidationError response = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(response);
+            final ValidationError validationError = new ValidationError(bindingResult);
+            return ResponseEntity.badRequest().body(validationError);
         }
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(response);
@@ -53,20 +53,23 @@ public class RegistrationController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidationSequence.class)
+    public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidation.class)
                                                           @RequestBody SuperuserRegistrationRequest registrationRequest,
                                                           BindingResult bindingResult) {
         log.debug("Handling a superuser registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
-            final ValidationError response = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(response);
+            final ValidationError validationError = new ValidationError(bindingResult);
+            return ResponseEntity.badRequest().body(validationError);
         }
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }
 
     @ResponseBody
-    @GetMapping("/registration/{token}")
+    @GetMapping(
+        value = "/registration/{token}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<AccountConfirmation> confirmAccountGet(@PathVariable String token) {
         final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);
         return ResponseEntity.ok(accountConfirmation);

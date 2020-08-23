@@ -1,6 +1,6 @@
 package com.topov.forum.initialization;
 
-import com.topov.forum.service.SuperuserTokenService;
+import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.token.SuperuserToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

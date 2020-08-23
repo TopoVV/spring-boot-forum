@@ -21,12 +21,12 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @MockBeans({ @MockBean(UserRepository.class) })
-class PostServiceImplTest {
+class PostServiceUT {
     private final UserRepository userRepository;
     private final PostService postService;
 
     @Autowired
-    PostServiceImplTest(UserRepository repository, PostService postService) {
+    PostServiceUT(UserRepository repository, PostService postService) {
         userRepository = repository;
         this.postService = postService;
     }
@@ -43,6 +43,5 @@ class PostServiceImplTest {
 
         final CreatePostResponse response = postService.createPost(createPostRequestMock);
         verify(forumUserMock, only()).addPost(any());
-
     }
 }

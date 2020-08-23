@@ -2,6 +2,7 @@ package com.topov.forum.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.topov.forum.dto.PostDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,11 @@ import static java.util.stream.Collectors.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class CreatePostResponse extends OperationResponse {
-    private String message;
-    @JsonIgnore
-    private Long createdPostId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private PostDto postDto;
 
-    public CreatePostResponse(String message, Long postId) {
-        this.message = message;
-        this.createdPostId = postId;
+    public CreatePostResponse(PostDto postDto) {
+        super("The post has been created");
+        this.postDto = postDto;
     }
 }

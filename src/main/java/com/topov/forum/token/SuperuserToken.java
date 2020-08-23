@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "superuser_tokens")
-@SequenceGenerator(name = "token_id_gen", sequenceName = "superuser_token_id_seq", allocationSize = 1)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SuperuserToken extends Token {

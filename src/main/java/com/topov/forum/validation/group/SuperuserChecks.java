@@ -1,4 +1,4 @@
 package com.topov.forum.validation.group;
 
-public interface SuperuserTokenGroup {
+public interface SuperuserChecks {
 }

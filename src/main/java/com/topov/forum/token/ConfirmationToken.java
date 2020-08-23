@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "registration_tokens")
-@SequenceGenerator(name = "token_id_gen", sequenceName = "registration_token_id_seq", allocationSize = 1)
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

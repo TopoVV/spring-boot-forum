@@ -5,7 +5,8 @@ import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.email.MailSenderImpl;
 import com.topov.forum.exception.RegistrationException;
-import com.topov.forum.model.ForumUser;
+import com.topov.forum.service.token.ConfirmationTokenService;
+import com.topov.forum.service.token.ConfirmationTokenServiceImpl;
 import com.topov.forum.token.ConfirmationToken;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @MockBeans({
     @MockBean(UserServiceImpl.class),
-    @MockBean(ConfirmationTokenService.class)
+    @MockBean(ConfirmationTokenServiceImpl.class)
 })
 @SpyBeans({
     @SpyBean(MailSenderImpl.class)

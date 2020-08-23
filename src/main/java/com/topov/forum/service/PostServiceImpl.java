@@ -1,8 +1,10 @@
 package com.topov.forum.service;
 
+import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
 import com.topov.forum.exception.PostException;
+import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.repository.UserRepository;
@@ -15,14 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
+    private final PostMapper postMapper;
     private final UserRepository userRepository;
     private final AuthenticatedUserService authenticatedUserService;
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
-                           UserRepository repository,
+                           PostMapper postMapper, UserRepository repository,
                            AuthenticatedUserService authenticatedUserService) {
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
+        this.postMapper = postMapper;
         userRepository = repository;
     }
 
@@ -36,7 +40,8 @@ public class PostServiceImpl implements PostService {
             userRepository.findByUsername(creatorUsername)
                 .orElseThrow(() -> new RuntimeException("Cannot create post! User not found"))
                 .addPost(newPost);
-            return new CreatePostResponse("The post has been created", newPost.getPostId());
+            final PostDto postDto = postMapper.toDto(newPost);
+            return new CreatePostResponse(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post");

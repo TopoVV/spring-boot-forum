@@ -10,7 +10,7 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class Token {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_id_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
     protected Long tokenId;
     @Column(name = "token")

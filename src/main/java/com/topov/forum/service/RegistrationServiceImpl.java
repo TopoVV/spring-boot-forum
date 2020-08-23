@@ -7,6 +7,8 @@ import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
+import com.topov.forum.service.token.ConfirmationTokenService;
+import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import lombok.extern.log4j.Log4j2;
