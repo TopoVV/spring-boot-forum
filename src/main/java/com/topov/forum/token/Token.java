@@ -14,7 +14,7 @@ public abstract class Token {
     @Column(name = "token_id")
     protected Long tokenId;
     @Column(name = "token")
-    protected String token;
+    protected String tokenValue;
     @Column(name = "created_at")
     protected LocalDateTime creationTime;
     @Column(name = "is_enabled")
@@ -35,11 +35,11 @@ public abstract class Token {
             return false;
         }
         Token token1 = (Token) o;
-        return token.equals(token1.token);
+        return tokenValue.equals(token1.tokenValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token);
+        return Objects.hash(tokenValue);
     }
 }

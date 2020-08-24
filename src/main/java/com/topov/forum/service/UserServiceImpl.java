@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public void createRegularUser(RegistrationRequest registrationRequest) {
         final ForumUser newUser = assembleUser(registrationRequest);
         newUser.addRole(new Role(Roles.USER));
-        newUser.setEnabled(false);;
+        newUser.setEnabled(false);
         userRepository.save(newUser);
     }
 

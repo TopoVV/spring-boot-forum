@@ -1,7 +1,6 @@
 package com.topov.forum.validation.constraint;
 
 import com.topov.forum.validation.CreatePostUniqueTitleValidator;
-import com.topov.forum.validation.UniqueUsernameConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

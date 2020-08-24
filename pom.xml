@@ -17,11 +17,12 @@
     <properties>
         <java.version>11</java.version>
         <h2.version>1.4.200</h2.version>
+        <jjwt.version>0.9.1</jjwt.version>
         <lombok.version>1.18.12</lombok.version>
         <postgresql.version>42.2.14</postgresql.version>
+        <modelmapper.version>2.3.7</modelmapper.version>
         <validator.version>6.1.5.Final</validator.version>
         <jackson.yml.dataformat.version>2.11.2</jackson.yml.dataformat.version>
-        <modelmapper.version>2.3.7</modelmapper.version>
     </properties>
 
     <dependencies>
@@ -94,6 +95,13 @@
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
 
 
         <dependency>
@@ -119,6 +127,31 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.4.0.905</version>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

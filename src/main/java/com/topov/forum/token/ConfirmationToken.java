@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ public class ConfirmationToken extends Token {
 
     public ConfirmationToken(String forUser) {
         this.creationTime = LocalDateTime.now();
-        this.token = UUID.randomUUID().toString();
+        this.tokenValue = UUID.randomUUID().toString();
         this.isEnabled = true;
         this.username = forUser;
     }

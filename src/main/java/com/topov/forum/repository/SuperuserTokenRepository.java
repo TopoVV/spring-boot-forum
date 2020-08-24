@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface SuperuserTokenRepository extends JpaRepository<SuperuserToken, Long> {
-    @Query("SELECT t FROM SuperuserToken t WHERE t.token = :token")
+    @Query("SELECT t FROM SuperuserToken t WHERE t.tokenValue = :token")
     Optional<SuperuserToken> findTokenByTokenValue(String token);
 }

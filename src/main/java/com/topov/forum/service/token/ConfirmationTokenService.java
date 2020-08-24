@@ -1,7 +1,6 @@
 package com.topov.forum.service.token;
 
 import com.topov.forum.token.ConfirmationToken;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

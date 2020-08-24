@@ -20,7 +20,7 @@ public class Role {
     @Id
     private Long roleId;
     @Enumerated(EnumType.STRING)
-    private Roles role;
+    private Roles roleName;
 
     @ManyToMany(
         fetch = FetchType.LAZY,
@@ -30,7 +30,7 @@ public class Role {
 
     public Role(Roles role) {
         this.roleId = (long) role.ordinal();
-        this.role = role;
+        this.roleName = role;
     }
 
     public void addUser(ForumUser user) {
@@ -53,11 +53,11 @@ public class Role {
         }
         Role role1 = (Role) o;
         return roleId.equals(role1.roleId) &&
-            role == role1.role;
+            roleName == role1.roleName;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, role);
+        return Objects.hash(roleId, roleName);
     }
 }

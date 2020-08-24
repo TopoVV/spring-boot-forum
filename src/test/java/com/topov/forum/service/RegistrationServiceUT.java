@@ -69,7 +69,7 @@ class RegistrationServiceUT {
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
 
         final ConfirmationToken confirmationTokenMock = mock(ConfirmationToken.class);
-        when(confirmationTokenMock.getToken()).thenReturn("123456789");
+        when(confirmationTokenMock.getTokenValue()).thenReturn("123456789");
 
         when(confirmationTokenService.createAccountConfirmationToken(any())).thenReturn(confirmationTokenMock);
 

@@ -1,8 +1,6 @@
 package com.topov.forum.initialization;
 
 import com.topov.forum.dto.request.RegistrationRequest;
-import com.topov.forum.model.ForumUser;
-import com.topov.forum.repository.UserRepository;
 import com.topov.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -25,7 +23,7 @@ public class UserInitialization implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         RegistrationRequest request = new RegistrationRequest();
         request.setUsername("username");
-        request.setPassword("password");
+        request.setPassword(encoder.encode("password"));
         request.setEmail("email@email.com");
         userService.createSuperuser(request);
     }

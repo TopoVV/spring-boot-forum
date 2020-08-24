@@ -91,7 +91,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private AccountConfirmation doConfirmation(ConfirmationToken token) {
         if(token.isTokenValid()) {
             userService.enableUser(token.getUsername());
-            confirmationTokenService.revokeConfirmationToken(token.getToken());
+            confirmationTokenService.revokeConfirmationToken(token.getTokenValue());
             return AccountConfirmation.success();
         }
         return AccountConfirmation.failed("Invalid token");
@@ -106,7 +106,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private String createRegistrationConfirmationUrl(String username) {
         final Token registrationToken = confirmationTokenService.createAccountConfirmationToken(username);
-        final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getToken());
+        final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getTokenValue());
         return UriComponentsBuilder.newInstance()
                                    .scheme("http")
                                    .host("localhost")

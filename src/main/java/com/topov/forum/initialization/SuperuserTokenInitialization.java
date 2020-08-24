@@ -23,6 +23,6 @@ public class SuperuserTokenInitialization implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         SuperuserToken superuserToken = superuserTokenService.createSuperuserToken();
-        log.warn("SUPERUSER TOKEN: {}", superuserToken.getToken());
+        log.warn("SUPERUSER TOKEN: {}", superuserToken.getTokenValue());
     }
 }

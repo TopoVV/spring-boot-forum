@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ public class SuperuserToken extends Token {
 
     public SuperuserToken() {
         this.creationTime = LocalDateTime.now();
-        this.token = UUID.randomUUID().toString();
+        this.tokenValue = UUID.randomUUID().toString();
         this.isEnabled = true;
     }
 

@@ -1,9 +1,7 @@
 package com.topov.forum.controller.advice;
 
 import com.topov.forum.controller.PostController;
-import com.topov.forum.controller.RegistrationController;
 import com.topov.forum.exception.PostException;
-import com.topov.forum.exception.RegistrationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
