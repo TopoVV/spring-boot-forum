@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 class ValidationErrorTest {
     @Test
     void bindingResultToMapOfStringListStringConversion() {
-
         final String field1 = "field 1";
         final String field2 = "field 2";
         final String field1Error1 = "field 1 error 1";
@@ -45,7 +44,5 @@ class ValidationErrorTest {
         assertTrue(inputErrors.get(field1).contains(field1Error1));
         assertTrue(inputErrors.get(field1).contains(field1Error2));
         assertTrue(inputErrors.get(field2).contains(field1Error3));
-
     }
-
 }

@@ -27,13 +27,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockBeans({
-    @MockBean(UserServiceImpl.class),
-    @MockBean(ConfirmationTokenServiceImpl.class)
-})
-@SpyBeans({
-    @SpyBean(MailSenderImpl.class)
-})
+@MockBeans({ @MockBean(UserServiceImpl.class), @MockBean(ConfirmationTokenServiceImpl.class) })
+@SpyBeans({ @SpyBean(MailSenderImpl.class) })
 class RegistrationServiceUT {
     private final RegistrationService registrationService;
     private final MailSender mailSender;

@@ -1,14 +1,10 @@
 package com.topov.forum.service;
 
-import com.topov.forum.WithMockForumUserDetails;
 import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,7 +28,6 @@ class PostServiceUT {
     }
 
     @Test
-    @WithMockForumUserDetails(username = "user")
     void createPost() {
         final CreatePostRequest createPostRequestMock = mock(CreatePostRequest.class);
         when(createPostRequestMock.getTitle()).thenReturn("post title");

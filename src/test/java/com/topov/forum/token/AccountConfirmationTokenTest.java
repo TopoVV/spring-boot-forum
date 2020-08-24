@@ -13,11 +13,13 @@ class AccountConfirmationTokenTest {
         confirmationToken.setCreationTime(LocalDateTime.now().minusMinutes(10));
         assertFalse(confirmationToken.isTokenValid());
     }
+
     @Test
     void whenCreatedLessThen5MinutesAgo_ThenReturnFalse() {
         ConfirmationToken confirmationToken = new ConfirmationToken("username");
         assertTrue(confirmationToken.isTokenValid());
     }
+
     @Test
     void whenTokenAlreadyUsed_ThenReturnFalse() {
         ConfirmationToken confirmationToken = new ConfirmationToken("username");

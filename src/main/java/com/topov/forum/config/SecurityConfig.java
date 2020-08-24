@@ -17,6 +17,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Log4j2
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private final UserDetailsService userDetailsService;
+
+    @Autowired
+    public SecurityConfig(@Qualifier("forumUserDetailsService") UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         log.debug("Configuring http security");
@@ -30,11 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/registration/**").permitAll()
             .antMatchers("/login").permitAll()
             .anyRequest().authenticated()
-
-            .and()
-
-            .formLogin()
-            .loginProcessingUrl("/login")
 
             .and()
 

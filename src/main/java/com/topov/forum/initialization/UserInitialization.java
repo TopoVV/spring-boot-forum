@@ -11,19 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserInitialization implements ApplicationRunner {
     private final UserService userService;
-    private final PasswordEncoder encoder;
 
     @Autowired
-    public UserInitialization(UserService userService, PasswordEncoder encoder) {
+    public UserInitialization(UserService userService) {
         this.userService = userService;
-        this.encoder = encoder;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         RegistrationRequest request = new RegistrationRequest();
         request.setUsername("username");
-        request.setPassword(encoder.encode("password"));
+        request.setPassword("password");
         request.setEmail("email@email.com");
         userService.createSuperuser(request);
     }

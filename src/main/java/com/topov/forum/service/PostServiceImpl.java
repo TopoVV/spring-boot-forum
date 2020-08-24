@@ -19,11 +19,11 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final UserRepository userRepository;
-    private final AuthenticatedUserService authenticatedUserService;
+    private final AuthenticationService authenticatedUserService;
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
                            PostMapper postMapper, UserRepository repository,
-                           AuthenticatedUserService authenticatedUserService) {
+                           AuthenticationService authenticatedUserService) {
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
         this.postMapper = postMapper;
