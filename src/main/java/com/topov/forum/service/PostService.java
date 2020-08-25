@@ -8,5 +8,6 @@ import com.topov.forum.dto.response.EditPostResponse;
 public interface PostService {
     CreatePostResponse createPost(CreatePostRequest createPostRequest);
     EditPostResponse editPost(EditPostRequest editPostRequest);
+    void deletePost(Long postId);
 
 }

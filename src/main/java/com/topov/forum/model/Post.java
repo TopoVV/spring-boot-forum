@@ -22,9 +22,15 @@ public class Post {
     private String title;
     @Column(name = "text", nullable = false, length = 2500)
     private String text;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
+
+    public void disable() {
+        this.status = Status.INACTIVE;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,5 +47,10 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(title);
+    }
+
+    public enum Status {
+        ACTIVE,
+        INACTIVE
     }
 }

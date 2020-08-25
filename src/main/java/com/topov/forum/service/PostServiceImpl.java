@@ -76,12 +76,23 @@ public class PostServiceImpl implements PostService {
             });
     }
 
-
+    @Transactional
+    @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
+    public void deletePost(Long postId) {
+        log.debug("Deleting post id={}", postId);
+        postRepository.findById(postId)
+            .orElseThrow(() -> {
+                log.error("Post not found id={}", postId);
+                return new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+            })
+            .disable();
+    }
 
     private Post assemblePost(CreatePostRequest createPostRequest) {
         final Post newPost = new Post();
         newPost.setTitle(createPostRequest.getTitle());
         newPost.setText(createPostRequest.getText());
+        newPost.setStatus(Post.Status.ACTIVE);
         return newPost;
     }
 }
