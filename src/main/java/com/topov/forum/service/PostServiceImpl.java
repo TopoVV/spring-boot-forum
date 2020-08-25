@@ -8,6 +8,7 @@ import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.repository.UserRepository;
+import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,6 @@
-package com.topov.forum.security;
+package com.topov.forum.security.jwt;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
