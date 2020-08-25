@@ -45,7 +45,10 @@ public class PostServiceImpl implements PostService {
             final Post newPost = assemblePost(createPostRequest);
             final String creatorUsername = authenticatedUserService.getAuthenticatedUser().getUsername();
             userRepository.findByUsername(creatorUsername)
-                .orElseThrow(() -> new RuntimeException("Cannot create post! User not found"))
+                .orElseThrow(() -> {
+                    log.error("User not found");
+                    return new RuntimeException("Cannot create post! User not found");
+                })
                 .addPost(newPost);
             postRepository.flush();
             final PostDto postDto = postMapper.toDto(newPost);
@@ -74,6 +77,18 @@ public class PostServiceImpl implements PostService {
                 log.error("Post with id={} doesnt exist", editPostRequest.getPostId());
                 return new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found");
             });
+    }
+
+    @Override
+    @Transactional
+    public PostDto getPost(Long postId) {
+        return postRepository.findById(postId)
+            .map(post -> {
+                post.viewed();
+                return post;
+            })
+            .map(postMapper::toDto)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
     @Transactional

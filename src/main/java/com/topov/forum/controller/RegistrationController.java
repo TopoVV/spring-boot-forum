@@ -38,7 +38,7 @@ public class RegistrationController {
     )
     public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
                                                             BindingResult bindingResult) {
-        log.debug("Handling a registration request: {}", registrationRequest);
+        log.debug("Handling (POST) registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
@@ -56,7 +56,7 @@ public class RegistrationController {
     public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidation.class)
                                                           @RequestBody SuperuserRegistrationRequest registrationRequest,
                                                           BindingResult bindingResult) {
-        log.debug("Handling a superuser registration request: {}", registrationRequest);
+        log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
@@ -71,6 +71,7 @@ public class RegistrationController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<AccountConfirmation> confirmAccountGet(@PathVariable String token) {
+        log.debug("Handling (GET) account confirmation request");
         final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);
         return ResponseEntity.ok(accountConfirmation);
     }

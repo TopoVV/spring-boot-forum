@@ -25,6 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtToken authenticate(LoginRequest loginRequest) {
+        log.debug("Authentication user: {}", loginRequest);
         final String username = loginRequest.getUsername();
         final String password = loginRequest.getPassword();
         final var authToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -34,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ForumUserDetails getAuthenticatedUser() {
+        log.debug("Getting current user");
         return (ForumUserDetails) SecurityContextHolder.getContext()
             .getAuthentication()
             .getPrincipal();

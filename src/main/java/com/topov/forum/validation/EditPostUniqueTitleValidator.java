@@ -3,17 +3,20 @@ package com.topov.forum.validation;
 import com.topov.forum.dto.request.EditPostRequest;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.validation.constraint.UniqueTitle;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+@Log4j2
 @Component
 public class EditPostUniqueTitleValidator implements ConstraintValidator<UniqueTitle, EditPostRequest> {
     private PostRepository postRepository;
     @Override
     public boolean isValid(EditPostRequest editPostRequest, ConstraintValidatorContext ctx) {
+        log.debug("Validating post edition request");
         final String newTitle = editPostRequest.getNewTitle();
         if(!editPostRequest.getOldTitle().equals(newTitle)) {
             if(postRepository.existsByTitle(newTitle)) {

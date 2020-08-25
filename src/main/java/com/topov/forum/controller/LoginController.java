@@ -42,7 +42,7 @@ public class LoginController {
     )
     public ResponseEntity<OperationResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest,
                                                           BindingResult bindingResult) {
-        log.debug("Authenticating user {}", loginRequest);
+        log.debug("Handling POST login request. User: {}", loginRequest);
         try {
             if(bindingResult.hasErrors()) {
                 ValidationError validationError = new ValidationError(bindingResult);

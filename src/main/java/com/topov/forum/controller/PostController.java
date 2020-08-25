@@ -1,5 +1,6 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.request.EditPostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
@@ -8,6 +9,7 @@ import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.security.ForumUserDetails;
 import com.topov.forum.service.PostService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
+@Log4j2
 @Controller
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
@@ -36,6 +39,13 @@ public class PostController {
     }
 
     @ResponseBody
+    @GetMapping(value = "/posts/{postId}")
+    public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
+        final PostDto post = postService.getPost(postId);
+        return ResponseEntity.ok(post);
+    }
+
+    @ResponseBody
     @PostMapping(
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -43,6 +53,7 @@ public class PostController {
     )
     public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                                         BindingResult bindingResult) {
+        log.debug("Handling (POST) post creation request");
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
@@ -66,6 +77,7 @@ public class PostController {
     )
     public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody EditPostRequest editPostRequest,
                                                       BindingResult bindingResult) {
+        log.debug("Handling (PUT) post modification request");
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
@@ -78,6 +90,7 @@ public class PostController {
     @ResponseBody
     @DeleteMapping(value = "/posts/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+        log.debug("Handling (DELETE) post removal request");
         postService.deletePost(postId);
         return ResponseEntity.ok("The post has been deleted");
     }

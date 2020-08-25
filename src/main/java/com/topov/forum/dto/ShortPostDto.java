@@ -7,10 +7,9 @@ import java.math.BigInteger;
 
 @Data
 @NoArgsConstructor
-public class PostDto {
+public class ShortPostDto {
     private Long postId;
     private String title;
-    private String text;
     private String author;
     private BigInteger views;
 }

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+@Log4j2
 @Service
 public class JwtServiceImpl implements JwtService {
     @Value("${jwt.secret}")
@@ -30,6 +32,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public JwtToken createTokenForUser(ForumUserDetails user) {
+        log.debug("Creating token for user: {}", user);
         Date now = new Date();
         String token =  Jwts.builder()
             .setClaims(generateClaims(user))
@@ -56,6 +59,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     @SuppressWarnings("unchecked cast")
     public ForumUserDetails extractUser(String token) {
+        log.debug("Extracting user from token");
         final Claims claims = Jwts.parser()
             .setSigningKey(secret)
             .parseClaimsJws(token)
@@ -75,11 +79,13 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token) {
+        log.debug("Validation token");
         try {
             final Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             final Date expiresAt = claims.getBody().getExpiration();
             return !expiresAt.before(new Date());
         } catch (RuntimeException e) {
+            log.error("Error token validation", e);
             return false;
         }
     }

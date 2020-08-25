@@ -1,11 +1,14 @@
 package com.topov.forum.model;
 
+import com.topov.forum.model.converter.AtomicIntegerConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "posts")
@@ -22,14 +25,25 @@ public class Post {
     private String title;
     @Column(name = "text", nullable = false, length = 2500)
     private String text;
+    @Column(name = "views_amount")
+    @Convert(converter = AtomicIntegerConverter.class)
+    private AtomicInteger views = new AtomicInteger(0);
     @Enumerated(EnumType.STRING)
     private Status status;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
 
+    public void viewed() {
+        this.views.incrementAndGet();
+    }
+
     public void disable() {
         this.status = Status.INACTIVE;
+    }
+
+    public BigInteger getViews() {
+        return BigInteger.valueOf(views.get());
     }
 
     @Override

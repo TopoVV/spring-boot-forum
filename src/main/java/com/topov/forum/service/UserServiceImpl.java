@@ -4,6 +4,7 @@ import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.topov.forum.model.Role.Roles;
 
+@Log4j2
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -45,8 +47,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void enableUser(String username) {
+        log.debug("Enabling user: {}", username);
         userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("The user doesn't exist"))
+            .orElseThrow(() -> {
+                log.error("User not found");
+                return new RuntimeException("The user doesn't exist");
+            })
             .enable();
     }
 
