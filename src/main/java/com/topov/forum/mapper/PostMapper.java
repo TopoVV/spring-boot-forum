@@ -30,7 +30,7 @@ public class PostMapper {
         return mapper.map(post, PostDto.class);
     }
 
-    public ShortPostDto toShortPostDto(Post post) {
+    public ShortPostDto toShortDto(Post post) {
         return mapper.map(post, ShortPostDto.class);
     }
 

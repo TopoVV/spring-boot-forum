@@ -1,6 +1,7 @@
 package com.topov.forum.controller;
 
 import com.topov.forum.dto.PostDto;
+import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.request.EditPostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
@@ -11,6 +12,9 @@ import com.topov.forum.security.ForumUserDetails;
 import com.topov.forum.service.PostService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +37,18 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping(value = "/posts")
-    public String createPostPage() {
-        return "post-create";
-    }
-
     @ResponseBody
     @GetMapping(value = "/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
         final PostDto post = postService.getPost(postId);
         return ResponseEntity.ok(post);
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/posts")
+    public ResponseEntity<Page<ShortPostDto>> getAllPosts(@PageableDefault(size = 3) Pageable pageable) {
+        final Page<ShortPostDto> allPosts = postService.getAllPosts(pageable);
+        return ResponseEntity.ok(allPosts);
     }
 
     @ResponseBody

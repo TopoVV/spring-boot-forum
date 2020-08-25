@@ -1,6 +1,7 @@
 package com.topov.forum.service;
 
 import com.topov.forum.dto.PostDto;
+import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.request.EditPostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
@@ -13,6 +14,8 @@ import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,25 @@ public class PostServiceImpl implements PostService {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         userRepository = repository;
+    }
+
+    @Override
+    @Transactional
+    public PostDto getPost(Long postId) {
+        return postRepository.findById(postId)
+            .map(post -> {
+                post.viewed();
+                return post;
+            })
+            .map(postMapper::toDto)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    }
+
+    @Override
+    @Transactional
+    public Page<ShortPostDto> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable)
+            .map(postMapper::toShortDto);
     }
 
     @Override
@@ -77,18 +99,6 @@ public class PostServiceImpl implements PostService {
                 log.error("Post with id={} doesnt exist", editPostRequest.getPostId());
                 return new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found");
             });
-    }
-
-    @Override
-    @Transactional
-    public PostDto getPost(Long postId) {
-        return postRepository.findById(postId)
-            .map(post -> {
-                post.viewed();
-                return post;
-            })
-            .map(postMapper::toDto)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
     @Transactional
