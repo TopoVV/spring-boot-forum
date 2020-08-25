@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ValidationError extends OperationResponse {
     private Map<String, List<String>> inputErrors;
 

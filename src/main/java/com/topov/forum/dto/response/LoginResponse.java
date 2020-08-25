@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class LoginResponse extends OperationResponse {
     private static final String WELCOME_MESSAGE = "Welcome, %s";
     private static final String BAD_CREDENTIALS_MESSAGE = "Wrong username or password";

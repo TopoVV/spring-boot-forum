@@ -1,7 +1,9 @@
 package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.CreatePostRequest;
+import com.topov.forum.dto.request.EditPostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
+import com.topov.forum.dto.response.EditPostResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.security.ForumUserDetails;
@@ -38,8 +40,8 @@ public class PostController {
     @ResponseBody
     @PostMapping(
         value = "/posts",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                                         BindingResult bindingResult) {
@@ -56,5 +58,22 @@ public class PostController {
     private URI assembleCreatedResourceLocation(CreatePostResponse createPostResponse) {
         final String location = String.format(POST_URI_TEMPLATE, createPostResponse.getPostDto().getPostId());
         return URI.create(location);
+    }
+
+    @ResponseBody
+    @PostMapping(
+        value = "/posts/{id}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody EditPostRequest editPostRequest,
+                                                      BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            final ValidationError validationError = new ValidationError(bindingResult);
+            return ResponseEntity.badRequest().body(validationError);
+        }
+
+        final EditPostResponse response = postService.editPost(editPostRequest);
+        return ResponseEntity.ok(response);
     }
 }

@@ -4,6 +4,7 @@ import com.topov.forum.dto.request.CreatePostRequest;
 import com.topov.forum.dto.response.CreatePostResponse;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.repository.UserRepository;
+import com.topov.forum.service.security.PostServiceSecurity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-@MockBeans({ @MockBean(UserRepository.class) })
+@MockBeans({ @MockBean(UserRepository.class), @MockBean(PostServiceSecurity.class) })
 class PostServiceUT {
     private final UserRepository userRepository;
     private final PostService postService;
@@ -37,7 +38,7 @@ class PostServiceUT {
 
         when(userRepository.findByUsername("user")).thenReturn(Optional.of(forumUserMock));
 
-        final CreatePostResponse response = postService.createPost(createPostRequestMock);
+        postService.createPost(createPostRequestMock);
         verify(forumUserMock, only()).addPost(any());
     }
 }
