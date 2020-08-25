@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,11 +30,20 @@ public class Post {
     @Column(name = "views_amount")
     @Convert(converter = AtomicIntegerConverter.class)
     private AtomicInteger views = new AtomicInteger(0);
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
+
+    @OneToMany(
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        mappedBy = "post",
+        orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
 
     public void viewed() {
         this.views.incrementAndGet();
@@ -61,10 +72,5 @@ public class Post {
     @Override
     public int hashCode() {
         return Objects.hash(title);
-    }
-
-    public enum Status {
-        ACTIVE,
-        INACTIVE
     }
 }

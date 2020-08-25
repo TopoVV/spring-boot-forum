@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "forum_users")
@@ -49,6 +47,14 @@ public class ForumUser {
         mappedBy = "creator"
     )
     private Set<Post> posts = new HashSet<>();
+
+    @OneToMany(
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        mappedBy = "creator",
+        orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
 
     public void addRole(Role role) {
         this.roles.add(role);
