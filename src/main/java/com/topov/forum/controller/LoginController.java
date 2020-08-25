@@ -1,6 +1,9 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.LoginRequest;
+import com.topov.forum.dto.request.LoginRequest;
+import com.topov.forum.dto.response.LoginResponse;
+import com.topov.forum.dto.response.OperationResponse;
+import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.security.jwt.JwtToken;
 import lombok.extern.log4j.Log4j2;
@@ -9,10 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @Log4j2
@@ -33,21 +40,28 @@ public class LoginController {
         value = "/auth",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<OperationResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest,
+                                                          BindingResult bindingResult) {
         log.debug("Authenticating user {}", loginRequest);
         try {
-            final JwtToken token = authenticationService.createAuthenticationToken(loginRequest);
+            if(bindingResult.hasErrors()) {
+                ValidationError validationError = new ValidationError(bindingResult);
+                return ResponseEntity.badRequest().body(validationError);
+            }
+
+            final JwtToken token = authenticationService.authenticate(loginRequest);
             return ResponseEntity.status(HttpStatus.OK)
                 .header(authorizationHeader, jwtPrefix.concat(token.getTokenValue()))
-                .body("WELCOME");
-        } catch (AuthenticationException e) {
-            log.error("An unsuccessful authentication attempt detected", e);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("Bad credentials");
+                .body(LoginResponse.success(loginRequest.getUsername()));
+        } catch (BadCredentialsException e) {
+            log.error("Bad credentials", e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(LoginResponse.badCredentials());
+        } catch (DisabledException e) {
+            log.error("Account {} Disabled", loginRequest.getUsername());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(LoginResponse.accountNotEnabled());
         } catch (RuntimeException e) {
             log.error("An unexpected error happened during authentication");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Woops..., Something went wrong! Please, try again later");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(LoginResponse.unknownError());
         }
     }
 

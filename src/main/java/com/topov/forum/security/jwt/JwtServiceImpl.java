@@ -41,6 +41,18 @@ public class JwtServiceImpl implements JwtService {
         return new JwtToken(token);
     }
 
+    private Claims generateClaims(ForumUserDetails user) {
+        Claims claims = Jwts.claims();
+        final Set<String> authorities = user.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(toSet());
+        claims.put("authorities", authorities);
+        claims.put("userId", user.getUserId());
+        claims.put("enabled", user.isEnabled());
+        return claims;
+    }
+
     @Override
     @SuppressWarnings("unchecked cast")
     public ForumUserDetails extractUser(String token) {
@@ -55,6 +67,12 @@ public class JwtServiceImpl implements JwtService {
         return new ForumUserDetails(userId, username, "", enabled, authorities);
     }
 
+    private Set<SimpleGrantedAuthority> extractAuthorities(List<String> authorities) {
+        return authorities.stream()
+            .map(SimpleGrantedAuthority::new)
+            .collect(toSet());
+    }
+
     @Override
     public boolean isTokenValid(String token) {
         try {
@@ -64,24 +82,6 @@ public class JwtServiceImpl implements JwtService {
         } catch (RuntimeException e) {
             return false;
         }
-    }
-
-    private Set<SimpleGrantedAuthority> extractAuthorities(List<String> authorities) {
-        return authorities.stream()
-            .map(SimpleGrantedAuthority::new)
-            .collect(toSet());
-    }
-
-    private Claims generateClaims(ForumUserDetails user) {
-        Claims claims = Jwts.claims();
-        final Set<String> authorities = user.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(toSet());
-        claims.put("authorities", authorities);
-        claims.put("userId", user.getUserId());
-        claims.put("enabled", user.isEnabled());
-        return claims;
     }
 }
 
