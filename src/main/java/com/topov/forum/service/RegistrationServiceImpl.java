@@ -108,11 +108,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         final Token registrationToken = confirmationTokenService.createAccountConfirmationToken(username);
         final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getTokenValue());
         return UriComponentsBuilder.newInstance()
-                                   .scheme("http")
-                                   .host("localhost")
-                                   .port("8080")
-                                   .path(tokenConfirmationPath)
-                                   .build()
-                                   .toString();
+            .scheme("http")
+            .host("localhost")
+            .port("8080")
+            .path(tokenConfirmationPath)
+            .build()
+            .toString();
     }
 }

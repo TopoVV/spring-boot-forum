@@ -9,6 +9,7 @@ import com.topov.forum.dto.response.EditPostResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
+import com.topov.forum.model.Status;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
@@ -44,10 +45,9 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostDto getPost(Long postId) {
         return postRepository.findById(postId)
-            .map(post -> {
-                post.viewed();
-                return post;
-            })
+            .stream()
+            .peek(Post::viewed)
+            .findFirst()
             .map(postMapper::toDto)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
@@ -66,12 +66,7 @@ public class PostServiceImpl implements PostService {
         try {
             final Post newPost = assemblePost(createPostRequest);
             final String creatorUsername = authenticatedUserService.getAuthenticatedUser().getUsername();
-            userRepository.findByUsername(creatorUsername)
-                .orElseThrow(() -> {
-                    log.error("User not found");
-                    return new RuntimeException("Cannot create post! User not found");
-                })
-                .addPost(newPost);
+            addPostToUser(newPost, creatorUsername);
             postRepository.flush();
             final PostDto postDto = postMapper.toDto(newPost);
             return new CreatePostResponse(postDto);
@@ -81,18 +76,24 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    private void addPostToUser(Post newPost, String creatorUsername) {
+        userRepository.findByUsername(creatorUsername)
+            .stream()
+            .peek(forumUser -> forumUser.addPost(newPost))
+            .findFirst()
+            .orElseThrow(() -> {
+                log.error("User not found");
+                return new RuntimeException("Cannot create post! User not found");
+            });
+    }
+
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#editPostRequest.postId) or hasRole('SUPERUSER')")
     public EditPostResponse editPost(EditPostRequest editPostRequest) {
         log.debug("Editing post: {}", editPostRequest);
         return postRepository.findById(editPostRequest.getPostId())
-            .map(post -> {
-                post.setText(editPostRequest.getText());
-                post.setTitle(editPostRequest.getNewTitle());
-                postRepository.flush();
-                return post;
-            })
+            .map(post -> doEdit(editPostRequest, post))
             .map(postMapper::toDto)
             .map(EditPostResponse::new)
             .orElseThrow(() -> {
@@ -101,23 +102,36 @@ public class PostServiceImpl implements PostService {
             });
     }
 
+    private Post doEdit(EditPostRequest editPostRequest, Post post) {
+        post.setText(editPostRequest.getText());
+        post.setTitle(editPostRequest.getNewTitle());
+        postRepository.flush();
+        return post;
+    }
+
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public void deletePost(Long postId) {
         log.debug("Deleting post id={}", postId);
+        disablePost(postId);
+    }
+
+    private void disablePost(Long postId) {
         postRepository.findById(postId)
+            .stream()
+            .peek(Post::disable)
+            .findFirst()
             .orElseThrow(() -> {
                 log.error("Post not found id={}", postId);
                 return new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
-            })
-            .disable();
+            });
     }
 
     private Post assemblePost(CreatePostRequest createPostRequest) {
         final Post newPost = new Post();
         newPost.setTitle(createPostRequest.getTitle());
         newPost.setText(createPostRequest.getText());
-        newPost.setStatus(Post.Status.ACTIVE);
+        newPost.setStatus(Status.ACTIVE);
         return newPost;
     }
 }

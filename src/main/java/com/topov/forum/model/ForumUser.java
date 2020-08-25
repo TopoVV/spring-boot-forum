@@ -86,4 +86,9 @@ public class ForumUser {
         this.posts.add(newPost);
         newPost.setCreator(this);
     }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setCreator(this);
+    }
 }

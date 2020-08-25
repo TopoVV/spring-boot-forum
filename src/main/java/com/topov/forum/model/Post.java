@@ -73,4 +73,9 @@ public class Post {
     public int hashCode() {
         return Objects.hash(title);
     }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setPost(this);
+    }
 }

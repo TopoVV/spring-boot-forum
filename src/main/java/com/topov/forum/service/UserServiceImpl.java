@@ -49,11 +49,13 @@ public class UserServiceImpl implements UserService {
     public void enableUser(String username) {
         log.debug("Enabling user: {}", username);
         userRepository.findByUsername(username)
+            .stream()
+            .peek(ForumUser::enable)
+            .findFirst()
             .orElseThrow(() -> {
                 log.error("User not found");
                 return new RuntimeException("The user doesn't exist");
-            })
-            .enable();
+            });
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {
