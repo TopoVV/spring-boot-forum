@@ -49,7 +49,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
             userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
-            return new RegistrationResponse(String.format(SUCCESSFUL_REGISTRATION_TEMPLATE, mail.getRecipient()));
+            return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
             throw new RegistrationException("Cannot register the user. Failed to send the account confirmation mail", e);
@@ -67,9 +67,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             if(superuserTokenService.checkSuperuserToken(registrationRequest.getToken())) {
                 superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
                 userService.createSuperuser(registrationRequest);
-               return new RegistrationResponse("The superuser has been successfully registered");
+               return RegistrationResponse.superuserRegistrationSuccess();
             }
-           return new RegistrationResponse("Invalid token");
+           return RegistrationResponse.invalidToken();
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);
@@ -83,7 +83,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             return confirmationTokenService.getAccountConfirmationToken(token)
                 .map(this::doConfirmation)
-                .orElse(AccountConfirmation.failed("The specified confirmation token doesn't exist"));
+                .orElse(AccountConfirmation.invalidToken());
         } catch (RuntimeException e) {
             log.error("Error during the account confirmation", e);
             throw new RegistrationException(String.format("Account confirmation failed! %s", e.getMessage()), e);
@@ -96,7 +96,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             confirmationTokenService.revokeConfirmationToken(token.getTokenValue());
             return AccountConfirmation.success();
         }
-        return AccountConfirmation.failed("Invalid token");
+        return AccountConfirmation.invalidToken();
     }
 
     private Mail createConfirmationMail(RegistrationRequest registrationRequest) {

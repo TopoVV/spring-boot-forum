@@ -82,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
             final CommentDto commentDto = commentMapper.toDto(comment);
             return new CommentEditResponse(commentDto);
         }
-        return new CommentEditResponse();
+        return CommentEditResponse.commentDisabled();
     }
 
     private Comment assembleComment(CommentCreateData createPostRequest) {

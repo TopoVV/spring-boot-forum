@@ -1,5 +1,6 @@
 package com.topov.forum.service.post;
 
+import com.topov.forum.dto.PostDeleteResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
@@ -119,22 +120,24 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             final PostDto postDto = postMapper.toDto(post);
             return new PostEditResponse(postDto);
         }
-        return new PostEditResponse("The post is inactive");
+        return PostEditResponse.postDisabled();
     }
 
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public void deletePost(Long postId) {
-        log.debug("Deleting post id={}", postId);
-        disablePost(postId);
+        log.debug("Deleting post with id={}", postId);
+        postRepository.findById(postId)
+            .map(this::doDelete)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
-    private void disablePost(Long postId) {
-        postRepository.findById(postId)
-            .stream()
-            .peek(Post::disable)
-            .findFirst()
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    private PostDeleteResponse doDelete(Post post) {
+        if(post.isActive()) {
+            post.disable();
+            return PostDeleteResponse.deleted();
+        }
+        return PostDeleteResponse.alreadyDisabled();
     }
 
     private Post assemblePost(PostCreateRequest postCreateRequest) {

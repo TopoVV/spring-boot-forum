@@ -20,7 +20,7 @@ public class LoginResponse extends OperationResponse {
     public static LoginResponse accountNotEnabled() { return new LoginResponse(ACCOUNT_NOT_CONFIRMED_MESSAGE); }
     public static LoginResponse unknownError() { return new LoginResponse(AUTHENTICATION_FAILED_MESSAGE); }
 
-    public LoginResponse(String message) {
+    private LoginResponse(String message) {
         super(message);
     }
 }

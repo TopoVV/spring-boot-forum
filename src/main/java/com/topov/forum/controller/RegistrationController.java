@@ -70,7 +70,7 @@ public class RegistrationController {
         value = "/registration/{token}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<AccountConfirmation> confirmAccountGet(@PathVariable String token) {
+    public ResponseEntity<OperationResponse> confirmAccountGet(@PathVariable String token) {
         log.debug("Handling (GET) account confirmation request");
         final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);
         return ResponseEntity.ok(accountConfirmation);

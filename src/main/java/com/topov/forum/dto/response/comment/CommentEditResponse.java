@@ -13,6 +13,11 @@ import lombok.NoArgsConstructor;
 public class CommentEditResponse extends OperationResponse {
     private static final String COMMENT_SUCCESSFULLY_EDITED = "The comment has been successfully edited";
     private static final String COMMENT_NOT_EDITED = "The comment has not been edited. Reason %s";
+    private static final String COMMENT_IS_DISABLED = "The comment is inactive";
+
+    public static CommentEditResponse commentDisabled() {
+        return new CommentEditResponse(COMMENT_IS_DISABLED);
+    }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private CommentDto commentDto;
@@ -22,7 +27,8 @@ public class CommentEditResponse extends OperationResponse {
         this.commentDto = commentDto;
     }
 
-    public CommentEditResponse(String reason) {
+    private CommentEditResponse(String reason) {
         super(String.format(COMMENT_NOT_EDITED, reason));
     }
+
 }
