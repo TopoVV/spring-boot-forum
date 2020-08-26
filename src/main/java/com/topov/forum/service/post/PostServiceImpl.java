@@ -1,6 +1,8 @@
 package com.topov.forum.service.post;
 
 import com.topov.forum.dto.response.post.PostDeleteResponse;
+import com.topov.forum.model.ViewCounter;
+import com.topov.forum.service.ViewCounterService;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
@@ -19,12 +21,20 @@ import com.topov.forum.service.user.UserServiceInternal;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Log4j2
 @Service
@@ -33,16 +43,19 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
     private final PostRepository postRepository;
     private final UserServiceInternal userService;
     private final AuthenticationService authenticatedUserService;
+    private final ViewCounterService viewCounterService;
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
                            PostMapper postMapper,
                            UserServiceInternal userService,
-                           AuthenticationService authenticatedUserService) {
+                           AuthenticationService authenticatedUserService,
+                           ViewCounterService viewCounterService) {
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
         this.userService = userService;
         this.postMapper = postMapper;
+        this.viewCounterService = viewCounterService;
     }
 
     @Override
@@ -55,23 +68,19 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
     @Override
     @Transactional
     public PostDto getPost(Long postId) {
-        return postRepository.findById(postId)
-            .map(postMapper::toDto)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        try {
+            return postRepository.findById(postId)
+                .map(postMapper::toDto)
+                .orElseThrow(EntityNotFoundException::new);
+        } catch (EntityNotFoundException e) {
+            log.debug("Post not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+        }
     }
 
     @Override
-    @Transactional
     public void postViewed(Long postId) {
-        try {
-            postRepository.findById(postId)
-                .ifPresentOrElse(
-                    Post::viewed,
-                    () -> { throw new RuntimeException("View increment error"); }
-                );
-        } catch (RuntimeException e) {
-            log.warn("Post viewed increment error", e);
-        }
+        viewCounterService.postViewed(postId);
     }
 
     @Override
@@ -83,8 +92,6 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             final Long currentUserId = authenticatedUserService.getCurrentUserId();
 
             userService.addPost(new AddPost(currentUserId, newPost));
-            postRepository.flush();
-
             final PostDto postDto = postMapper.toDto(newPost);
             return new PostCreateResponse(postDto);
         } catch (RuntimeException e) {
@@ -98,6 +105,9 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
         newPost.setTitle(postCreateRequest.getTitle());
         newPost.setText(postCreateRequest.getText());
         newPost.setStatus(Status.ACTIVE);
+        final ViewCounter viewCounter = new ViewCounter();
+        viewCounter.setPost(newPost);
+        newPost.setViews(viewCounter);
         return newPost;
     }
 

@@ -49,8 +49,8 @@ public class PostMapper {
             map().setTitle(source.getTitle());
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
-            map().setViews(source.getViews());
-            map().setCommentsAmount(source.getCommentsAmount().get());
+            map().setViews(source.getViews().getCount());
+//            map().setCommentsAmount(source.getCommentsAmount().get());
             using(commentListConverter).map(source.getComments()).setComments(null);
         }
     }
@@ -60,9 +60,9 @@ public class PostMapper {
         protected void configure() {
             map().setPostId(source.getPostId());
             map().setTitle(source.getTitle());
+            map().setViews(source.getViews().getCount());
             map().setAuthor(source.getCreator().getUsername());
-            map().setViews(source.getViews());
-            map().setCommentsAmount(source.getCommentsAmount().get());
+//            map().setCommentsAmount(source.getCommentsAmount().get());
         }
     }
 

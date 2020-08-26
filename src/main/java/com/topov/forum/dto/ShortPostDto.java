@@ -10,6 +10,6 @@ public class ShortPostDto {
     private Long postId;
     private String title;
     private String author;
-    private BigInteger views;
+    private Integer views;
     private Integer commentsAmount;
 }

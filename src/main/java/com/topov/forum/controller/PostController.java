@@ -31,6 +31,7 @@ public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
     private final PostService postService;
 
+
     @Autowired
     public PostController(PostService postService) {
         this.postService = postService;

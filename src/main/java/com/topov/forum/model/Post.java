@@ -1,6 +1,5 @@
 package com.topov.forum.model;
 
-import com.topov.forum.model.converter.AtomicIntegerConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,12 +27,6 @@ public class Post {
     private String title;
     @Column(name = "text", nullable = false, length = 2500)
     private String text;
-    @Column(name = "comments_amount")
-    @Convert(converter = AtomicIntegerConverter.class)
-    private AtomicInteger commentsAmount = new AtomicInteger(0);
-    @Column(name = "views_amount")
-    @Convert(converter = AtomicIntegerConverter.class)
-    private AtomicInteger views = new AtomicInteger(0);
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -51,19 +44,19 @@ public class Post {
     @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
-    public void viewed() {
-        this.views.incrementAndGet();
-    }
+    @OneToOne(
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        mappedBy = "post",
+        optional = false
+    )
+    private ViewCounter views;
 
     public void disable() {
         this.status = Status.INACTIVE;
     }
 
     public boolean isActive() { return this.status.equals(Status.ACTIVE); }
-
-    public BigInteger getViews() {
-        return BigInteger.valueOf(views.get());
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -83,7 +76,6 @@ public class Post {
     }
 
     public void addComment(Comment comment) {
-        this.commentsAmount.incrementAndGet();
         this.comments.add(comment);
         comment.setPost(this);
     }
