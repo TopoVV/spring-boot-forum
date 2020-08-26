@@ -1,6 +1,6 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.PostDeleteResponse;
+import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
@@ -26,7 +26,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @Log4j2
-@Controller
+@RestController
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
     private final PostService postService;
@@ -36,7 +36,6 @@ public class PostController {
         this.postService = postService;
     }
 
-    @ResponseBody
     @GetMapping(value = "/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
         final PostDto post = postService.getPost(postId);
@@ -44,18 +43,15 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @ResponseBody
     @GetMapping(value = "/posts")
     public ResponseEntity<Page<ShortPostDto>> getAllPosts(@PageableDefault(size = 3) Pageable pageable) {
         final Page<ShortPostDto> allPosts = postService.getAllPosts(pageable);
         return ResponseEntity.ok(allPosts);
     }
 
-    @ResponseBody
     @PostMapping(
         value = "/posts",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest,
                                                         BindingResult bindingResult) {
@@ -75,11 +71,9 @@ public class PostController {
         return URI.create(location);
     }
 
-    @ResponseBody
     @PutMapping(
         value = "/posts/{postId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> editPost(@PathVariable Long postId,
                                                       @Valid @RequestBody PostEditRequest postEditRequest,
@@ -94,7 +88,6 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @ResponseBody
     @DeleteMapping(value = "/posts/{postId}")
     public ResponseEntity<OperationResponse> deletePost(@PathVariable Long postId) {
         log.debug("Handling (DELETE) post removal request");

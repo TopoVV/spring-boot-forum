@@ -28,11 +28,9 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @ResponseBody
     @PostMapping(
         value = "/posts/{postId}/comments",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> createComment(@PathVariable Long postId,
                                                            @Valid @RequestBody CommentCreateRequest commentCreateRequest,
@@ -48,11 +46,9 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
-    @ResponseBody
     @PutMapping(
         value = "/posts/{postId}/comments/{commentId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> editComment(@PathVariable Long postId,
                                                          @PathVariable Long commentId,

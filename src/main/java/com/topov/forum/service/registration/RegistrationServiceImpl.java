@@ -59,6 +59,27 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
+    private Mail createConfirmationMail(RegistrationRequest registrationRequest) {
+        final String username = registrationRequest.getUsername();
+        final String confirmationUrl = createRegistrationConfirmationUrl(username);
+        final String mailContent = String.format(CONFIRMATION_MAIL_TEMPLATE, username, confirmationUrl);
+
+        return new Mail("Registration", registrationRequest.getEmail(), mailContent);
+    }
+
+    private String createRegistrationConfirmationUrl(String username) {
+        final Token registrationToken = confirmationTokenService.createAccountConfirmationToken(username);
+        final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getTokenValue());
+
+        return UriComponentsBuilder.newInstance()
+            .scheme("http")
+            .host("localhost")
+            .port("8080")
+            .path(tokenConfirmationPath)
+            .build()
+            .toString();
+    }
+
     @Override
     @Transactional
     public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
@@ -75,6 +96,8 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);
         }
     }
+
+
 
     @Override
     @Transactional
@@ -97,26 +120,5 @@ public class RegistrationServiceImpl implements RegistrationService {
             return AccountConfirmation.success();
         }
         return AccountConfirmation.invalidToken();
-    }
-
-    private Mail createConfirmationMail(RegistrationRequest registrationRequest) {
-        final String username = registrationRequest.getUsername();
-        final String confirmationUrl = createRegistrationConfirmationUrl(username);
-        final String mailContent = String.format(CONFIRMATION_MAIL_TEMPLATE, username, confirmationUrl);
-
-        return new Mail("Registration", registrationRequest.getEmail(), mailContent);
-    }
-
-    private String createRegistrationConfirmationUrl(String username) {
-        final Token registrationToken = confirmationTokenService.createAccountConfirmationToken(username);
-        final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getTokenValue());
-
-        return UriComponentsBuilder.newInstance()
-            .scheme("http")
-            .host("localhost")
-            .port("8080")
-            .path(tokenConfirmationPath)
-            .build()
-            .toString();
     }
 }

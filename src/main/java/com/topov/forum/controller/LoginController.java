@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@RestController
 @Log4j2
+@RestController
 public class LoginController {
     private final AuthenticationService authenticationService;
 

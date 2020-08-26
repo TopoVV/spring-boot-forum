@@ -34,4 +34,8 @@ public class Comment {
 
     public boolean isActive() { return this.status.equals(Status.ACTIVE); }
 
+    public void disable() {
+        this.status = Status.INACTIVE;
+    }
+
 }

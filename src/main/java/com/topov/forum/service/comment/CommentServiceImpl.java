@@ -1,5 +1,8 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.dto.response.comment.CommentDeleteResponse;
+import com.topov.forum.dto.response.post.PostDeleteResponse;
+import com.topov.forum.model.Post;
 import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
 import com.topov.forum.dto.CommentDto;
@@ -65,6 +68,13 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    private Comment assembleComment(CommentCreateData createPostRequest) {
+        final Comment comment = new Comment();
+        comment.setText(createPostRequest.getText());
+        comment.setStatus(Status.ACTIVE);
+        return comment;
+    }
+
     @Override
     @Transactional
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.commentId) or hasRole('SUPERUSER')")
@@ -85,10 +95,21 @@ public class CommentServiceImpl implements CommentService {
         return CommentEditResponse.commentDisabled();
     }
 
-    private Comment assembleComment(CommentCreateData createPostRequest) {
-        final Comment comment = new Comment();
-        comment.setText(createPostRequest.getText());
-        comment.setStatus(Status.ACTIVE);
-        return comment;
+
+    @Override
+    @Transactional
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
+    public CommentDeleteResponse deleteComment(Long commentId) {
+        log.debug("Deleting comment with id={}", commentId);
+        return commentRepository.findById(commentId)
+            .map(this::doDelete)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    }
+
+    private CommentDeleteResponse doDelete(Comment comment) {
+        if(comment.isActive()) {
+            comment.disable();
+        }
+        return CommentDeleteResponse.deleted();
     }
 }

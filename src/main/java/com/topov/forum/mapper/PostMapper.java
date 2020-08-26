@@ -50,6 +50,7 @@ public class PostMapper {
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
             map().setViews(source.getViews());
+            map().setCommentsAmount(source.getCommentsAmount().get());
             using(commentListConverter).map(source.getComments()).setComments(null);
         }
     }
@@ -61,6 +62,7 @@ public class PostMapper {
             map().setTitle(source.getTitle());
             map().setAuthor(source.getCreator().getUsername());
             map().setViews(source.getViews());
+            map().setCommentsAmount(source.getCommentsAmount().get());
         }
     }
 

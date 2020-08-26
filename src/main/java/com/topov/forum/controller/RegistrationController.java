@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import static com.topov.forum.dto.request.registration.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
 
 @Log4j2
-@Controller
+@RestController
 public class RegistrationController {
     private final RegistrationService registrationService;
 
@@ -30,11 +30,9 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    @ResponseBody
     @PostMapping(
         value = "/registration",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
                                                             BindingResult bindingResult) {
@@ -47,11 +45,9 @@ public class RegistrationController {
         return ResponseEntity.ok(response);
     }
 
-    @ResponseBody
     @PostMapping(
         value = "/registration/superuser",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidation.class)
                                                           @RequestBody SuperuserRegistrationRequest registrationRequest,
@@ -65,11 +61,7 @@ public class RegistrationController {
         return ResponseEntity.ok(response);
     }
 
-    @ResponseBody
-    @GetMapping(
-        value = "/registration/{token}",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(value = "/registration/{token}")
     public ResponseEntity<OperationResponse> confirmAccountGet(@PathVariable String token) {
         log.debug("Handling (GET) account confirmation request");
         final AccountConfirmation accountConfirmation = registrationService.confirmAccount(token);

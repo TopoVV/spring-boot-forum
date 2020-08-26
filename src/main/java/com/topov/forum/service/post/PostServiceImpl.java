@@ -1,6 +1,6 @@
 package com.topov.forum.service.post;
 
-import com.topov.forum.dto.PostDeleteResponse;
+import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
@@ -47,6 +47,13 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     @Transactional
+    public Page<ShortPostDto> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable)
+            .map(postMapper::toShortDto);
+    }
+
+    @Override
+    @Transactional
     public PostDto getPost(Long postId) {
         return postRepository.findById(postId)
             .map(postMapper::toDto)
@@ -69,23 +76,6 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     @Transactional
-    public Page<ShortPostDto> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable)
-            .map(postMapper::toShortDto);
-    }
-
-    @Override
-    public void addComment(AddComment addComment) {
-        log.debug("Adding new comment to post's comments collection: {}", addComment);
-        postRepository.findById(addComment.getTargetId())
-            .ifPresentOrElse(
-                post -> post.addComment(addComment.getNewComment()),
-                () -> { throw new RuntimeException("Post not found"); }
-            );
-    }
-
-    @Override
-    @Transactional
     public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
@@ -101,6 +91,14 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
         }
+    }
+
+    private Post assemblePost(PostCreateRequest postCreateRequest) {
+        final Post newPost = new Post();
+        newPost.setTitle(postCreateRequest.getTitle());
+        newPost.setText(postCreateRequest.getText());
+        newPost.setStatus(Status.ACTIVE);
+        return newPost;
     }
 
     @Override
@@ -135,16 +133,18 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
     private PostDeleteResponse doDelete(Post post) {
         if(post.isActive()) {
             post.disable();
-            return PostDeleteResponse.deleted();
         }
-        return PostDeleteResponse.alreadyDisabled();
+        return PostDeleteResponse.deleted();
     }
 
-    private Post assemblePost(PostCreateRequest postCreateRequest) {
-        final Post newPost = new Post();
-        newPost.setTitle(postCreateRequest.getTitle());
-        newPost.setText(postCreateRequest.getText());
-        newPost.setStatus(Status.ACTIVE);
-        return newPost;
+    @Override
+    public void addComment(AddComment addComment) {
+        log.debug("Adding new comment to post's comments collection: {}", addComment);
+        postRepository.findById(addComment.getTargetId())
+            .ifPresentOrElse(
+                post -> post.addComment(addComment.getNewComment()),
+                () -> { throw new RuntimeException("Post not found"); }
+            );
     }
+
 }
