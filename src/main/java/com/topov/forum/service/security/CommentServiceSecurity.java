@@ -29,11 +29,11 @@ public class CommentServiceSecurity {
     @Transactional
     public boolean checkOwnership(Long commentId) {
         log.debug("Check the user rights to edit the comment");
-        final ForumUserDetails authenticatedUser = (ForumUserDetails) authenticationService.getAuthenticatedUser();
+        final Long currentUserId = authenticationService.getCurrentUserId();
         return commentRepository.findById(commentId)
             .map(Comment::getCreator)
             .map(ForumUser::getUserId)
-            .map(creatorId -> authenticatedUser.getUserId().equals(creatorId))
+            .map(currentUserId::equals)
             .orElseThrow(() -> {
                 log.error("Comment with id={} doesn't exist", commentId);
                 return new RuntimeException(String.format("Post (id = %d) not found", commentId));

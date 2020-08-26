@@ -1,9 +1,11 @@
-package com.topov.forum.service;
+package com.topov.forum.service.user;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
+import com.topov.forum.service.interraction.AddComment;
+import com.topov.forum.service.interraction.AddPost;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +16,7 @@ import static com.topov.forum.model.Role.Roles;
 
 @Log4j2
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserServiceInternal     {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -53,6 +55,26 @@ public class UserServiceImpl implements UserService {
             .peek(ForumUser::enable)
             .findFirst()
             .orElseThrow(() -> new RuntimeException("The user doesn't exist"));
+    }
+
+    @Override
+    public void addComment(AddComment addComment) {
+        userRepository.findById(addComment.getTargetId())
+            .ifPresentOrElse(user -> {
+                user.addComment(addComment.getNewComment());
+            }, () -> {
+                throw new RuntimeException("User not found");
+            });
+    }
+
+    @Override
+    public void addPost(AddPost addPost) {
+        userRepository.findById(addPost.getTargetId())
+            .ifPresentOrElse(user ->{
+                user.addPost(addPost.getNewPost());
+            }, () -> {
+                throw new RuntimeException("User not found");
+            });
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {

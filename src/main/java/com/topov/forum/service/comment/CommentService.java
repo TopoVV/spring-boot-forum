@@ -1,4 +1,4 @@
-package com.topov.forum.service;
+package com.topov.forum.service.comment;
 
 import com.topov.forum.dto.request.CreateCommentRequest;
 import com.topov.forum.dto.request.EditCommentRequest;

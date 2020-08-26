@@ -6,5 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AuthenticationService {
     JwtToken authenticate(LoginRequest loginRequest);
-    UserDetails getAuthenticatedUser();
+    ForumUserDetails getAuthenticatedUser();
+    Long getCurrentUserId();
 }

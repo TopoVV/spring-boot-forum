@@ -41,4 +41,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .getAuthentication()
             .getPrincipal();
     }
+
+    @Override
+    public Long getCurrentUserId() {
+        final ForumUserDetails principal = (ForumUserDetails) SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getPrincipal();
+        return principal.getUserId();
+    }
 }

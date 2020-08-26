@@ -8,7 +8,7 @@ import com.topov.forum.dto.response.CreatePostResponse;
 import com.topov.forum.dto.response.EditPostResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
-import com.topov.forum.service.PostService;
+import com.topov.forum.service.post.PostService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +38,7 @@ public class PostController {
     @GetMapping(value = "/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
         final PostDto post = postService.getPost(postId);
+        postService.postViewed(postId);
         return ResponseEntity.ok(post);
     }
 

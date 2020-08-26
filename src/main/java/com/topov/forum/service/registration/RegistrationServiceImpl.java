@@ -1,4 +1,4 @@
-package com.topov.forum.service;
+package com.topov.forum.service.registration;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;
@@ -9,6 +9,7 @@ import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
 import com.topov.forum.service.token.ConfirmationTokenService;
 import com.topov.forum.service.token.SuperuserTokenService;
+import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import lombok.extern.log4j.Log4j2;

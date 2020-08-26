@@ -6,7 +6,7 @@ import com.topov.forum.dto.response.AccountConfirmation;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.RegistrationResponse;
 import com.topov.forum.dto.response.ValidationError;
-import com.topov.forum.service.RegistrationService;
+import com.topov.forum.service.registration.RegistrationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

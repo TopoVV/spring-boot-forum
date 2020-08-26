@@ -1,16 +1,15 @@
 package com.topov.forum.service;
 
 import com.topov.forum.dto.request.CreatePostRequest;
-import com.topov.forum.dto.response.CreatePostResponse;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.repository.UserRepository;
+import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.security.PostServiceSecurity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Optional;
 

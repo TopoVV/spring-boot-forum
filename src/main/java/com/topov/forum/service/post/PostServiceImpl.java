@@ -1,4 +1,4 @@
-package com.topov.forum.service;
+package com.topov.forum.service.post;
 
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
@@ -11,8 +11,10 @@ import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
 import com.topov.forum.model.Status;
 import com.topov.forum.repository.PostRepository;
-import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
+import com.topov.forum.service.interraction.AddComment;
+import com.topov.forum.service.interraction.AddPost;
+import com.topov.forum.service.user.UserServiceInternal;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,31 +27,38 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Log4j2
 @Service
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements PostService, PostServiceInternal {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
-    private final UserRepository userRepository;
+    private final UserServiceInternal userService;
     private final AuthenticationService authenticatedUserService;
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
-                           PostMapper postMapper, UserRepository repository,
+                           PostMapper postMapper,
+                           UserServiceInternal userService,
                            AuthenticationService authenticatedUserService) {
+        this.userService = userService;
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
         this.postMapper = postMapper;
-        userRepository = repository;
     }
 
     @Override
     @Transactional
     public PostDto getPost(Long postId) {
         return postRepository.findById(postId)
-            .stream()
-            .peek(Post::viewed)
-            .findFirst()
             .map(postMapper::toDto)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    }
+
+    public void postViewed(Long postId) {
+        try {
+            postRepository.findById(postId)
+                .ifPresentOrElse(Post::viewed, () -> { throw new RuntimeException("View increment error"); });
+        } catch (RuntimeException e) {
+            log.warn("Post viewed increment error", e);
+        }
     }
 
     @Override
@@ -60,14 +69,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void addComment(AddComment addComment) {
+        postRepository.findById(addComment.getTargetId())
+            .ifPresentOrElse(post -> {
+                post.addComment(addComment.getNewComment());
+            }, () -> {
+                throw new RuntimeException("Post not found");
+            });
+    }
+
+    @Override
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest) {
         log.debug("Creating a post: {}", createPostRequest);
         try {
             final Post newPost = assemblePost(createPostRequest);
-            final String creatorUsername = authenticatedUserService.getAuthenticatedUser().getUsername();
+            final Long currentUserId = authenticatedUserService.getCurrentUserId();
 
-            addPostToUser(newPost, creatorUsername);
+            userService.addPost(new AddPost(currentUserId, newPost));
             postRepository.flush();
 
             final PostDto postDto = postMapper.toDto(newPost);
@@ -76,14 +95,6 @@ public class PostServiceImpl implements PostService {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
         }
-    }
-
-    private void addPostToUser(Post newPost, String creatorUsername) {
-        userRepository.findByUsername(creatorUsername)
-            .stream()
-            .peek(forumUser -> forumUser.addPost(newPost))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Cannot create post! User not found"));
     }
 
     @Override

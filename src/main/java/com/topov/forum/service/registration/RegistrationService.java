@@ -1,4 +1,4 @@
-package com.topov.forum.service;
+package com.topov.forum.service.registration;
 
 import com.topov.forum.dto.request.RegistrationRequest;
 import com.topov.forum.dto.request.SuperuserRegistrationRequest;

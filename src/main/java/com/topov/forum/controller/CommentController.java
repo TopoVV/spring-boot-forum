@@ -6,7 +6,7 @@ import com.topov.forum.dto.response.CreateCommentResponse;
 import com.topov.forum.dto.response.EditCommentResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
-import com.topov.forum.service.CommentService;
+import com.topov.forum.service.comment.CommentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
