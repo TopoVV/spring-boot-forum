@@ -125,9 +125,9 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
-    public void deletePost(Long postId) {
+    public PostDeleteResponse deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
-        postRepository.findById(postId)
+        return postRepository.findById(postId)
             .map(this::doDelete)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }

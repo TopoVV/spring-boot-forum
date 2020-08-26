@@ -1,5 +1,6 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.dto.PostDeleteResponse;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
@@ -95,9 +96,9 @@ public class PostController {
 
     @ResponseBody
     @DeleteMapping(value = "/posts/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+    public ResponseEntity<OperationResponse> deletePost(@PathVariable Long postId) {
         log.debug("Handling (DELETE) post removal request");
-        postService.deletePost(postId);
-        return ResponseEntity.ok("The post has been deleted");
+        final PostDeleteResponse response = postService.deletePost(postId);
+        return ResponseEntity.ok(response);
     }
 }
