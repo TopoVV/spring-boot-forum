@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class CreateCommentResponse extends OperationResponse {
+    private static final String COMMENT_SUCCESSFULLY_CREATED = "The comment has been successfully created";
+
     private CommentDto commentDto;
 
     public CreateCommentResponse(CommentDto commentDto) {
-        super("Comment created");
+        super(COMMENT_SUCCESSFULLY_CREATED);
         this.commentDto = commentDto;
     }
 

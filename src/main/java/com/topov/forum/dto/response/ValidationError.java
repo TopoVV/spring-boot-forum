@@ -15,10 +15,12 @@ import static java.util.stream.Collectors.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class ValidationError extends OperationResponse {
+    private static final String INVALID_INPUT = "Invalid input";
+
     private Map<String, List<String>> inputErrors;
 
     public ValidationError(BindingResult bindingResult) {
-        super("Invalid input");
+        super(INVALID_INPUT);
         this.inputErrors = bindingResult.getFieldErrors()
             .stream()
             .collect(groupingBy(

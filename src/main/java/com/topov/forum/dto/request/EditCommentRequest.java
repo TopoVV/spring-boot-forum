@@ -7,9 +7,9 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
-public class CreateCommentRequest {
+public class EditCommentRequest {
     @NotEmpty
-    private Long postId;
+    private Long commentId;
     @NotEmpty(message = "A comment must have text")
     private String text;
 }

@@ -92,13 +92,13 @@ public class PostServiceImpl implements PostService {
     public EditPostResponse editPost(EditPostRequest editPostRequest) {
         log.debug("Editing post: {}", editPostRequest);
         return postRepository.findById(editPostRequest.getPostId())
-            .map(post -> doEdit(editPostRequest, post))
+            .map(post -> doEditPost(editPostRequest, post))
             .map(postMapper::toDto)
             .map(EditPostResponse::new)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found"));
     }
 
-    private Post doEdit(EditPostRequest editPostRequest, Post post) {
+    private Post doEditPost(EditPostRequest editPostRequest, Post post) {
         post.setText(editPostRequest.getText());
         post.setTitle(editPostRequest.getNewTitle());
         postRepository.flush();

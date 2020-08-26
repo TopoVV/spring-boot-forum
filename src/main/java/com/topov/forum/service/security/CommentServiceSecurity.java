@@ -1,7 +1,9 @@
 package com.topov.forum.service.security;
 
+import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
+import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.security.ForumUserDetails;
@@ -14,27 +16,27 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Log4j2
 @Component
-public class PostServiceSecurity {
+public class CommentServiceSecurity {
     private final AuthenticationService authenticationService;
-    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public PostServiceSecurity(AuthenticationService authenticationService, PostRepository postRepository) {
+    public CommentServiceSecurity(AuthenticationService authenticationService, CommentRepository commentRepository) {
         this.authenticationService = authenticationService;
-        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
-    public boolean checkOwnership(Long postId) {
-        log.debug("Check the user rights to edit the post");
+    public boolean checkOwnership(Long commentId) {
+        log.debug("Check the user rights to edit the comment");
         final ForumUserDetails authenticatedUser = (ForumUserDetails) authenticationService.getAuthenticatedUser();
-        return postRepository.findById(postId)
-            .map(Post::getCreator)
+        return commentRepository.findById(commentId)
+            .map(Comment::getCreator)
             .map(ForumUser::getUserId)
             .map(creatorId -> authenticatedUser.getUserId().equals(creatorId))
             .orElseThrow(() -> {
-                log.error("Post with id={} doesn't exist", postId);
-                return new RuntimeException(String.format("Post (id = %d) not found", postId));
+                log.error("Comment with id={} doesn't exist", commentId);
+                return new RuntimeException(String.format("Post (id = %d) not found", commentId));
             });
     }
 }

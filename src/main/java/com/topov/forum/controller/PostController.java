@@ -63,11 +63,11 @@ public class PostController {
         }
 
         final CreatePostResponse response = postService.createPost(createPostRequest);
-        final URI uri = assembleCreatedResourceLocation(response);
-        return ResponseEntity.created(uri).body(response);
+        final URI location = buildCreatedPostLocation(response);
+        return ResponseEntity.created(location).body(response);
     }
 
-    private URI assembleCreatedResourceLocation(CreatePostResponse createPostResponse) {
+    private URI buildCreatedPostLocation(CreatePostResponse createPostResponse) {
         final String location = String.format(POST_URI_TEMPLATE, createPostResponse.getPostDto().getPostId());
         return URI.create(location);
     }

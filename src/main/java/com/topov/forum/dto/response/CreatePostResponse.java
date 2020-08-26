@@ -10,11 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class CreatePostResponse extends OperationResponse {
+    private static final String POST_SUCCESSFULLY_CREATED = "The post has been successfully created";
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private PostDto postDto;
 
     public CreatePostResponse(PostDto postDto) {
-        super("The post has been created");
+        super(POST_SUCCESSFULLY_CREATED);
         this.postDto = postDto;
     }
 }
