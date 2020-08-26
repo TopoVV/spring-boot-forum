@@ -28,6 +28,9 @@ public class Post {
     private String title;
     @Column(name = "text", nullable = false, length = 2500)
     private String text;
+    @Column(name = "comments_amount")
+    @Convert(converter = AtomicIntegerConverter.class)
+    private AtomicInteger commentsAmount = new AtomicInteger(0);
     @Column(name = "views_amount")
     @Convert(converter = AtomicIntegerConverter.class)
     private AtomicInteger views = new AtomicInteger(0);
@@ -38,6 +41,9 @@ public class Post {
     @JoinColumn(name = "creator_id")
     @ToString.Exclude
     private ForumUser creator;
+    @Version
+    @Column(name = "version")
+    private long version;
 
     @OneToMany(
         cascade = CascadeType.ALL,
@@ -55,6 +61,8 @@ public class Post {
     public void disable() {
         this.status = Status.INACTIVE;
     }
+
+    public boolean isActive() { return this.status.equals(Status.ACTIVE); }
 
     public BigInteger getViews() {
         return BigInteger.valueOf(views.get());
@@ -78,6 +86,7 @@ public class Post {
     }
 
     public void addComment(Comment comment) {
+        this.commentsAmount.incrementAndGet();
         this.comments.add(comment);
         comment.setPost(this);
     }

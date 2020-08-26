@@ -1,11 +1,10 @@
 package com.topov.forum.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.topov.forum.dto.request.RegistrationRequest;
-import com.topov.forum.dto.request.SuperuserRegistrationRequest;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
+import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

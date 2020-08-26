@@ -1,11 +1,11 @@
 package com.topov.forum.service.post;
 
+import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
-import com.topov.forum.dto.request.CreatePostRequest;
-import com.topov.forum.dto.request.EditPostRequest;
-import com.topov.forum.dto.response.CreatePostResponse;
-import com.topov.forum.dto.response.EditPostResponse;
+import com.topov.forum.dto.request.post.PostCreateRequest;
+import com.topov.forum.dto.response.post.PostCreateResponse;
+import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
@@ -28,8 +28,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Log4j2
 @Service
 public class PostServiceImpl implements PostService, PostServiceInternal {
-    private final PostRepository postRepository;
     private final PostMapper postMapper;
+    private final PostRepository postRepository;
     private final UserServiceInternal userService;
     private final AuthenticationService authenticatedUserService;
 
@@ -38,9 +38,9 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
                            PostMapper postMapper,
                            UserServiceInternal userService,
                            AuthenticationService authenticatedUserService) {
-        this.userService = userService;
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
+        this.userService = userService;
         this.postMapper = postMapper;
     }
 
@@ -52,10 +52,15 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
+    @Override
+    @Transactional
     public void postViewed(Long postId) {
         try {
             postRepository.findById(postId)
-                .ifPresentOrElse(Post::viewed, () -> { throw new RuntimeException("View increment error"); });
+                .ifPresentOrElse(
+                    Post::viewed,
+                    () -> { throw new RuntimeException("View increment error"); }
+                );
         } catch (RuntimeException e) {
             log.warn("Post viewed increment error", e);
         }
@@ -70,27 +75,27 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     public void addComment(AddComment addComment) {
+        log.debug("Adding new comment to post's comments collection: {}", addComment);
         postRepository.findById(addComment.getTargetId())
-            .ifPresentOrElse(post -> {
-                post.addComment(addComment.getNewComment());
-            }, () -> {
-                throw new RuntimeException("Post not found");
-            });
+            .ifPresentOrElse(
+                post -> post.addComment(addComment.getNewComment()),
+                () -> { throw new RuntimeException("Post not found"); }
+            );
     }
 
     @Override
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest createPostRequest) {
-        log.debug("Creating a post: {}", createPostRequest);
+    public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
+        log.debug("Creating a post: {}", postCreateRequest);
         try {
-            final Post newPost = assemblePost(createPostRequest);
+            final Post newPost = assemblePost(postCreateRequest);
             final Long currentUserId = authenticatedUserService.getCurrentUserId();
 
             userService.addPost(new AddPost(currentUserId, newPost));
             postRepository.flush();
 
             final PostDto postDto = postMapper.toDto(newPost);
-            return new CreatePostResponse(postDto);
+            return new PostCreateResponse(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
@@ -99,21 +104,22 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     @Transactional
-    @PreAuthorize("@postServiceSecurity.checkOwnership(#editPostRequest.postId) or hasRole('SUPERUSER')")
-    public EditPostResponse editPost(EditPostRequest editPostRequest) {
-        log.debug("Editing post: {}", editPostRequest);
-        return postRepository.findById(editPostRequest.getPostId())
-            .map(post -> doEditPost(editPostRequest, post))
-            .map(postMapper::toDto)
-            .map(EditPostResponse::new)
+    @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
+    public PostEditResponse editPost(PostEditData postEditData) {
+        log.debug("Editing post: {}", postEditData);
+        return postRepository.findById(postEditData.getPostId())
+            .map(post -> doEditPost(postEditData, post))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found"));
     }
 
-    private Post doEditPost(EditPostRequest editPostRequest, Post post) {
-        post.setText(editPostRequest.getText());
-        post.setTitle(editPostRequest.getNewTitle());
-        postRepository.flush();
-        return post;
+    private PostEditResponse doEditPost(PostEditData editData, Post post) {
+        if (post.isActive()) {
+            post.setTitle(editData.getNewTitle());
+            post.setText(editData.getText());
+            final PostDto postDto = postMapper.toDto(post);
+            return new PostEditResponse(postDto);
+        }
+        return new PostEditResponse("The post is inactive");
     }
 
     @Transactional
@@ -131,10 +137,10 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
-    private Post assemblePost(CreatePostRequest createPostRequest) {
+    private Post assemblePost(PostCreateRequest postCreateRequest) {
         final Post newPost = new Post();
-        newPost.setTitle(createPostRequest.getTitle());
-        newPost.setText(createPostRequest.getText());
+        newPost.setTitle(postCreateRequest.getTitle());
+        newPost.setText(postCreateRequest.getText());
         newPost.setStatus(Status.ACTIVE);
         return newPost;
     }

@@ -1,6 +1,6 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.request.CreatePostRequest;
+import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.service.post.PostService;
@@ -30,14 +30,14 @@ class PostServiceUT {
 
     @Test
     void createPost() {
-        final CreatePostRequest createPostRequestMock = mock(CreatePostRequest.class);
-        when(createPostRequestMock.getTitle()).thenReturn("post title");
-        when(createPostRequestMock.getText()).thenReturn("post text");
+        final PostCreateRequest postCreateRequestMock = mock(PostCreateRequest.class);
+        when(postCreateRequestMock.getTitle()).thenReturn("post title");
+        when(postCreateRequestMock.getText()).thenReturn("post text");
         final ForumUser forumUserMock = mock(ForumUser.class);
 
         when(userRepository.findByUsername("user")).thenReturn(Optional.of(forumUserMock));
 
-        postService.createPost(createPostRequestMock);
+        postService.createPost(postCreateRequestMock);
         verify(forumUserMock, only()).addPost(any());
     }
 }

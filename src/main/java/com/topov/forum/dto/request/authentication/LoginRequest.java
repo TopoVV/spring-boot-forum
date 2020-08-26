@@ -1,4 +1,4 @@
-package com.topov.forum.dto.request;
+package com.topov.forum.dto.request.authentication;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

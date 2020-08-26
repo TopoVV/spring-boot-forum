@@ -9,4 +9,6 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = ForumUserDetailsSecurityContextFactory.class)
 public @interface WithMockForumUserDetails {
     String username() default "username";
+    long id() default 1L;
+
 }

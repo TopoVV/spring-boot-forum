@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/h2/databases/forum-test-db
+    username: topovv
+    password: admin
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+  mail:
+    host: smtp.mailtrap.io
+    port: 587
+    username: f7c6241b14b772
+    password: 0fbc58b10fc5d9

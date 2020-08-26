@@ -1,6 +1,6 @@
 package com.topov.forum.service.user;
 
-import com.topov.forum.dto.request.RegistrationRequest;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
 
 public interface UserService {
     void createRegularUser(RegistrationRequest registrationRequest);

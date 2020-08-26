@@ -1,5 +1,6 @@
-package com.topov.forum.dto.response;
+package com.topov.forum.dto.response.authentication;
 
+import com.topov.forum.dto.response.OperationResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

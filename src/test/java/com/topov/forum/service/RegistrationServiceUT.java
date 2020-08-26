@@ -1,6 +1,6 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.request.RegistrationRequest;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.email.MailSenderImpl;

@@ -1,12 +1,14 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.request.CreateCommentRequest;
-import com.topov.forum.dto.request.EditCommentRequest;
-import com.topov.forum.dto.response.CreateCommentResponse;
-import com.topov.forum.dto.response.EditCommentResponse;
+import com.topov.forum.dto.request.comment.CommentCreateRequest;
+import com.topov.forum.dto.request.comment.CommentEditRequest;
+import com.topov.forum.dto.response.comment.CommentCreateResponse;
+import com.topov.forum.dto.response.comment.CommentEditResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.comment.CommentService;
+import com.topov.forum.service.data.CommentCreateData;
+import com.topov.forum.service.data.CommentEditData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,7 +34,8 @@ public class CommentController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
+    public ResponseEntity<OperationResponse> createComment(@PathVariable Long postId,
+                                                           @Valid @RequestBody CommentCreateRequest commentCreateRequest,
                                                            BindingResult bindingResult) {
         log.debug("Handling (POST) comment creation request");
         if(bindingResult.hasErrors()) {
@@ -40,7 +43,8 @@ public class CommentController {
             return ResponseEntity.badRequest().body(validationError);
         }
 
-        final CreateCommentResponse response = commentService.createComment(createCommentRequest);
+        final CommentCreateData commentCreateData = new CommentCreateData(commentCreateRequest, postId);
+        final CommentCreateResponse response = commentService.createComment(commentCreateData);
         return ResponseEntity.ok(response);
     }
 
@@ -50,7 +54,9 @@ public class CommentController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> editComment(@Valid @RequestBody EditCommentRequest editCommentRequest,
+    public ResponseEntity<OperationResponse> editComment(@PathVariable Long postId,
+                                                         @PathVariable Long commentId,
+                                                         @Valid @RequestBody CommentEditRequest commentEditRequest,
                                                          BindingResult bindingResult) {
         log.debug("Handling (PUT) comment edition request");
         if(bindingResult.hasErrors()) {
@@ -58,7 +64,8 @@ public class CommentController {
             return ResponseEntity.badRequest().body(validationError);
         }
 
-        final EditCommentResponse response = commentService.editComment(editCommentRequest);
+        final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId, commentId);
+        final CommentEditResponse response = commentService.editComment(commentEditData);
         return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.topov.forum.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,5 +15,6 @@ public class PostDto {
     private String text;
     private String author;
     private BigInteger views;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<CommentDto> comments;
 }

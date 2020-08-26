@@ -27,11 +27,11 @@ public class PostServiceSecurity {
     @Transactional
     public boolean checkOwnership(Long postId) {
         log.debug("Check the user rights to edit the post");
-        final ForumUserDetails authenticatedUser = (ForumUserDetails) authenticationService.getAuthenticatedUser();
+        final Long currentUserId = authenticationService.getCurrentUserId();
         return postRepository.findById(postId)
             .map(Post::getCreator)
             .map(ForumUser::getUserId)
-            .map(creatorId -> authenticatedUser.getUserId().equals(creatorId))
+            .map(currentUserId::equals)
             .orElseThrow(() -> {
                 log.error("Post with id={} doesn't exist", postId);
                 return new RuntimeException(String.format("Post (id = %d) not found", postId));

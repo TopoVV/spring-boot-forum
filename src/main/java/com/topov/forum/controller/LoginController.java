@@ -1,7 +1,7 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.request.LoginRequest;
-import com.topov.forum.dto.response.LoginResponse;
+import com.topov.forum.dto.request.authentication.LoginRequest;
+import com.topov.forum.dto.response.authentication.LoginResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.security.AuthenticationService;

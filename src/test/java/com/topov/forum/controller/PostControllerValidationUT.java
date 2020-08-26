@@ -1,10 +1,8 @@
 package com.topov.forum.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.topov.forum.dto.request.CreatePostRequest;
+import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.repository.PostRepository;
-import org.hamcrest.Matchers;
-import org.hamcrest.collection.IsMapContaining;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.Matchers.hasKey;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,10 +39,10 @@ class PostControllerValidationUT {
 
     @Test
     void whenTitleNotUnique_ThenValidationError() throws Exception {
-        final CreatePostRequest createPostRequest = new CreatePostRequest("post text", "post title");
+        final PostCreateRequest postCreateRequest = new PostCreateRequest("post text", "post title");
 
         when(postRepository.existsByTitle("post title")).thenReturn(true);
-        final String json = mapper.writeValueAsString(createPostRequest);
+        final String json = mapper.writeValueAsString(postCreateRequest);
         final MvcResult mvcResult = mockMvc.perform(post("/posts")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(json))

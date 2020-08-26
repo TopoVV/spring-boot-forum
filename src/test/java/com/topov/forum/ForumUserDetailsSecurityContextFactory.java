@@ -10,14 +10,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
+import static com.topov.forum.model.Role.*;
+
 public class ForumUserDetailsSecurityContextFactory implements WithSecurityContextFactory<WithMockForumUserDetails> {
     @Override
     public SecurityContext createSecurityContext(WithMockForumUserDetails customUser) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         ForumUser forumUser = new ForumUser();
+        forumUser.setUserId(customUser.id());
         forumUser.setUsername(customUser.username());
-        forumUser.addRole(new Role(Role.Roles.USER));
+        forumUser.setPassword("");
+        forumUser.setEmail("email@email.com");
+        forumUser.setEnabled(true);
+        forumUser.addRole(new Role(Roles.USER));
 
         ForumUserDetails principal = new ForumUserDetails(forumUser);
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());

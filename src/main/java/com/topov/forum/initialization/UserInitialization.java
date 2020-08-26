@@ -1,6 +1,6 @@
 package com.topov.forum.initialization;
 
-import com.topov.forum.dto.request.RegistrationRequest;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

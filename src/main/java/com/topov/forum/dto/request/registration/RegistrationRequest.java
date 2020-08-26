@@ -1,4 +1,4 @@
-package com.topov.forum.dto.request;
+package com.topov.forum.dto.request.registration;
 
 import com.topov.forum.validation.constraint.UniqueEmail;
 import com.topov.forum.validation.constraint.UniqueUsername;

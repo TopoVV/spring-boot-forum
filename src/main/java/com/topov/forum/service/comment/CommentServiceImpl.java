@@ -1,10 +1,10 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.service.data.CommentCreateData;
+import com.topov.forum.service.data.CommentEditData;
 import com.topov.forum.dto.CommentDto;
-import com.topov.forum.dto.request.CreateCommentRequest;
-import com.topov.forum.dto.request.EditCommentRequest;
-import com.topov.forum.dto.response.CreateCommentResponse;
-import com.topov.forum.dto.response.EditCommentResponse;
+import com.topov.forum.dto.response.comment.CommentCreateResponse;
+import com.topov.forum.dto.response.comment.CommentEditResponse;
 import com.topov.forum.exception.CommentException;
 import com.topov.forum.mapper.CommentMapper;
 import com.topov.forum.model.Comment;
@@ -47,18 +47,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CreateCommentResponse createComment(CreateCommentRequest createCommentRequest) {
-        log.debug("Creating comment: {}", createCommentRequest);
+    public CommentCreateResponse createComment(CommentCreateData commentCreateData) {
+        log.debug("Creating comment: {}", commentCreateData);
         try {
-            final Comment newComment = assembleComment(createCommentRequest);
+            final Comment newComment = assembleComment(commentCreateData);
             final Long currentUserId = authenticationService.getCurrentUserId();
 
-            postService.addComment(new AddComment(createCommentRequest.getPostId(), newComment));
+            postService.addComment(new AddComment(commentCreateData.getPostId(), newComment));
             userService.addComment(new AddComment(currentUserId, newComment));
             commentRepository.flush();
 
             final CommentDto commentDto = commentMapper.toDto(newComment);
-            return new CreateCommentResponse(commentDto);
+            return new CommentCreateResponse(commentDto);
         } catch (RuntimeException e) {
             log.error("Error creating comment", e);
             throw new CommentException("Cannot create comment", e);
@@ -67,23 +67,25 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#editCommentRequest.commentId) or hasRole('SUPERUSER')")
-    public EditCommentResponse editComment(EditCommentRequest editCommentRequest) {
-        final Long commentId = editCommentRequest.getCommentId();
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.commentId) or hasRole('SUPERUSER')")
+    public CommentEditResponse editComment(CommentEditData commentEditData) {
+        final Long commentId = commentEditData.getCommentId();
 
         return commentRepository.findById(commentId)
-            .map(comment -> doEditComment(editCommentRequest, comment))
-            .map(commentMapper::toDto)
-            .map(EditCommentResponse::new)
+            .map(comment -> doEditComment(commentEditData, comment))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
     }
 
-    private Comment doEditComment(EditCommentRequest editCommentRequest, Comment comment) {
-        comment.setText(editCommentRequest.getText());
-        return comment;
+    private CommentEditResponse doEditComment(CommentEditData editCommentRequest, Comment comment) {
+        if(comment.isActive()) {
+            comment.setText(editCommentRequest.getNewText());
+            final CommentDto commentDto = commentMapper.toDto(comment);
+            return new CommentEditResponse(commentDto);
+        }
+        return new CommentEditResponse();
     }
 
-    private Comment assembleComment(CreateCommentRequest createPostRequest) {
+    private Comment assembleComment(CommentCreateData createPostRequest) {
         final Comment comment = new Comment();
         comment.setText(createPostRequest.getText());
         comment.setStatus(Status.ACTIVE);

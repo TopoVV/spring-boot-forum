@@ -1,4 +1,4 @@
-package com.topov.forum.dto.request;
+package com.topov.forum.dto.request.registration;
 
 import com.topov.forum.validation.group.SuperuserChecks;
 import lombok.Data;

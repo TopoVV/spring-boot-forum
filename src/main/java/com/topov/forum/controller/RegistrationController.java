@@ -1,10 +1,10 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.request.RegistrationRequest;
-import com.topov.forum.dto.request.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.AccountConfirmation;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
+import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
+import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.dto.response.RegistrationResponse;
+import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.registration.RegistrationService;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.topov.forum.dto.request.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
+import static com.topov.forum.dto.request.registration.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
 
 @Log4j2
 @Controller

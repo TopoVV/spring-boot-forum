@@ -1,6 +1,6 @@
 package com.topov.forum.security;
 
-import com.topov.forum.dto.request.LoginRequest;
+import com.topov.forum.dto.request.authentication.LoginRequest;
 import com.topov.forum.security.jwt.JwtService;
 import com.topov.forum.security.jwt.JwtToken;
 import lombok.extern.log4j.Log4j2;

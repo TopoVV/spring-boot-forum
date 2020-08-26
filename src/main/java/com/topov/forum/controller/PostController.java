@@ -2,12 +2,13 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
-import com.topov.forum.dto.request.CreatePostRequest;
-import com.topov.forum.dto.request.EditPostRequest;
-import com.topov.forum.dto.response.CreatePostResponse;
-import com.topov.forum.dto.response.EditPostResponse;
+import com.topov.forum.dto.request.post.PostCreateRequest;
+import com.topov.forum.dto.request.post.PostEditRequest;
+import com.topov.forum.dto.response.post.PostCreateResponse;
+import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
+import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class PostController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
+    public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest,
                                                         BindingResult bindingResult) {
         log.debug("Handling (POST) post creation request");
         if(bindingResult.hasErrors()) {
@@ -63,31 +64,32 @@ public class PostController {
             return ResponseEntity.badRequest().body(validationError);
         }
 
-        final CreatePostResponse response = postService.createPost(createPostRequest);
+        final PostCreateResponse response = postService.createPost(postCreateRequest);
         final URI location = buildCreatedPostLocation(response);
         return ResponseEntity.created(location).body(response);
     }
 
-    private URI buildCreatedPostLocation(CreatePostResponse createPostResponse) {
-        final String location = String.format(POST_URI_TEMPLATE, createPostResponse.getPostDto().getPostId());
+    private URI buildCreatedPostLocation(PostCreateResponse postCreateResponse) {
+        final String location = String.format(POST_URI_TEMPLATE, postCreateResponse.getPostDto().getPostId());
         return URI.create(location);
     }
 
     @ResponseBody
     @PutMapping(
-        value = "/posts/{id}",
+        value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody EditPostRequest editPostRequest,
+    public ResponseEntity<OperationResponse> editPost(@PathVariable Long postId,
+                                                      @Valid @RequestBody PostEditRequest postEditRequest,
                                                       BindingResult bindingResult) {
         log.debug("Handling (PUT) post modification request");
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
         }
-
-        final EditPostResponse response = postService.editPost(editPostRequest);
+        final PostEditData postEditData = new PostEditData(postEditRequest, postId);
+        final PostEditResponse response = postService.editPost(postEditData);
         return ResponseEntity.ok(response);
     }
 

@@ -1,6 +1,6 @@
 package com.topov.forum.service.user;
 
-import com.topov.forum.dto.request.RegistrationRequest;
+import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     @Override
     @Transactional
     public void createRegularUser(RegistrationRequest registrationRequest) {
+        log.debug("Creating a regular user");
         final ForumUser newUser = assembleUser(registrationRequest);
         newUser.addRole(new Role(Roles.USER));
         newUser.setEnabled(false);
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     @Override
     @Transactional
     public void createSuperuser(RegistrationRequest registrationRequest) {
+        log.debug("Creating a superuser");
         final ForumUser newUser = assembleUser(registrationRequest);
         newUser.addRole(new Role(Roles.USER));
         newUser.addRole(new Role(Roles.ADMIN));
@@ -59,22 +61,22 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
 
     @Override
     public void addComment(AddComment addComment) {
+        log.debug("Adding new comment to user's comments collection");
         userRepository.findById(addComment.getTargetId())
-            .ifPresentOrElse(user -> {
-                user.addComment(addComment.getNewComment());
-            }, () -> {
-                throw new RuntimeException("User not found");
-            });
+            .ifPresentOrElse(
+                user -> user.addComment(addComment.getNewComment()),
+                () -> { throw new RuntimeException("User not found"); }
+            );
     }
 
     @Override
     public void addPost(AddPost addPost) {
+        log.debug("Adding new comment to user's posts collection");
         userRepository.findById(addPost.getTargetId())
-            .ifPresentOrElse(user ->{
-                user.addPost(addPost.getNewPost());
-            }, () -> {
-                throw new RuntimeException("User not found");
-            });
+            .ifPresentOrElse(
+                user -> user.addPost(addPost.getNewPost()),
+                () -> { throw new RuntimeException("User not found"); }
+            );
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {

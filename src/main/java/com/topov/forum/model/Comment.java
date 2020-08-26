@@ -31,4 +31,7 @@ public class Comment {
     @JoinColumn(name = "creator_id")
     @ToString.Exclude
     private ForumUser creator;
+
+    public boolean isActive() { return this.status.equals(Status.ACTIVE); }
+
 }

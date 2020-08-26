@@ -1,6 +1,6 @@
 package com.topov.forum.validation;
 
-import com.topov.forum.dto.request.EditPostRequest;
+import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.validation.constraint.UniqueTitle;
 import lombok.extern.log4j.Log4j2;
@@ -12,13 +12,13 @@ import javax.validation.ConstraintValidatorContext;
 
 @Log4j2
 @Component
-public class EditPostUniqueTitleValidator implements ConstraintValidator<UniqueTitle, EditPostRequest> {
+public class EditPostUniqueTitleValidator implements ConstraintValidator<UniqueTitle, PostEditRequest> {
     private PostRepository postRepository;
     @Override
-    public boolean isValid(EditPostRequest editPostRequest, ConstraintValidatorContext ctx) {
+    public boolean isValid(PostEditRequest postEditRequest, ConstraintValidatorContext ctx) {
         log.debug("Validating post edition request");
-        final String newTitle = editPostRequest.getNewTitle();
-        if(!editPostRequest.getOldTitle().equals(newTitle)) {
+        final String newTitle = postEditRequest.getNewTitle();
+        if(!postEditRequest.getOldTitle().equals(newTitle)) {
             if(postRepository.existsByTitle(newTitle)) {
                 ctx.disableDefaultConstraintViolation();
                 ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
