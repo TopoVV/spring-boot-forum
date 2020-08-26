@@ -41,9 +41,6 @@ public class Post {
     @JoinColumn(name = "creator_id")
     @ToString.Exclude
     private ForumUser creator;
-    @Version
-    @Column(name = "version")
-    private long version;
 
     @OneToMany(
         cascade = CascadeType.ALL,
