@@ -52,10 +52,7 @@ public class UserServiceImpl implements UserService {
             .stream()
             .peek(ForumUser::enable)
             .findFirst()
-            .orElseThrow(() -> {
-                log.error("User not found");
-                return new RuntimeException("The user doesn't exist");
-            });
+            .orElseThrow(() -> new RuntimeException("The user doesn't exist"));
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {

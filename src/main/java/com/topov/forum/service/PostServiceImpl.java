@@ -66,13 +66,15 @@ public class PostServiceImpl implements PostService {
         try {
             final Post newPost = assemblePost(createPostRequest);
             final String creatorUsername = authenticatedUserService.getAuthenticatedUser().getUsername();
+
             addPostToUser(newPost, creatorUsername);
             postRepository.flush();
+
             final PostDto postDto = postMapper.toDto(newPost);
             return new CreatePostResponse(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
-            throw new PostException("Cannot create post");
+            throw new PostException("Cannot create post", e);
         }
     }
 
@@ -81,10 +83,7 @@ public class PostServiceImpl implements PostService {
             .stream()
             .peek(forumUser -> forumUser.addPost(newPost))
             .findFirst()
-            .orElseThrow(() -> {
-                log.error("User not found");
-                return new RuntimeException("Cannot create post! User not found");
-            });
+            .orElseThrow(() -> new RuntimeException("Cannot create post! User not found"));
     }
 
     @Override
@@ -96,10 +95,7 @@ public class PostServiceImpl implements PostService {
             .map(post -> doEdit(editPostRequest, post))
             .map(postMapper::toDto)
             .map(EditPostResponse::new)
-            .orElseThrow(() -> {
-                log.error("Post with id={} doesnt exist", editPostRequest.getPostId());
-                return new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found");
-            });
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found"));
     }
 
     private Post doEdit(EditPostRequest editPostRequest, Post post) {
@@ -121,10 +117,7 @@ public class PostServiceImpl implements PostService {
             .stream()
             .peek(Post::disable)
             .findFirst()
-            .orElseThrow(() -> {
-                log.error("Post not found id={}", postId);
-                return new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
-            });
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
     private Post assemblePost(CreatePostRequest createPostRequest) {

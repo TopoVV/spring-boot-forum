@@ -4,6 +4,7 @@ import com.topov.forum.model.converter.AtomicIntegerConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigInteger;
@@ -35,6 +36,7 @@ public class Post {
     private Status status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id")
+    @ToString.Exclude
     private ForumUser creator;
 
     @OneToMany(
@@ -43,6 +45,7 @@ public class Post {
         mappedBy = "post",
         orphanRemoval = true
     )
+    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
     public void viewed() {

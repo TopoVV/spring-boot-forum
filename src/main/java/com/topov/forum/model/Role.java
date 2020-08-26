@@ -26,6 +26,7 @@ public class Role {
         fetch = FetchType.LAZY,
         mappedBy = "roles"
     )
+    @ToString.Exclude
     private Set<ForumUser> users = new HashSet<>();
 
     public Role(Roles role) {

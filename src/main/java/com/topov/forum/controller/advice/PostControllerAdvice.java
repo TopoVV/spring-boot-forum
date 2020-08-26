@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = { PostController.class })
 public class PostControllerAdvice {
     @ExceptionHandler(value = PostException.class)
-    public ResponseEntity<String> handleRegistrationException(PostException e) {
+    public ResponseEntity<String> handlePostException(PostException e) {
         log.error("Post exception", e);
         return ResponseEntity.badRequest().body(e.getMessage());
     }

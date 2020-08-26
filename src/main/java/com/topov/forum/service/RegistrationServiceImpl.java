@@ -45,6 +45,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
+
             userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
             return new RegistrationResponse(String.format(SUCCESSFUL_REGISTRATION_TEMPLATE, mail.getRecipient()));
@@ -101,12 +102,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         final String username = registrationRequest.getUsername();
         final String confirmationUrl = createRegistrationConfirmationUrl(username);
         final String mailContent = String.format(CONFIRMATION_MAIL_TEMPLATE, username, confirmationUrl);
+
         return new Mail("Registration", registrationRequest.getEmail(), mailContent);
     }
 
     private String createRegistrationConfirmationUrl(String username) {
         final Token registrationToken = confirmationTokenService.createAccountConfirmationToken(username);
         final String tokenConfirmationPath = String.format("registration/%s", registrationToken.getTokenValue());
+
         return UriComponentsBuilder.newInstance()
             .scheme("http")
             .host("localhost")

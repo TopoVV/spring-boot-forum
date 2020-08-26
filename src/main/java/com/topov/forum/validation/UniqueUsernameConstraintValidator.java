@@ -2,7 +2,6 @@ package com.topov.forum.validation;
 
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.validation.constraint.UniqueUsername;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -3,6 +3,7 @@ package com.topov.forum.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -24,8 +25,10 @@ public class Comment {
     private Status status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id")
+    @ToString.Exclude
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id")
+    @ToString.Exclude
     private ForumUser creator;
 }

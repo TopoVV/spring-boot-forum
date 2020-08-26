@@ -29,6 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final String username = loginRequest.getUsername();
         final String password = loginRequest.getPassword();
         final var authToken = new UsernamePasswordAuthenticationToken(username, password);
+
         final Authentication authentication = authenticationManager.authenticate(authToken);
         return jwtService.createTokenForUser((ForumUserDetails) authentication.getPrincipal());
     }

@@ -12,7 +12,6 @@ import java.util.*;
 @Table(name = "forum_users")
 @SequenceGenerator(name = "user_id_seq", allocationSize = 1)
 @Data
-@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ForumUser {
@@ -38,6 +37,7 @@ public class ForumUser {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(
@@ -46,6 +46,7 @@ public class ForumUser {
         orphanRemoval = true,
         mappedBy = "creator"
     )
+    @ToString.Exclude
     private Set<Post> posts = new HashSet<>();
 
     @OneToMany(
@@ -54,6 +55,7 @@ public class ForumUser {
         mappedBy = "creator",
         orphanRemoval = true
     )
+    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
     public void addRole(Role role) {
