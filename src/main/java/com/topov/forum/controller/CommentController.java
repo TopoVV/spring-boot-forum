@@ -5,6 +5,7 @@ import com.topov.forum.dto.response.CreateCommentResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.CommentService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Log4j2
 @RestController
 public class CommentController {
     private final CommentService commentService;
@@ -33,6 +35,7 @@ public class CommentController {
     )
     public ResponseEntity<OperationResponse> createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
                                                            BindingResult bindingResult) {
+        log.debug("Handling (POST) comment creation request");
         if(bindingResult.hasErrors()) {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
