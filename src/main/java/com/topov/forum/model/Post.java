@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "posts")
@@ -44,13 +44,10 @@ public class Post {
     @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(
-        cascade = CascadeType.ALL,
-        fetch = FetchType.LAZY,
-        mappedBy = "post",
-        optional = false
-    )
-    private ViewCounter views;
+    @OneToMany
+    @JoinColumn(name = "post_id")
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    private List<PostVisit> visits = new ArrayList<>();
 
     public void disable() {
         this.status = Status.INACTIVE;

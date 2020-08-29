@@ -40,7 +40,6 @@ public class PostController {
     @GetMapping(value = "/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
         final PostDto post = postService.getPost(postId);
-        postService.postViewed(postId);
         return ResponseEntity.ok(post);
     }
 

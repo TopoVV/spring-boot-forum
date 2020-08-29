@@ -16,5 +16,4 @@ public interface PostService {
     Page<ShortPostDto> getAllPosts(Pageable pageable);
     PostDto getPost(Long postId);
     PostDeleteResponse deletePost(Long postId);
-    void postViewed(Long postId);
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -49,8 +50,7 @@ public class PostMapper {
             map().setTitle(source.getTitle());
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
-            map().setViews(source.getViews().getCount());
-//            map().setCommentsAmount(source.getCommentsAmount().get());
+            using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
             using(commentListConverter).map(source.getComments()).setComments(null);
         }
     }
@@ -60,9 +60,8 @@ public class PostMapper {
         protected void configure() {
             map().setPostId(source.getPostId());
             map().setTitle(source.getTitle());
-            map().setViews(source.getViews().getCount());
             map().setAuthor(source.getCreator().getUsername());
-//            map().setCommentsAmount(source.getCommentsAmount().get());
+            using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
         }
     }
 
@@ -77,4 +76,7 @@ public class PostMapper {
             return commentDto;
         })
         .collect(toList());
+
+    public static final Converter<Collection<?>, Integer> collectionToSizeConverter =
+        mappingContext -> mappingContext.getSource().size();
 }

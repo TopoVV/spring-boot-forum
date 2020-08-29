@@ -63,6 +63,19 @@ public class ForumUser {
         role.addUser(this);
     }
 
+
+    public void addPost(Post newPost) {
+        this.posts.add(newPost);
+        newPost.setCreator(this);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setCreator(this);
+    }
+
+    public void enable() { this.enabled = true; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -78,19 +91,5 @@ public class ForumUser {
     @Override
     public int hashCode() {
         return Objects.hash(username);
-    }
-
-    public void enable() {
-        this.enabled = true;
-    }
-
-    public void addPost(Post newPost) {
-        this.posts.add(newPost);
-        newPost.setCreator(this);
-    }
-
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-        comment.setCreator(this);
     }
 }
