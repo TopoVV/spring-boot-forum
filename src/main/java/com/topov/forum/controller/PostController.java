@@ -87,8 +87,7 @@ public class PostController {
             final ValidationError validationError = new ValidationError(bindingResult);
             return ResponseEntity.badRequest().body(validationError);
         }
-        final PostEditData postEditData = new PostEditData(postEditRequest, postId);
-        final PostEditResponse response = postService.editPost(postEditData);
+        final PostEditResponse response = postService.editPost(postId, postEditRequest);
         return ResponseEntity.ok(response);
     }
 

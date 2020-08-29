@@ -1,6 +1,7 @@
 package com.topov.forum.service.post;
 
 import com.topov.forum.dto.request.post.PostCreateRequest;
+import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.PostVisit;
@@ -83,7 +84,8 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             newPost.setTitle(createRequest.getTitle());
             newPost.setText(createRequest.getText());
             newPost.setStatus(Status.ACTIVE);
-            userService.addPost(newPost);
+            final Long creatorId = authenticatedUserService.getCurrentUserId();
+            userService.addPost(creatorId, newPost);
             postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(newPost);
             return new PostCreateResponse(postDto);
@@ -95,14 +97,13 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     @Transactional
-    @PreAuthorize("@postServiceSecurity.checkOwnership(#editData.postId) or hasRole('SUPERUSER')")
-    public PostEditResponse editPost(PostEditData editData) {
-        log.debug("Editing post: {}", editData);
+    @PreAuthorize("@postServiceSecurity.checkOwnership(#targetPostId) or hasRole('SUPERUSER')")
+    public PostEditResponse editPost(Long targetPostId, PostEditRequest editRequest) {
+        log.debug("Editing post: {}", editRequest);
         try {
-            final Long postId = editData.getPostId();
-            final Post post = postRepository.findActiveById(postId).orElseThrow(EntityNotFoundException::new);
-            post.setTitle(editData.getNewTitle());
-            post.setText(editData.getText());
+            final Post post = postRepository.findActiveById(targetPostId).orElseThrow(EntityNotFoundException::new);
+            post.setTitle(editRequest.getNewTitle());
+            post.setText(editRequest.getText());
             final PostDto postDto = postMapper.toDto(post);
             return new PostEditResponse(postDto);
         } catch (EntityNotFoundException e) {
@@ -126,10 +127,9 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
     }
 
     @Override
-    public void addComment(Comment comment) {
+    public void addComment(Long targetPost, Comment comment) {
         log.debug("Adding new comment to post's comments collection: {}", comment);
-        final Long currentUserId = authenticatedUserService.getCurrentUserId();
-        postRepository.findById(currentUserId)
+        postRepository.findById(targetPost)
             .ifPresentOrElse(
                 post -> post.addComment(comment),
                 () -> { throw new RuntimeException("Post not found"); }

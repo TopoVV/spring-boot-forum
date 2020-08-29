@@ -4,6 +4,6 @@ import com.topov.forum.model.Comment;
 import com.topov.forum.model.Post;
 
 public interface UserServiceInternal {
-    void addComment(Comment comment);
-    void addPost(Post post);
+    void addComment(Long creatorId, Comment comment);
+    void addPost(Long creatorId, Post post);
 }

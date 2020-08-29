@@ -103,8 +103,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
-
-
     @Override
     @Transactional
     public AccountConfirmation confirmAccount(String token) {

@@ -1,5 +1,6 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.response.comment.CommentDeleteResponse;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.model.Post;
@@ -29,17 +30,19 @@ import javax.persistence.EntityExistsException;
 @Log4j2
 @Service
 public class CommentServiceImpl implements CommentService {
+    private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
-
     private final UserServiceInternal userService;
     private final PostServiceInternal postService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository,
+    public CommentServiceImpl(AuthenticationService authenticationService,
+                              CommentRepository commentRepository,
                               CommentMapper commentMapper,
                               UserServiceInternal userService,
                               PostServiceInternal postService) {
+        this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
         this.userService = userService;
@@ -48,14 +51,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentCreateResponse createComment(CommentCreateData commentCreateData) {
-        log.debug("Creating comment: {}", commentCreateData);
+    public CommentCreateResponse createComment(Long targetPostId, CommentCreateRequest createRequest) {
+        log.debug("Creating comment: {}", createRequest);
         try {
             final Comment newComment = new Comment();
-            newComment.setText(commentCreateData.getText());
+            newComment.setText(createRequest.getText());
             newComment.setStatus(Status.ACTIVE);
-            postService.addComment(newComment);
-            userService.addComment(newComment);
+
+            final Long creatorId = authenticationService.getCurrentUserId();
+
+            postService.addComment(targetPostId, newComment);
+            userService.addComment(creatorId, newComment);
             commentRepository.flush();
             final CommentDto commentDto = commentMapper.toDto(newComment);
             return new CommentCreateResponse(commentDto);

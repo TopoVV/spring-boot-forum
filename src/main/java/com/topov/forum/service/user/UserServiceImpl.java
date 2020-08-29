@@ -43,10 +43,8 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     }
 
     @Override
-    public void addComment(Comment comment) {
-        log.debug("Adding new comment to user's comments collection {}", comment);
-        final Long currentUserId = authenticationService.getCurrentUserId();
-        userRepository.findById(currentUserId)
+    public void addComment(Long creatorId, Comment comment) {
+        userRepository.findById(creatorId)
             .ifPresentOrElse(
                 user -> user.addComment(comment),
                 () -> { throw new RuntimeException("User not found"); }
@@ -54,10 +52,9 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     }
 
     @Override
-    public void addPost(Post post) {
-        log.debug("Adding new comment to user's posts collection {}", post);
-        final Long currentUserId = authenticationService.getCurrentUserId();
-        userRepository.findById(currentUserId)
+    public void addPost(Long creatorId, Post post) {
+        log.debug("Adding new comment to user's posts collection {}", creatorId);
+        userRepository.findById(creatorId)
             .ifPresentOrElse(
                 user -> user.addPost(post),
                 () -> { throw new RuntimeException("User not found"); }

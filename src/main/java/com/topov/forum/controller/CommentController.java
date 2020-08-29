@@ -41,8 +41,7 @@ public class CommentController {
             return ResponseEntity.badRequest().body(validationError);
         }
 
-        final CommentCreateData commentCreateData = new CommentCreateData(commentCreateRequest, postId);
-        final CommentCreateResponse response = commentService.createComment(commentCreateData);
+        final CommentCreateResponse response = commentService.createComment(postId, commentCreateRequest);
         return ResponseEntity.ok(response);
     }
 
