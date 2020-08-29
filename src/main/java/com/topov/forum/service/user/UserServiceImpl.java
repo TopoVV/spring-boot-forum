@@ -4,48 +4,30 @@ import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
-import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-
-import static com.topov.forum.model.Role.Roles;
 
 @Log4j2
 @Service
 public class UserServiceImpl implements UserService, UserServiceInternal     {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
-    private final UserFactory userFactory;
 
     @Autowired
     public UserServiceImpl(AuthenticationService authenticationService,
-                           UserRepository userRepository,
-                           UserFactory userFactory) {
+                           UserRepository userRepository) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
-        this.userFactory = userFactory;
     }
 
     @Override
     @Transactional
-    public void createRegularUser(RegistrationRequest registrationRequest) {
-        log.debug("Creating a regular user");
-        final ForumUser user = userFactory.constructRegularUser(registrationRequest);
-        userRepository.save(user);
-    }
-
-    @Override
-    @Transactional
-    public void createSuperuser(RegistrationRequest registrationRequest) {
+    public void saveUser(ForumUser user) {
         log.debug("Creating a superuser");
-        final ForumUser user = userFactory.constructSuperuser(registrationRequest);
         userRepository.save(user);
     }
 

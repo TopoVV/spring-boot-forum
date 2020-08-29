@@ -7,14 +7,15 @@ import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
+import com.topov.forum.model.ForumUser;
 import com.topov.forum.service.token.ConfirmationTokenService;
 import com.topov.forum.service.token.SuperuserTokenService;
+import com.topov.forum.service.user.UserFactory;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,6 +29,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         "To confirm your account follow this link: %s";
 
     private final UserService userService;
+    private final UserFactory userFactory;
     private final MailSender mailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final SuperuserTokenService superuserTokenService;
@@ -35,8 +37,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationServiceImpl(ConfirmationTokenService confirmationTokenService,
                                    SuperuserTokenService superuserTokenService,
                                    UserService userService,
-                                   MailSender mailSender) {
+                                   UserFactory userFactory, MailSender mailSender) {
         this.userService = userService;
+        this.userFactory = userFactory;
         this.mailSender = mailSender;
         this.confirmationTokenService = confirmationTokenService;
         this.superuserTokenService = superuserTokenService;
@@ -48,7 +51,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
 
-            userService.createRegularUser(registrationRequest);
+            final ForumUser user = userFactory.constructRegularUser(registrationRequest);
+            userService.saveUser(user);
             mailSender.sendMail(mail);
             return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
         } catch (MailException e) {
@@ -88,7 +92,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             if(superuserTokenService.checkSuperuserToken(registrationRequest.getToken())) {
                 superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
-                userService.createSuperuser(registrationRequest);
+                final ForumUser forumUser = userFactory.constructSuperuser(registrationRequest);
+                userService.saveUser(forumUser);
                return RegistrationResponse.superuserRegistrationSuccess();
             }
            return RegistrationResponse.invalidToken();
