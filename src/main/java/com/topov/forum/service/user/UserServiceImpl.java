@@ -7,8 +7,6 @@ import com.topov.forum.model.Post;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.service.interraction.AddComment;
-import com.topov.forum.service.interraction.AddPost;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,37 +22,31 @@ import static com.topov.forum.model.Role.Roles;
 public class UserServiceImpl implements UserService, UserServiceInternal     {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserFactory userFactory;
 
     @Autowired
     public UserServiceImpl(AuthenticationService authenticationService,
                            UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           UserFactory userFactory) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.userFactory = userFactory;
     }
 
     @Override
     @Transactional
     public void createRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Creating a regular user");
-        final ForumUser newUser = assembleUser(registrationRequest);
-        newUser.addRole(new Role(Roles.USER));
-        newUser.setEnabled(false);
-        userRepository.save(newUser);
+        final ForumUser user = userFactory.constructRegularUser(registrationRequest);
+        userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void createSuperuser(RegistrationRequest registrationRequest) {
         log.debug("Creating a superuser");
-        final ForumUser newUser = assembleUser(registrationRequest);
-        newUser.addRole(new Role(Roles.USER));
-        newUser.addRole(new Role(Roles.ADMIN));
-        newUser.addRole(new Role(Roles.SUPERUSER));
-        newUser.setEnabled(true);
-        userRepository.save(newUser);
+        final ForumUser user = userFactory.constructSuperuser(registrationRequest);
+        userRepository.save(user);
     }
 
     @Override
@@ -88,13 +80,5 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
                 user -> user.addPost(post),
                 () -> { throw new RuntimeException("User not found"); }
             );
-    }
-
-    private ForumUser assembleUser(RegistrationRequest registrationRequest) {
-        final ForumUser forumUser = new ForumUser();
-        forumUser.setUsername(registrationRequest.getUsername());
-        forumUser.setEmail(registrationRequest.getEmail());
-        forumUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        return forumUser;
     }
 }

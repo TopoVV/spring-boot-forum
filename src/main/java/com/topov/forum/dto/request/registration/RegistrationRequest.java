@@ -5,6 +5,7 @@ import com.topov.forum.validation.constraint.UniqueUsername;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -22,4 +23,6 @@ public class RegistrationRequest {
     @NotEmpty(message = "The email must not be empty")
     @UniqueEmail
     protected String email;
+
+
 }

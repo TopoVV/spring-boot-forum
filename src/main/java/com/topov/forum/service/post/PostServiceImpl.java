@@ -1,23 +1,21 @@
 package com.topov.forum.service.post;
 
+import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.PostVisit;
+import com.topov.forum.model.Status;
 import com.topov.forum.service.VisitService;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
-import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.Post;
-import com.topov.forum.model.Status;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.service.interraction.AddComment;
-import com.topov.forum.service.interraction.AddPost;
 import com.topov.forum.service.user.UserServiceInternal;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,16 +56,11 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
     @Transactional
     public PostDto getPost(Long postId) {
         try {
-            final Optional<Post> optionalPost = postRepository.findById(postId);
-            if(optionalPost.isPresent()) {
-                final Post post = optionalPost.get();
-                final Long currentUserId = authenticatedUserService.getCurrentUserId();
-                final PostDto postDto = postMapper.toDto(post);
-                visitService.postVisited(new PostVisit(currentUserId, postId));
-                return postDto;
-            } else {
-                throw new EntityNotFoundException();
-            }
+            final Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+            final Long currentUserId = authenticatedUserService.getCurrentUserId();
+            final PostDto postDto = postMapper.toDto(post);
+            visitService.postVisited(new PostVisit(currentUserId, postId));
+            return postDto;
         } catch (EntityNotFoundException e) {
             log.debug("Post not found");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
@@ -83,10 +76,13 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
 
     @Override
     @Transactional
-    public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
-        log.debug("Creating a post: {}", postCreateRequest);
+    public PostCreateResponse createPost(PostCreateRequest createRequest) {
+        log.debug("Creating a post: {}", createRequest);
         try {
-            final Post newPost = assemblePost(postCreateRequest);
+            final Post newPost = new Post();
+            newPost.setTitle(createRequest.getTitle());
+            newPost.setText(createRequest.getText());
+            newPost.setStatus(Status.ACTIVE);
             userService.addPost(newPost);
             postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(newPost);
@@ -97,48 +93,36 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
         }
     }
 
-    private Post assemblePost(PostCreateRequest postCreateRequest) {
-        final Post newPost = new Post();
-        newPost.setTitle(postCreateRequest.getTitle());
-        newPost.setText(postCreateRequest.getText());
-        newPost.setStatus(Status.ACTIVE);
-        return newPost;
-    }
-
     @Override
     @Transactional
-    @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
-    public PostEditResponse editPost(PostEditData postEditData) {
-        log.debug("Editing post: {}", postEditData);
-        return postRepository.findById(postEditData.getPostId())
-            .map(post -> doEditPost(postEditData, post))
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND , "Post not found"));
-    }
-
-    private PostEditResponse doEditPost(PostEditData editData, Post post) {
-        if (post.isActive()) {
+    @PreAuthorize("@postServiceSecurity.checkOwnership(#editData.postId) or hasRole('SUPERUSER')")
+    public PostEditResponse editPost(PostEditData editData) {
+        log.debug("Editing post: {}", editData);
+        try {
+            final Long postId = editData.getPostId();
+            final Post post = postRepository.findActiveById(postId).orElseThrow(EntityNotFoundException::new);
             post.setTitle(editData.getNewTitle());
             post.setText(editData.getText());
             final PostDto postDto = postMapper.toDto(post);
             return new PostEditResponse(postDto);
+        } catch (EntityNotFoundException e) {
+            log.error("Post not found when edit");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
-        return PostEditResponse.postDisabled();
     }
 
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public PostDeleteResponse deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
-        return postRepository.findById(postId)
-            .map(this::doDelete)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-    }
-
-    private PostDeleteResponse doDelete(Post post) {
-        if(post.isActive()) {
+        try {
+            final Post post = postRepository.findActiveById(postId).orElseThrow(EntityNotFoundException::new);
             post.disable();
+            return PostDeleteResponse.deleted();
+        } catch (EntityNotFoundException e) {
+            log.error("Post not found when delete");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
-        return PostDeleteResponse.deleted();
     }
 
     @Override

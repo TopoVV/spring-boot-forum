@@ -14,7 +14,6 @@ import com.topov.forum.model.Comment;
 import com.topov.forum.model.Status;
 import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.service.interraction.AddComment;
 import com.topov.forum.service.post.PostServiceInternal;
 import com.topov.forum.service.user.UserServiceInternal;
 import lombok.extern.log4j.Log4j2;
@@ -25,10 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityExistsException;
+
 @Log4j2
 @Service
 public class CommentServiceImpl implements CommentService {
-    private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
@@ -36,12 +36,10 @@ public class CommentServiceImpl implements CommentService {
     private final PostServiceInternal postService;
 
     @Autowired
-    public CommentServiceImpl(AuthenticationService authenticationService,
-                              CommentRepository commentRepository,
+    public CommentServiceImpl(CommentRepository commentRepository,
                               CommentMapper commentMapper,
                               UserServiceInternal userService,
                               PostServiceInternal postService) {
-        this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
         this.userService = userService;
@@ -53,13 +51,12 @@ public class CommentServiceImpl implements CommentService {
     public CommentCreateResponse createComment(CommentCreateData commentCreateData) {
         log.debug("Creating comment: {}", commentCreateData);
         try {
-            final Comment newComment = assembleComment(commentCreateData);
-            final Long currentUserId = authenticationService.getCurrentUserId();
-
-            postService.addComment(new AddComment(commentCreateData.getPostId(), newComment));
-            userService.addComment(new AddComment(currentUserId, newComment));
+            final Comment newComment = new Comment();
+            newComment.setText(commentCreateData.getText());
+            newComment.setStatus(Status.ACTIVE);
+            postService.addComment(newComment);
+            userService.addComment(newComment);
             commentRepository.flush();
-
             final CommentDto commentDto = commentMapper.toDto(newComment);
             return new CommentCreateResponse(commentDto);
         } catch (RuntimeException e) {
@@ -68,48 +65,34 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private Comment assembleComment(CommentCreateData createPostRequest) {
-        final Comment comment = new Comment();
-        comment.setText(createPostRequest.getText());
-        comment.setStatus(Status.ACTIVE);
-        return comment;
-    }
-
     @Override
     @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.commentId) or hasRole('SUPERUSER')")
-    public CommentEditResponse editComment(CommentEditData commentEditData) {
-        final Long commentId = commentEditData.getCommentId();
-
-        return commentRepository.findById(commentId)
-            .map(comment -> doEditComment(commentEditData, comment))
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
-    }
-
-    private CommentEditResponse doEditComment(CommentEditData editCommentRequest, Comment comment) {
-        if(comment.isActive()) {
-            comment.setText(editCommentRequest.getNewText());
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#editData.commentId) or hasRole('SUPERUSER')")
+    public CommentEditResponse editComment(CommentEditData editData) {
+        try {
+            final Long commentId = editData.getCommentId();
+            final Comment comment = commentRepository.findActiveById(commentId).orElseThrow(EntityExistsException::new);
+            comment.setText(editData.getNewText());
             final CommentDto commentDto = commentMapper.toDto(comment);
             return new CommentEditResponse(commentDto);
+        } catch (EntityExistsException e) {
+            log.error("Comment not found when edit");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
-        return CommentEditResponse.commentDisabled();
     }
-
 
     @Override
     @Transactional
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
     public CommentDeleteResponse deleteComment(Long commentId) {
         log.debug("Deleting comment with id={}", commentId);
-        return commentRepository.findById(commentId)
-            .map(this::doDelete)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-    }
-
-    private CommentDeleteResponse doDelete(Comment comment) {
-        if(comment.isActive()) {
+        try {
+            final Comment comment = commentRepository.findActiveById(commentId).orElseThrow(EntityExistsException::new);
             comment.disable();
+            return CommentDeleteResponse.deleted();
+        } catch (EntityExistsException e) {
+            log.error("Comment not found when delete");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
-        return CommentDeleteResponse.deleted();
     }
 }

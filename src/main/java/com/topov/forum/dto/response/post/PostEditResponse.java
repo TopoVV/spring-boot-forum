@@ -10,11 +10,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class PostEditResponse extends OperationResponse {
     private static final String POST_SUCCESSFULLY_EDITED = "The post has been successfully edited";
-    private static final String POST_NOT_EDITED = "The post has not been edited. Reason: %s";
-    private static final String POST_IS_DISABLED = "The post is inactive";
+    private static final String POST_NOT_EDITED = "The post has not been edited";
 
-    public static PostEditResponse postDisabled() {
-        return new PostEditResponse(POST_IS_DISABLED);
+    public static PostEditResponse notEdited() {
+        return new PostEditResponse(POST_NOT_EDITED);
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,7 +24,7 @@ public class PostEditResponse extends OperationResponse {
         this.postDto = postDto;
     }
 
-    private PostEditResponse(String reason) {
-        super(String.format(POST_NOT_EDITED, reason));
+    private PostEditResponse(String message) {
+        super(message);
     }
 }

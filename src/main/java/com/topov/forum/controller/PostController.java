@@ -9,6 +9,8 @@ import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.ValidationError;
+import com.topov.forum.mapper.PostMapper;
+import com.topov.forum.model.Post;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import lombok.extern.log4j.Log4j2;
@@ -30,11 +32,13 @@ import java.net.URI;
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
     private final PostService postService;
+    private final PostMapper postMapper;
 
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostMapper postMapper) {
         this.postService = postService;
+        this.postMapper = postMapper;
     }
 
     @GetMapping(value = "/posts/{postId}")

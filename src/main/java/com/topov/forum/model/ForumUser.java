@@ -58,11 +58,16 @@ public class ForumUser {
     @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
+    public ForumUser(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     public void addRole(Role role) {
         this.roles.add(role);
         role.addUser(this);
     }
-
 
     public void addPost(Post newPost) {
         this.posts.add(newPost);

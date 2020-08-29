@@ -14,6 +14,7 @@ import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;

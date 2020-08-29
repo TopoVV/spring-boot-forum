@@ -1,6 +1,7 @@
 package com.topov.forum.service.post;
 
 import com.topov.forum.dto.response.post.PostDeleteResponse;
+import com.topov.forum.model.Post;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
