@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ForumUser getUser(Long userId) {
+    public ForumUser findUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(EntityNotFoundException::new);
     }

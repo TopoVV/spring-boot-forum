@@ -7,26 +7,28 @@ import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.service.registration.RegistrationService;
+import com.topov.forum.validation.UserValidationService;
+import com.topov.forum.validation.ValidationErrorResponse;
+import com.topov.forum.validation.ValidationResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import static com.topov.forum.dto.request.registration.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
 
 @Log4j2
 @RestController
 public class RegistrationController {
     private final RegistrationService registrationService;
+    private final UserValidationService userValidationService;
 
     @Autowired
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(RegistrationService registrationService, UserValidationService userValidationService) {
         this.registrationService = registrationService;
+        this.userValidationService = userValidationService;
     }
 
     @PostMapping(
@@ -36,10 +38,17 @@ public class RegistrationController {
     public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
                                                             BindingResult bindingResult) {
         log.debug("Handling (POST) registration request: {}", registrationRequest);
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
             return ResponseEntity.badRequest().body(inputErrorResponse);
         }
+
+        final var validationResult = userValidationService.validateRegistration(registrationRequest);
+        if (validationResult.hasErrors()) {
+            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            return ResponseEntity.badRequest().body(validationErrorResponse);
+        }
+
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(response);
     }
@@ -48,14 +57,21 @@ public class RegistrationController {
         value = "/registration/superuser",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidation.class)
-                                                          @RequestBody SuperuserRegistrationRequest registrationRequest,
+    public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest,
                                                           BindingResult bindingResult) {
         log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
-        if(bindingResult.hasErrors()) {
+
+        if (bindingResult.hasErrors()) {
             final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
             return ResponseEntity.badRequest().body(inputErrorResponse);
         }
+
+        final var validationResult = userValidationService.validateSuperuserRegistration(registrationRequest);
+        if (validationResult.hasErrors()) {
+            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            return ResponseEntity.badRequest().body(validationErrorResponse);
+        }
+
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }

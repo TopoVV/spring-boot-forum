@@ -11,11 +11,11 @@ import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
 import com.topov.forum.model.Status;
 import com.topov.forum.repository.CommentRepository;
-import com.topov.forum.repository.PostRepository;
-import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
+import com.topov.forum.service.post.PostService;
+import com.topov.forum.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,28 +24,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
-
 @Log4j2
 @Service
 public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final UserService userService;
+    private final PostService postService;
     private final CommentMapper commentMapper;
 
     @Autowired
     public CommentServiceImpl(AuthenticationService authenticationService,
                               CommentRepository commentRepository,
-                              UserRepository userRepository,
-                              PostRepository postRepository,
-                              CommentMapper commentMapper) {
+                              CommentMapper commentMapper,
+                              UserService userService,
+                              PostService postService) {
         this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
         this.commentMapper = commentMapper;
+        this.userService = userService;
+        this.postService = postService;
     }
 
     @Override
@@ -60,10 +58,8 @@ public class CommentServiceImpl implements CommentService {
             final Long targetPostId = commentCreateData.getTargetPostId();
             final Long creatorId = authenticationService.getCurrentUserId();
 
-             final ForumUser creator = userRepository.findById(creatorId)
-                .orElseThrow(EntityNotFoundException::new);
-            final Post post = postRepository.findById(targetPostId)
-                .orElseThrow(EntityNotFoundException::new);
+            final ForumUser creator = userService.findUser(creatorId);
+            final Post post = postService.findPost(targetPostId);
 
             creator.addComment(newComment);
             post.addComment(newComment);

@@ -8,5 +8,5 @@ public interface UserService {
     void createSuperuser(RegistrationRequest registrationRequest);
     void enableUser(String username);
 
-    ForumUser getUser(Long userId);
+    ForumUser findUser(Long userId);
 }

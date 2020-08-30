@@ -13,7 +13,6 @@ import com.topov.forum.model.Post;
 import com.topov.forum.model.PostVisit;
 import com.topov.forum.model.Status;
 import com.topov.forum.repository.PostRepository;
-import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.VisitService;
 import com.topov.forum.service.data.PostEditData;
@@ -36,8 +35,8 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
     private final AuthenticationService authenticatedUserService;
     private final PostRepository postRepository;
-    private final UserService userService;
     private final VisitService visitService;
+    private final UserService userService;
     private final PostMapper postMapper;
 
     @Autowired
@@ -87,7 +86,7 @@ public class PostServiceImpl implements PostService {
         try {
             final Post newPost = assemblePost(postCreateRequest);
             final Long creatorId = authenticatedUserService.getCurrentUserId();
-            final ForumUser creator = userService.getUser(creatorId);
+            final ForumUser creator = userService.findUser(creatorId);
             creator.addPost(newPost);
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
@@ -133,6 +132,12 @@ public class PostServiceImpl implements PostService {
         return postRepository.findById(postId)
             .map(this::doDelete)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    }
+
+    @Override
+    public Post findPost(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(EntityNotFoundException::new);
     }
 
     private PostDeleteResponse doDelete(Post post) {

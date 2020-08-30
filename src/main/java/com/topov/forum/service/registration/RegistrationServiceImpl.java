@@ -85,12 +85,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-            if(superuserTokenService.checkSuperuserToken(registrationRequest.getToken())) {
-                superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
-                userService.createSuperuser(registrationRequest);
-               return RegistrationResponse.superuserRegistrationSuccess();
-            }
-           return RegistrationResponse.invalidToken();
+            superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
+            userService.createSuperuser(registrationRequest);
+            return RegistrationResponse.superuserRegistrationSuccess();
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);

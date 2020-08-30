@@ -26,7 +26,7 @@ public class SuperuserTokenServiceImpl implements SuperuserTokenService {
 
     @Override
     @Transactional
-    public boolean checkSuperuserToken(String token) {
+    public boolean isSuperuserTokenValid(String token) {
         return superuserTokenRepository.findTokenByTokenValue(token)
             .map(SuperuserToken::isTokenValid)
             .orElse(false);
