@@ -1,5 +1,6 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.dto.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
 import com.topov.forum.dto.response.InputErrorResponse;
@@ -11,6 +12,9 @@ import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,6 +30,13 @@ public class CommentController {
     @Autowired
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
+    }
+
+    @GetMapping(value = "/posts/{postId}/comments")
+    public ResponseEntity<Page<CommentDto>> getCommentsForPost(@PathVariable Long postId,
+                                                               @PageableDefault(size = 3) Pageable pageable) {
+        Page<CommentDto> comments =  commentService.getAllComments(postId, pageable);
+        return ResponseEntity.ok(comments);
     }
 
     @PostMapping(

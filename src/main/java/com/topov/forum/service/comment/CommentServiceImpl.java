@@ -18,6 +18,8 @@ import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
     private final UserService userService;
     private final PostService postService;
-    private final CommentMapper commentMapper;
 
     @Autowired
     public CommentServiceImpl(AuthenticationService authenticationService,
@@ -44,6 +46,13 @@ public class CommentServiceImpl implements CommentService {
         this.commentMapper = commentMapper;
         this.userService = userService;
         this.postService = postService;
+    }
+
+    @Override
+    @Transactional
+    public Page<CommentDto> getAllComments(Long postId, Pageable pageable) {
+        return commentRepository.findCommentsForPost(postId, pageable)
+            .map(commentMapper::toDto);
     }
 
     @Override
