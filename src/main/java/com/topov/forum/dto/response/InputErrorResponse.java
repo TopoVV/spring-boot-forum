@@ -14,12 +14,12 @@ import static java.util.stream.Collectors.*;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ValidationError extends OperationResponse {
+public class InputErrorResponse extends OperationResponse {
     private static final String INVALID_INPUT = "Invalid input";
 
     private Map<String, List<String>> inputErrors;
 
-    public ValidationError(BindingResult bindingResult) {
+    public InputErrorResponse(BindingResult bindingResult) {
         super(INVALID_INPUT);
         this.inputErrors = bindingResult.getFieldErrors()
             .stream()

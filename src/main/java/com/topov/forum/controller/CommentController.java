@@ -2,10 +2,10 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
+import com.topov.forum.dto.response.InputErrorResponse;
+import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.comment.CommentCreateResponse;
 import com.topov.forum.dto.response.comment.CommentEditResponse;
-import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.comment.CommentService;
 import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
@@ -37,8 +37,8 @@ public class CommentController {
                                                            BindingResult bindingResult) {
         log.debug("Handling (POST) comment creation request");
         if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
+            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
+            return ResponseEntity.badRequest().body(inputErrorResponse);
         }
 
         final CommentCreateData commentCreateData = new CommentCreateData(commentCreateRequest, postId);
@@ -56,8 +56,8 @@ public class CommentController {
                                                          BindingResult bindingResult) {
         log.debug("Handling (PUT) comment edition request");
         if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
+            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
+            return ResponseEntity.badRequest().body(inputErrorResponse);
         }
 
         final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId, commentId);

@@ -2,9 +2,7 @@ package com.topov.forum.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Data

@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBeans;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @MockBeans({ @MockBean(UserRepository.class), @MockBean(PostServiceSecurity.class) })

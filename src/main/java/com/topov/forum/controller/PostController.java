@@ -1,16 +1,19 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.dto.response.post.PostCreateResponse;
-import com.topov.forum.dto.response.post.PostEditResponse;
+import com.topov.forum.dto.response.InputErrorResponse;
 import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.dto.response.ValidationError;
+import com.topov.forum.dto.response.post.PostCreateResponse;
+import com.topov.forum.dto.response.post.PostDeleteResponse;
+import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
+import com.topov.forum.validation.PostValidationService;
+import com.topov.forum.validation.ValidationErrorResponse;
+import com.topov.forum.validation.ValidationResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +32,13 @@ import java.net.URI;
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
     private final PostService postService;
+    private final PostValidationService postValidationService;
 
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostValidationService postValidationService) {
         this.postService = postService;
+        this.postValidationService = postValidationService;
     }
 
     @GetMapping(value = "/posts/{postId}")
@@ -57,8 +61,14 @@ public class PostController {
                                                         BindingResult bindingResult) {
         log.debug("Handling (POST) post creation request");
         if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
+            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
+            return ResponseEntity.badRequest().body(inputErrorResponse);
+        }
+
+        final ValidationResult validationResult = postValidationService.validateCreatePost(postCreateRequest);
+        if (validationResult.hasErrors()) {
+            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            return ResponseEntity.badRequest().body(validationErrorResponse);
         }
 
         final PostCreateResponse response = postService.createPost(postCreateRequest);
@@ -80,8 +90,8 @@ public class PostController {
                                                       BindingResult bindingResult) {
         log.debug("Handling (PUT) post modification request");
         if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
+            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
+            return ResponseEntity.badRequest().body(inputErrorResponse);
         }
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
         final PostEditResponse response = postService.editPost(postEditData);

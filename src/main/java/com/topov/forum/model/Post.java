@@ -18,6 +18,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_id_seq")
@@ -30,9 +31,12 @@ public class Post {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
     @JoinColumn(name = "creator_id")
-    @ToString.Exclude
     private ForumUser creator;
 
     @OneToMany(
@@ -41,13 +45,17 @@ public class Post {
         mappedBy = "post",
         orphanRemoval = true
     )
-    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "post_id")
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<PostVisit> visits = new ArrayList<>();
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setPost(this);
+    }
 
     public void disable() {
         this.status = Status.INACTIVE;
@@ -72,8 +80,4 @@ public class Post {
         return Objects.hash(title);
     }
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-        comment.setPost(this);
-    }
 }

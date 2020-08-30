@@ -1,14 +1,9 @@
 package com.topov.forum.service.user;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
-import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.model.Post;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
-import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.service.interraction.AddComment;
-import com.topov.forum.service.interraction.AddPost;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,16 +16,12 @@ import static com.topov.forum.model.Role.Roles;
 
 @Log4j2
 @Service
-public class UserServiceImpl implements UserService, UserServiceInternal     {
-    private final AuthenticationService authenticationService;
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(AuthenticationService authenticationService,
-                           UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.authenticationService = authenticationService;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -69,25 +60,9 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     }
 
     @Override
-    public void addComment(Comment comment) {
-        log.debug("Adding new comment to user's comments collection {}", comment);
-        final Long currentUserId = authenticationService.getCurrentUserId();
-        userRepository.findById(currentUserId)
-            .ifPresentOrElse(
-                user -> user.addComment(comment),
-                () -> { throw new RuntimeException("User not found"); }
-            );
-    }
-
-    @Override
-    public void addPost(Post post) {
-        log.debug("Adding new comment to user's posts collection {}", post);
-        final Long currentUserId = authenticationService.getCurrentUserId();
-        userRepository.findById(currentUserId)
-            .ifPresentOrElse(
-                user -> user.addPost(post),
-                () -> { throw new RuntimeException("User not found"); }
-            );
+    public ForumUser getUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(EntityNotFoundException::new);
     }
 
     private ForumUser assembleUser(RegistrationRequest registrationRequest) {

@@ -1,24 +1,23 @@
 package com.topov.forum.service.post;
 
-import com.topov.forum.dto.response.post.PostDeleteResponse;
-import com.topov.forum.model.Comment;
-import com.topov.forum.model.PostVisit;
-import com.topov.forum.service.VisitService;
-import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.response.post.PostCreateResponse;
+import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
+import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
+import com.topov.forum.model.PostVisit;
 import com.topov.forum.model.Status;
 import com.topov.forum.repository.PostRepository;
+import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.service.interraction.AddComment;
-import com.topov.forum.service.interraction.AddPost;
-import com.topov.forum.service.user.UserServiceInternal;
+import com.topov.forum.service.VisitService;
+import com.topov.forum.service.data.PostEditData;
+import com.topov.forum.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,24 +33,24 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class PostServiceImpl implements PostService, PostServiceInternal {
-    private final PostMapper postMapper;
-    private final PostRepository postRepository;
-    private final UserServiceInternal userService;
+public class PostServiceImpl implements PostService {
     private final AuthenticationService authenticatedUserService;
+    private final PostRepository postRepository;
+    private final UserService userService;
     private final VisitService visitService;
+    private final PostMapper postMapper;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository,
-                           PostMapper postMapper,
-                           UserServiceInternal userService,
-                           AuthenticationService authenticatedUserService,
-                           VisitService visitService) {
+    public PostServiceImpl(AuthenticationService authenticatedUserService,
+                           PostRepository postRepository,
+                           VisitService visitService,
+                           UserService userService,
+                           PostMapper postMapper) {
         this.authenticatedUserService = authenticatedUserService;
         this.postRepository = postRepository;
+        this.visitService = visitService;
         this.userService = userService;
         this.postMapper = postMapper;
-        this.visitService = visitService;
     }
 
     @Override
@@ -87,9 +86,11 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
             final Post newPost = assemblePost(postCreateRequest);
-            userService.addPost(newPost);
-            postRepository.save(newPost);
-            final PostDto postDto = postMapper.toDto(newPost);
+            final Long creatorId = authenticatedUserService.getCurrentUserId();
+            final ForumUser creator = userService.getUser(creatorId);
+            creator.addPost(newPost);
+            final Post savedPost = postRepository.save(newPost);
+            final PostDto postDto = postMapper.toDto(savedPost);
             return new PostCreateResponse(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
@@ -139,17 +140,6 @@ public class PostServiceImpl implements PostService, PostServiceInternal {
             post.disable();
         }
         return PostDeleteResponse.deleted();
-    }
-
-    @Override
-    public void addComment(Comment comment) {
-        log.debug("Adding new comment to post's comments collection: {}", comment);
-        final Long currentUserId = authenticatedUserService.getCurrentUserId();
-        postRepository.findById(currentUserId)
-            .ifPresentOrElse(
-                post -> post.addComment(comment),
-                () -> { throw new RuntimeException("Post not found"); }
-            );
     }
 
 }

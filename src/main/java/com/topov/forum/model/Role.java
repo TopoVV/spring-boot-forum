@@ -22,11 +22,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private Roles roleName;
 
-    @ManyToMany(
-        fetch = FetchType.LAZY,
-        mappedBy = "roles"
-    )
-    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
     private Set<ForumUser> users = new HashSet<>();
 
     public Role(Roles role) {
@@ -36,12 +32,6 @@ public class Role {
 
     public void addUser(ForumUser user) {
         this.users.add(user);
-    }
-
-    public enum Roles {
-        USER,
-        ADMIN,
-        SUPERUSER
     }
 
     @Override
@@ -60,5 +50,11 @@ public class Role {
     @Override
     public int hashCode() {
         return Objects.hash(roleId, roleName);
+    }
+
+    public enum Roles {
+        USER,
+        ADMIN,
+        SUPERUSER
     }
 }
