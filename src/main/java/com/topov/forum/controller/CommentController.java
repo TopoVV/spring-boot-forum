@@ -6,6 +6,7 @@ import com.topov.forum.dto.request.comment.CommentEditRequest;
 import com.topov.forum.dto.response.InputErrorResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.comment.CommentCreateResponse;
+import com.topov.forum.dto.response.comment.CommentDeleteResponse;
 import com.topov.forum.dto.response.comment.CommentEditResponse;
 import com.topov.forum.service.comment.CommentService;
 import com.topov.forum.service.data.CommentCreateData;
@@ -74,5 +75,11 @@ public class CommentController {
         final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId, commentId);
         final CommentEditResponse response = commentService.editComment(commentEditData);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<OperationResponse> deleteComment(@PathVariable Long commentId) {
+        final CommentDeleteResponse commentDeleteResponse = commentService.deleteComment(commentId);
+        return ResponseEntity.ok(commentDeleteResponse);
     }
 }
