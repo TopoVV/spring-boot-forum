@@ -26,7 +26,7 @@ public class Role {
     private Set<ForumUser> users = new HashSet<>();
 
     public Role(Roles role) {
-        this.roleId = (long) role.ordinal();
+        this.roleId = (long) role.ordinal() + 1;
         this.roleName = role;
     }
 

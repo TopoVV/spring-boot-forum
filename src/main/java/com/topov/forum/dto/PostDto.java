@@ -13,6 +13,4 @@ public class PostDto {
     private String author;
     private Integer visitsAmount;
     private Integer commentsAmount;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<CommentDto> comments;
 }

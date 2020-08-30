@@ -21,8 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Log4j2
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
-    private static final String SUCCESSFUL_REGISTRATION_TEMPLATE = "You've been successfully registered! " +
-        "Please, confirm your account by clicking the link that was sent to %s";
     private static final String CONFIRMATION_MAIL_TEMPLATE = "Welcome to Forum, %s. " +
         "To confirm your account follow this link: %s";
 

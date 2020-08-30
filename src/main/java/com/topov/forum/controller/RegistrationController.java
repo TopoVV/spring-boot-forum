@@ -45,7 +45,7 @@ public class RegistrationController {
 
         final var validationResult = userValidationService.validateRegistration(registrationRequest);
         if (validationResult.hasErrors()) {
-            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
             return ResponseEntity.badRequest().body(validationErrorResponse);
         }
 
@@ -68,7 +68,7 @@ public class RegistrationController {
 
         final var validationResult = userValidationService.validateSuperuserRegistration(registrationRequest);
         if (validationResult.hasErrors()) {
-            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
             return ResponseEntity.badRequest().body(validationErrorResponse);
         }
 

@@ -11,6 +11,6 @@ public class CommentEditData {
     public CommentEditData(CommentEditRequest commentEditRequest, Long postId, Long commentId) {
         this.commentId = commentId;
         this.postId = postId;
-        this.newText = commentEditRequest.getText();
+        this.newText = commentEditRequest.getNewText();
     }
 }

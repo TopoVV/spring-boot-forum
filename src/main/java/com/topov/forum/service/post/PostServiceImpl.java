@@ -134,12 +134,6 @@ public class PostServiceImpl implements PostService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 
-    @Override
-    public Post findPost(Long postId) {
-        return postRepository.findById(postId)
-            .orElseThrow(EntityNotFoundException::new);
-    }
-
     private PostDeleteResponse doDelete(Post post) {
         if(post.isActive()) {
             post.disable();
@@ -147,4 +141,9 @@ public class PostServiceImpl implements PostService {
         return PostDeleteResponse.deleted();
     }
 
+    @Override
+    public Post findPost(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(EntityNotFoundException::new);
+    }
 }

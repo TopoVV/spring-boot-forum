@@ -22,13 +22,11 @@ import java.util.Objects;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_id_seq")
-    @Column(name = "post_id")
     private Long postId;
-    @Column(name = "title", nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String title;
-    @Column(name = "text", nullable = false, length = 2500)
+    @Column(nullable = false, length = 2500)
     private String text;
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -48,7 +46,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "visitedPostId")
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<PostVisit> visits = new ArrayList<>();
 

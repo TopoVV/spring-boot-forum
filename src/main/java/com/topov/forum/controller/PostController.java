@@ -67,7 +67,7 @@ public class PostController {
 
         final ValidationResult validationResult = postValidationService.validateCreatePost(postCreateRequest);
         if (validationResult.hasErrors()) {
-            final ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(validationResult);
+            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
             return ResponseEntity.badRequest().body(validationErrorResponse);
         }
 
@@ -93,6 +93,13 @@ public class PostController {
             final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
             return ResponseEntity.badRequest().body(inputErrorResponse);
         }
+
+        final ValidationResult validationResult = postValidationService.validateEditPost(postEditRequest);
+        if(validationResult.hasErrors()) {
+            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
+            return ResponseEntity.badRequest().body(validationErrorResponse);
+        }
+
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
         final PostEditResponse response = postService.editPost(postEditData);
         return ResponseEntity.ok(response);

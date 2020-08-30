@@ -48,7 +48,6 @@ public class PostMapper {
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
-            using(commentListConverter).map(source.getComments()).setComments(null);
         }
     }
 
@@ -61,18 +60,6 @@ public class PostMapper {
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
         }
     }
-
-    public static final Converter<List<Comment>, List<CommentDto>>  commentListConverter =
-        mappingContext -> mappingContext.getSource()
-        .stream()
-        .map(comment -> {
-            CommentDto commentDto = new CommentDto();
-            commentDto.setText(comment.getText());
-            commentDto.setCommentId(comment.getCommentId());
-            commentDto.setAuthor(comment.getCreator().getUsername());
-            return commentDto;
-        })
-        .collect(toList());
 
     public static final Converter<Collection<?>, Integer> collectionToSizeConverter =
         mappingContext -> mappingContext.getSource().size();
