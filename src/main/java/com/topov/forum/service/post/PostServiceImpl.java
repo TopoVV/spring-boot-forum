@@ -18,6 +18,7 @@ import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -53,17 +54,13 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDto getPost(Long postId) {
-        try {
-            final Post post = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
-            final Long currentUserId = authenticatedUserService.getCurrentUserId();
-            final PostDto postDto = postMapper.toDto(post);
-            visitService.postVisited(new PostVisit(currentUserId, postId));
-            return postDto;
-        } catch (EntityNotFoundException e) {
-            log.debug("Post not found");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
-        }
+        final Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        final Long currentUserId = authenticatedUserService.getCurrentUserId();
+        final PostDto postDto = postMapper.toDto(post);
+        visitService.postVisited(new PostVisit(currentUserId, postId));
+        return postDto;
     }
 
     @Override
@@ -101,14 +98,20 @@ public class PostServiceImpl implements PostService {
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
     public PostEditResponse editPost(PostEditData postEditData) {
         log.debug("Editing post: {}", postEditData);
+        try {
+            final Post post = postRepository.findById(postEditData.getPostId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
-        final Post post = postRepository.findById(postEditData.getPostId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-
-        post.setTitle(postEditData.getNewTitle());
-        post.setText(postEditData.getText());
-        final PostDto postDto = postMapper.toDto(post);
-        return new PostEditResponse(postDto);
+            post.setTitle(postEditData.getNewTitle());
+            post.setText(postEditData.getText());
+            final PostDto postDto = postMapper.toDto(post);
+            return new PostEditResponse(postDto);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            log.error("Cannot edit post", e);
+            throw new PostException("Cannot edit post", e);
+        }
     }
 
     @Override

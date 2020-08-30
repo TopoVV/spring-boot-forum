@@ -86,14 +86,21 @@ public class CommentServiceImpl implements CommentService {
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.targetCommentId) or hasRole('SUPERUSER')")
     public CommentEditResponse editComment(CommentEditData commentEditData) {
         log.debug("Editing comment: {}", commentEditData);
-        final Long targetCommentId = commentEditData.getTargetCommentId();
+        try {
+            final Long targetCommentId = commentEditData.getTargetCommentId();
 
-        final Comment comment = commentRepository.findById(targetCommentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+            final Comment comment = commentRepository.findById(targetCommentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
-        comment.setText(commentEditData.getNewText());
-        final CommentDto commentDto = commentMapper.toDto(comment);
-        return new CommentEditResponse(commentDto);
+            comment.setText(commentEditData.getNewText());
+            final CommentDto commentDto = commentMapper.toDto(comment);
+            return new CommentEditResponse(commentDto);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            log.error("Cannot edit comment", e);
+            throw new CommentException("Cannot edit comment", e);
+        }
     }
 
     @Override
