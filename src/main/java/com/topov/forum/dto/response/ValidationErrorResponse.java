@@ -1,6 +1,7 @@
-package com.topov.forum.validation;
+package com.topov.forum.dto.response;
 
 import com.topov.forum.dto.response.OperationResponse;
+import com.topov.forum.validation.ValidationResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

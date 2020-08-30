@@ -12,7 +12,7 @@ import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.validation.PostValidationService;
-import com.topov.forum.validation.ValidationErrorResponse;
+import com.topov.forum.dto.response.ValidationErrorResponse;
 import com.topov.forum.validation.ValidationResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
