@@ -27,8 +27,6 @@ public class Post {
     private String title;
     @Column(nullable = false, length = 2500)
     private String text;
-    @Enumerated(EnumType.STRING)
-    private Status status;
 
     @ManyToOne(
         fetch = FetchType.LAZY,
@@ -38,11 +36,10 @@ public class Post {
     private ForumUser creator;
 
     @OneToMany(
-        cascade = CascadeType.ALL,
-        fetch = FetchType.LAZY,
         mappedBy = "post",
         orphanRemoval = true
     )
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany
@@ -54,12 +51,6 @@ public class Post {
         this.comments.add(comment);
         comment.setPost(this);
     }
-
-    public void disable() {
-        this.status = Status.INACTIVE;
-    }
-
-    public boolean isActive() { return this.status.equals(Status.ACTIVE); }
 
     @Override
     public boolean equals(Object o) {

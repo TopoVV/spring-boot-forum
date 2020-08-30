@@ -1,6 +1,7 @@
 package com.topov.forum.service.comment;
 
 import com.topov.forum.dto.CommentDto;
+import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.dto.response.comment.CommentCreateResponse;
 import com.topov.forum.dto.response.comment.CommentDeleteResponse;
 import com.topov.forum.dto.response.comment.CommentEditResponse;
@@ -9,7 +10,6 @@ import com.topov.forum.mapper.CommentMapper;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
-import com.topov.forum.model.Status;
 import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.data.CommentCreateData;
@@ -62,7 +62,6 @@ public class CommentServiceImpl implements CommentService {
         try {
             final Comment newComment = new Comment();
             newComment.setText(commentCreateData.getText());
-            newComment.setStatus(Status.ACTIVE);
 
             final Long targetPostId = commentCreateData.getTargetPostId();
             final Long creatorId = authenticationService.getCurrentUserId();
@@ -82,42 +81,32 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-
     @Override
     @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.commentId) or hasRole('SUPERUSER')")
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.targetCommentId) or hasRole('SUPERUSER')")
     public CommentEditResponse editComment(CommentEditData commentEditData) {
-        final Long commentId = commentEditData.getCommentId();
+        log.debug("Editing comment: {}", commentEditData);
+        final Long targetCommentId = commentEditData.getTargetCommentId();
 
-        return commentRepository.findById(commentId)
-            .map(comment -> doEditComment(commentEditData, comment))
+        final Comment comment = commentRepository.findById(targetCommentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
-    }
 
-    private CommentEditResponse doEditComment(CommentEditData editCommentRequest, Comment comment) {
-        if(comment.isActive()) {
-            comment.setText(editCommentRequest.getNewText());
-            final CommentDto commentDto = commentMapper.toDto(comment);
-            return new CommentEditResponse(commentDto);
-        }
-        return CommentEditResponse.commentDisabled();
+        comment.setText(commentEditData.getNewText());
+        final CommentDto commentDto = commentMapper.toDto(comment);
+        return new CommentEditResponse(commentDto);
     }
-
 
     @Override
     @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
-    public CommentDeleteResponse deleteComment(Long commentId) {
-        log.debug("Deleting comment with id={}", commentId);
-        return commentRepository.findById(commentId)
-            .map(this::doDelete)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-    }
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentDeleteRequest) or hasRole('SUPERUSER')")
+    public CommentDeleteResponse deleteComment(CommentDeleteRequest commentDeleteRequest) {
+        log.debug("Deleting comment with id={}", commentDeleteRequest);
+        final Long targetCommentId = commentDeleteRequest.getTargetCommentId();
 
-    private CommentDeleteResponse doDelete(Comment comment) {
-        if(comment.isActive()) {
-            comment.disable();
-        }
+        final Comment comment = commentRepository.findById(targetCommentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+
+        commentRepository.delete(comment);
         return CommentDeleteResponse.deleted();
     }
 }

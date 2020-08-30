@@ -19,8 +19,6 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_id_seq")
     private Long commentId;
     private String text;
-    @Enumerated(EnumType.STRING)
-    private Status status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id")
     private Post post;
@@ -28,10 +26,5 @@ public class Comment {
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
 
-    public boolean isActive() { return this.status.equals(Status.ACTIVE); }
-
-    public void disable() {
-        this.status = Status.INACTIVE;
-    }
 
 }

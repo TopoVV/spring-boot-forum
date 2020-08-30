@@ -47,6 +47,7 @@ public class PostMapper {
             map().setTitle(source.getTitle());
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
+            using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
         }
     }
@@ -57,6 +58,7 @@ public class PostMapper {
             map().setPostId(source.getPostId());
             map().setTitle(source.getTitle());
             map().setAuthor(source.getCreator().getUsername());
+            using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
         }
     }

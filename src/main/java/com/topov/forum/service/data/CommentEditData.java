@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 public class CommentEditData {
-    private final Long commentId;
+    private final Long targetCommentId;
     private final Long postId;
     private final String newText;
     public CommentEditData(CommentEditRequest commentEditRequest, Long postId) {
         this.postId = postId;
         this.newText = commentEditRequest.getNewText();
-        this.commentId = commentEditRequest.getTargetCommentId();
+        this.targetCommentId = commentEditRequest.getTargetCommentId();
     }
 }

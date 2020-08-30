@@ -60,7 +60,7 @@ public class CommentController {
     }
 
     @PutMapping(
-        value = "/posts/{postId}/comments}",
+        value = "/posts/{postId}/comments",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> editComment(@PathVariable Long postId,
@@ -77,9 +77,9 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value = "/posts/{postId}/comments}")
+    @DeleteMapping(value = "/posts/{postId}/comments")
     public ResponseEntity<OperationResponse> deleteComment(@RequestBody CommentDeleteRequest commentDeleteRequest) {
-        final var commentDeleteResponse = commentService.deleteComment(commentDeleteRequest.getTargetCommentId());
+        final var commentDeleteResponse = commentService.deleteComment(commentDeleteRequest);
         return ResponseEntity.ok(commentDeleteResponse);
     }
 }

@@ -1,6 +1,7 @@
 package com.topov.forum.service.comment;
 
 import com.topov.forum.dto.CommentDto;
+import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.dto.response.comment.CommentCreateResponse;
 import com.topov.forum.dto.response.comment.CommentDeleteResponse;
 import com.topov.forum.dto.response.comment.CommentEditResponse;
@@ -15,5 +16,5 @@ public interface CommentService {
     Page<CommentDto> getAllComments(Long postId, Pageable pageable);
     CommentCreateResponse createComment(CommentCreateData createCommentRequest);
     CommentEditResponse editComment(CommentEditData editCommentRequest);
-    CommentDeleteResponse deleteComment(Long commentId);
+    CommentDeleteResponse deleteComment(CommentDeleteRequest commentId);
 }
