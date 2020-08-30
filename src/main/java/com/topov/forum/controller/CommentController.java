@@ -2,6 +2,7 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
+import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
 import com.topov.forum.dto.response.InputErrorResponse;
 import com.topov.forum.dto.response.OperationResponse;
@@ -59,11 +60,10 @@ public class CommentController {
     }
 
     @PutMapping(
-        value = "/posts/{postId}/comments/{commentId}",
+        value = "/posts/{postId}/comments}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<OperationResponse> editComment(@PathVariable Long postId,
-                                                         @PathVariable Long commentId,
                                                          @Valid @RequestBody CommentEditRequest commentEditRequest,
                                                          BindingResult bindingResult) {
         log.debug("Handling (PUT) comment edition request");
@@ -72,14 +72,14 @@ public class CommentController {
             return ResponseEntity.badRequest().body(inputErrorResponse);
         }
 
-        final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId, commentId);
+        final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId);
         final CommentEditResponse response = commentService.editComment(commentEditData);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<OperationResponse> deleteComment(@PathVariable Long commentId) {
-        final CommentDeleteResponse commentDeleteResponse = commentService.deleteComment(commentId);
+    @DeleteMapping(value = "/posts/{postId}/comments}")
+    public ResponseEntity<OperationResponse> deleteComment(@RequestBody CommentDeleteRequest commentDeleteRequest) {
+        final var commentDeleteResponse = commentService.deleteComment(commentDeleteRequest.getTargetCommentId());
         return ResponseEntity.ok(commentDeleteResponse);
     }
 }
