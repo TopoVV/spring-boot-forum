@@ -6,7 +6,6 @@ import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.Post;
-import com.topov.forum.model.Status;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -47,9 +45,8 @@ public class PostMapper {
             map().setTitle(source.getTitle());
             map().setText(source.getText());
             map().setAuthor(source.getCreator().getUsername());
-            using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
             using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
-            using(commentListConverter).map(source.getComments()).setComments(null);
+            using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
         }
     }
 
@@ -59,23 +56,11 @@ public class PostMapper {
             map().setPostId(source.getPostId());
             map().setTitle(source.getTitle());
             map().setAuthor(source.getCreator().getUsername());
+            using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
             using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
         }
     }
-
-
-    public static final Converter<List<Comment>, List<CommentDto>>  commentListConverter =
-        mappingContext -> mappingContext.getSource()
-        .stream()
-        .map(comment -> {
-            CommentDto commentDto = new CommentDto();
-            commentDto.setText(comment.getText());
-            commentDto.setCommentId(comment.getCommentId());
-            commentDto.setAuthor(comment.getCreator().getUsername());
-            return commentDto;
-        })
-        .collect(toList());
 
     public static final Converter<Collection<?>, Integer> collectionToSizeConverter =
         mappingContext -> mappingContext.getSource().size();

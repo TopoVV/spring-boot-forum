@@ -2,9 +2,7 @@ package com.topov.forum.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Data
@@ -15,6 +13,4 @@ public class PostDto {
     private String author;
     private Integer visitsAmount;
     private Integer commentsAmount;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<CommentDto> comments;
 }

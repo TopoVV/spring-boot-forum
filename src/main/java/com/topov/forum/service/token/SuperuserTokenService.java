@@ -4,6 +4,6 @@ import com.topov.forum.token.SuperuserToken;
 
 public interface SuperuserTokenService {
     SuperuserToken createSuperuserToken();
-    boolean checkSuperuserToken(String token);
+    boolean isSuperuserTokenValid(String token);
     void revokeSuperuserToken(String token);
 }

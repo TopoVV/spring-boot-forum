@@ -1,11 +1,8 @@
 package com.topov.forum.dto.response.registration;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.topov.forum.dto.response.OperationResponse;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

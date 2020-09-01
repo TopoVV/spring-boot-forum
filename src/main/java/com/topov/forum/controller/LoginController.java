@@ -1,9 +1,9 @@
 package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.authentication.LoginRequest;
-import com.topov.forum.dto.response.authentication.LoginResponse;
+import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.dto.response.ValidationError;
+import com.topov.forum.dto.response.authentication.LoginResponse;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.security.jwt.JwtToken;
 import lombok.extern.log4j.Log4j2;
@@ -40,15 +40,9 @@ public class LoginController {
         value = "/auth",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest,
-                                                          BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
         log.debug("Handling POST login request. User: {}", loginRequest);
         try {
-            if(bindingResult.hasErrors()) {
-                ValidationError validationError = new ValidationError(bindingResult);
-                return ResponseEntity.badRequest().body(validationError);
-            }
-
             final JwtToken token = authenticationService.authenticate(loginRequest);
             return ResponseEntity.status(HttpStatus.OK)
                 .header(authorizationHeader, jwtPrefix.concat(token.getTokenValue()))

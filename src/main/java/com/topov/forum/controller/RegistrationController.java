@@ -2,23 +2,18 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.OperationResponse;
+import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.registration.RegistrationResponse;
-import com.topov.forum.dto.response.ValidationError;
 import com.topov.forum.service.registration.RegistrationService;
+import com.topov.forum.dto.response.ValidationErrorResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import static com.topov.forum.dto.request.registration.SuperuserRegistrationRequest.SuperuserRegistrationValidation;
 
 @Log4j2
 @RestController
@@ -34,13 +29,10 @@ public class RegistrationController {
         value = "/registration",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
-                                                            BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         log.debug("Handling (POST) registration request: {}", registrationRequest);
-        if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
-        }
+
+
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(response);
     }
@@ -49,14 +41,9 @@ public class RegistrationController {
         value = "/registration/superuser",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regSuperuser(@Validated(SuperuserRegistrationValidation.class)
-                                                          @RequestBody SuperuserRegistrationRequest registrationRequest,
-                                                          BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest) {
         log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
-        if(bindingResult.hasErrors()) {
-            final ValidationError validationError = new ValidationError(bindingResult);
-            return ResponseEntity.badRequest().body(validationError);
-        }
+
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }

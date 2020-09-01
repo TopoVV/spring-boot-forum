@@ -1,14 +1,14 @@
 package com.topov.forum.dto.response;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ class ValidationErrorTest {
         final BindingResult bindingResultMock = mock(BindingResult.class);
         when(bindingResultMock.getFieldErrors()).thenReturn(List.of(fieldError1, fieldError2, fieldError3));
 
-        final ValidationError response = new ValidationError(bindingResultMock);
+        final InvalidInputResponse response = new InvalidInputResponse(bindingResultMock);
         final Map<String, List<String>> inputErrors = response.getInputErrors();
 
         assertEquals(2, inputErrors.get(field1).size());

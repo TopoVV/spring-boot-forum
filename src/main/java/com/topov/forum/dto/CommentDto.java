@@ -1,7 +1,6 @@
 package com.topov.forum.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class CommentDto {

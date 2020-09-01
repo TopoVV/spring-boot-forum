@@ -14,18 +14,16 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class ForumUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-    @Column(name = "user_id")
     private Long userId;
-    @Column(name = "username", unique = true)
+    @Column(unique = true)
     private String username;
-    @Column(name = "password")
     private String password;
-    @Column(name = "email", unique = true)
+    @Column(unique = true)
     private String email;
-    @Column(name = "enabled")
     private Boolean enabled;
 
     @ManyToMany(
@@ -37,7 +35,6 @@ public class ForumUser {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(
@@ -46,7 +43,6 @@ public class ForumUser {
         orphanRemoval = true,
         mappedBy = "creator"
     )
-    @ToString.Exclude
     private Set<Post> posts = new HashSet<>();
 
     @OneToMany(
@@ -55,7 +51,6 @@ public class ForumUser {
         mappedBy = "creator",
         orphanRemoval = true
     )
-    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
     public ForumUser(String username, String password, String email) {

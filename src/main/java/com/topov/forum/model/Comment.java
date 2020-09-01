@@ -13,29 +13,18 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_id_seq")
-    @Column(name = "comment_id")
     private Long commentId;
-    @Column(name = "text")
     private String text;
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id")
-    @ToString.Exclude
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id")
-    @ToString.Exclude
     private ForumUser creator;
 
-    public boolean isActive() { return this.status.equals(Status.ACTIVE); }
-
-    public void disable() {
-        this.status = Status.INACTIVE;
-    }
 
 }

@@ -1,26 +1,24 @@
 package com.topov.forum.service.user;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
-import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.model.Post;
+import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
-import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+
 @Log4j2
 @Service
-public class UserServiceImpl implements UserService, UserServiceInternal     {
-    private final AuthenticationService authenticationService;
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(AuthenticationService authenticationService,
-                           UserRepository userRepository) {
-        this.authenticationService = authenticationService;
+
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -43,21 +41,8 @@ public class UserServiceImpl implements UserService, UserServiceInternal     {
     }
 
     @Override
-    public void addComment(Long creatorId, Comment comment) {
-        userRepository.findById(creatorId)
-            .ifPresentOrElse(
-                user -> user.addComment(comment),
-                () -> { throw new RuntimeException("User not found"); }
-            );
-    }
-
-    @Override
-    public void addPost(Long creatorId, Post post) {
-        log.debug("Adding new comment to user's posts collection {}", creatorId);
-        userRepository.findById(creatorId)
-            .ifPresentOrElse(
-                user -> user.addPost(post),
-                () -> { throw new RuntimeException("User not found"); }
-            );
+    public ForumUser findUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(EntityNotFoundException::new);
     }
 }
