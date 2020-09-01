@@ -1,6 +1,5 @@
 package com.topov.forum.dto.response;
 
-import com.topov.forum.validation.ValidationError;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -37,7 +36,7 @@ class ValidationErrorTest {
         final BindingResult bindingResultMock = mock(BindingResult.class);
         when(bindingResultMock.getFieldErrors()).thenReturn(List.of(fieldError1, fieldError2, fieldError3));
 
-        final InputErrorResponse response = new InputErrorResponse(bindingResultMock);
+        final InvalidInputResponse response = new InvalidInputResponse(bindingResultMock);
         final Map<String, List<String>> inputErrors = response.getInputErrors();
 
         assertEquals(2, inputErrors.get(field1).size());

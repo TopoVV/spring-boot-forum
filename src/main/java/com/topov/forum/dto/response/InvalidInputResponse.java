@@ -12,15 +12,14 @@ import java.util.Map;
 import static java.util.stream.Collectors.*;
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class InputErrorResponse extends OperationResponse {
+public class InvalidInputResponse extends ExceptionalResponse {
     private static final String INVALID_INPUT = "Invalid input";
 
     private Map<String, List<String>> inputErrors;
 
-    public InputErrorResponse(BindingResult bindingResult) {
-        super(INVALID_INPUT);
+    public InvalidInputResponse(BindingResult bindingResult) {
+        super(INVALID_INPUT, "Please, prove proper data");
         this.inputErrors = bindingResult.getFieldErrors()
             .stream()
             .collect(groupingBy(

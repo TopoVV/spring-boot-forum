@@ -4,7 +4,7 @@ import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.dto.response.InputErrorResponse;
+import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
@@ -57,13 +57,8 @@ public class PostController {
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest,
-                                                        BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
-        if(bindingResult.hasErrors()) {
-            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
-            return ResponseEntity.badRequest().body(inputErrorResponse);
-        }
 
         final ValidationResult validationResult = postValidationService.validateCreatePost(postCreateRequest);
         if (validationResult.hasErrors()) {
@@ -85,14 +80,9 @@ public class PostController {
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> editPost(@PathVariable Long postId,
-                                                      @Valid @RequestBody PostEditRequest postEditRequest,
-                                                      BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody PostEditRequest postEditRequest,
+                                                      @PathVariable Long postId) {
         log.debug("Handling (PUT) post modification request");
-        if(bindingResult.hasErrors()) {
-            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
-            return ResponseEntity.badRequest().body(inputErrorResponse);
-        }
 
         final ValidationResult validationResult = postValidationService.validateEditPost(postEditRequest);
         if(validationResult.hasErrors()) {

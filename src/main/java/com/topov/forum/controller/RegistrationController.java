@@ -1,8 +1,9 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.controller.advice.InvalidInputException;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.InputErrorResponse;
+import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.registration.RegistrationResponse;
@@ -34,13 +35,8 @@ public class RegistrationController {
         value = "/registration",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest,
-                                                            BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         log.debug("Handling (POST) registration request: {}", registrationRequest);
-        if (bindingResult.hasErrors()) {
-            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
-            return ResponseEntity.badRequest().body(inputErrorResponse);
-        }
 
         final var validationResult = userValidationService.validateRegistration(registrationRequest);
         if (validationResult.hasErrors()) {
@@ -56,14 +52,8 @@ public class RegistrationController {
         value = "/registration/superuser",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest,
-                                                          BindingResult bindingResult) {
+    public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest) {
         log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
-
-        if (bindingResult.hasErrors()) {
-            final InputErrorResponse inputErrorResponse = new InputErrorResponse(bindingResult);
-            return ResponseEntity.badRequest().body(inputErrorResponse);
-        }
 
         final var validationResult = userValidationService.validateSuperuserRegistration(registrationRequest);
         if (validationResult.hasErrors()) {
