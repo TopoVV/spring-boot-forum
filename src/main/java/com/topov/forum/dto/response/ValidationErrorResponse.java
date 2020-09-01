@@ -3,7 +3,6 @@ package com.topov.forum.dto.response;
 import com.topov.forum.validation.ValidationError;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 

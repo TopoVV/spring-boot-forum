@@ -8,10 +8,8 @@ import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
-
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
-import com.topov.forum.dto.response.ValidationErrorResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,7 +73,6 @@ public class PostController {
 
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
         final PostEditResponse response = postService.editPost(postEditData);
-
         return ResponseEntity.ok(response);
     }
 

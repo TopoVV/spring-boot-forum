@@ -3,7 +3,6 @@ package com.topov.forum.mapper;
 import com.topov.forum.dto.CommentDto;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
-import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.Post;
 import org.modelmapper.Converter;
@@ -58,9 +57,21 @@ public class PostMapper {
             map().setAuthor(source.getCreator().getUsername());
             using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
             using(collectionToSizeConverter).map(source.getVisits()).setVisitsAmount(null);
-            using(collectionToSizeConverter).map(source.getComments()).setCommentsAmount(null);
         }
     }
+
+
+    public static final Converter<List<Comment>, List<CommentDto>>  commentListConverter =
+        mappingContext -> mappingContext.getSource()
+        .stream()
+        .map(comment -> {
+            CommentDto commentDto = new CommentDto();
+            commentDto.setText(comment.getText());
+            commentDto.setCommentId(comment.getCommentId());
+            commentDto.setAuthor(comment.getCreator().getUsername());
+            return commentDto;
+        })
+        .collect(toList());
 
     public static final Converter<Collection<?>, Integer> collectionToSizeConverter =
         mappingContext -> mappingContext.getSource().size();

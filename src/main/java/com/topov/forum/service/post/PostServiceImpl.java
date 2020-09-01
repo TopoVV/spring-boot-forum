@@ -1,6 +1,5 @@
 package com.topov.forum.service.post;
 
-
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
@@ -11,7 +10,6 @@ import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
-
 import com.topov.forum.model.PostVisit;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
@@ -20,7 +18,6 @@ import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+
 
 @Log4j2
 @Service
@@ -56,7 +54,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDto getPost(Long postId) {
-
         final Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
@@ -79,7 +76,6 @@ public class PostServiceImpl implements PostService {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
             final Post newPost = new Post();
-
             newPost.setTitle(postCreateRequest.getTitle());
             newPost.setText(postCreateRequest.getText());
 
@@ -90,7 +86,6 @@ public class PostServiceImpl implements PostService {
 
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
-
             return new PostCreateResponse(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);

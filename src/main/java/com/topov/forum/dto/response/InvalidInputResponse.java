@@ -2,7 +2,6 @@ package com.topov.forum.dto.response;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 

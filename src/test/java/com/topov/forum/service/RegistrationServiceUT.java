@@ -54,7 +54,7 @@ class RegistrationServiceUT {
         when(registrationRequestMock.getUsername()).thenReturn("username");
         when(registrationRequestMock.getEmail()).thenReturn("email@email.ru");
 
-        doThrow(DataIntegrityViolationException.class).when(userService).createRegularUser(registrationRequestMock);
+//        doThrow(DataIntegrityViolationException.class).when(userService).createRegularUser(registrationRequestMock);
 
         assertThrows(RuntimeException.class, () -> registrationService.registerRegularUser(registrationRequestMock));
         verifyNoInteractions(mailSender);

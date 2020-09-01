@@ -3,7 +3,6 @@ package com.topov.forum.service.post;
 import com.topov.forum.dto.PostDto;
 import com.topov.forum.dto.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
-import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
@@ -14,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostService {
     PostCreateResponse createPost(PostCreateRequest postCreateRequest);
-    PostEditResponse editPost(PostEditData editRequest);
+    PostEditResponse editPost(PostEditData postEditData);
     Page<ShortPostDto> getAllPosts(Pageable pageable);
     PostDto getPost(Long postId);
     PostDeleteResponse deletePost(Long postId);

@@ -12,12 +12,10 @@ import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
 import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.security.AuthenticationService;
-
 import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.user.UserService;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityExistsException;
 
 @Log4j2
 @Service
@@ -36,6 +33,7 @@ public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+
     private final UserService userService;
     private final PostService postService;
 
@@ -79,7 +77,6 @@ public class CommentServiceImpl implements CommentService {
 
             final Comment savedComment = commentRepository.save(newComment);
             final CommentDto commentDto = commentMapper.toDto(savedComment);
-
             return new CommentCreateResponse(commentDto);
         } catch (RuntimeException e) {
             log.error("Error creating comment", e);

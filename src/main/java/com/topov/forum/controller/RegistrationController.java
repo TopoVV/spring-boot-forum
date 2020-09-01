@@ -6,7 +6,6 @@ import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.service.registration.RegistrationService;
-import com.topov.forum.dto.response.ValidationErrorResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,8 +30,6 @@ public class RegistrationController {
     )
     public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         log.debug("Handling (POST) registration request: {}", registrationRequest);
-
-
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(response);
     }
@@ -43,7 +40,6 @@ public class RegistrationController {
     )
     public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest) {
         log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
-
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }

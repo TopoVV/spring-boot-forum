@@ -2,8 +2,6 @@ package com.topov.forum.dto.response;
 
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ExceptionalResponse {

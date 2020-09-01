@@ -2,7 +2,6 @@ package com.topov.forum.service;
 
 import com.topov.forum.model.PostVisit;
 import com.topov.forum.repository.PostVisitRepository;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

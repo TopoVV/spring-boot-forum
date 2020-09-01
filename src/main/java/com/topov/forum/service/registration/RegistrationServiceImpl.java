@@ -10,7 +10,6 @@ import com.topov.forum.exception.RegistrationException;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.service.token.ConfirmationTokenService;
 import com.topov.forum.service.token.SuperuserTokenService;
-import com.topov.forum.service.user.UserFactory;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
@@ -28,7 +27,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         "To confirm your account follow this link: %s";
 
     private final UserService userService;
-    private final UserFactory userFactory;
     private final MailSender mailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final SuperuserTokenService superuserTokenService;
@@ -38,9 +36,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    SuperuserTokenService superuserTokenService,
                                    RegistrationValidator registrationValidator,
                                    UserService userService,
-                                   UserFactory userFactory, MailSender mailSender) {
+                                   MailSender mailSender) {
         this.userService = userService;
-        this.userFactory = userFactory;
         this.mailSender = mailSender;
         this.confirmationTokenService = confirmationTokenService;
         this.superuserTokenService = superuserTokenService;
@@ -53,8 +50,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
             registrationValidator.validateRegistrationData(registrationRequest);
-            final ForumUser forumUser = userFactory.constructRegularUser(registrationRequest);
-            userService.saveUser(forumUser);
+            userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
             return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
         } catch (MailException e) {
@@ -92,12 +88,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-
             registrationValidator.validateToken(registrationRequest.getToken());
             registrationValidator.validateRegistrationData(registrationRequest);
             superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
-            final ForumUser forumUser = userFactory.constructSuperuser(registrationRequest);
-            userService.saveUser(forumUser);
+            userService.createSuperuser(registrationRequest);
             return RegistrationResponse.superuserRegistrationSuccess();
         } catch(RuntimeException e) {
             log.error("Error during registration", e);

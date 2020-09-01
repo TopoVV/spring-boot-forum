@@ -24,7 +24,7 @@ public class UserInitialization implements ApplicationRunner {
         superuser.setUsername("super");
         superuser.setPassword("super");
         superuser.setEmail("email1@email.com");
-        userService.saveUser(superuser);
+        userService.createSuperuser(superuser);
 
         RegistrationRequest user = new RegistrationRequest();
         user.setUsername("user");

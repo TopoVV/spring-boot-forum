@@ -1,7 +1,6 @@
 package com.topov.forum.controller;
 
 import com.topov.forum.dto.request.authentication.LoginRequest;
-import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.authentication.LoginResponse;
 import com.topov.forum.security.AuthenticationService;
@@ -14,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

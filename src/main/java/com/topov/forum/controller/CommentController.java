@@ -4,7 +4,6 @@ import com.topov.forum.dto.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
-import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.comment.CommentCreateResponse;
 import com.topov.forum.dto.response.comment.CommentEditResponse;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
