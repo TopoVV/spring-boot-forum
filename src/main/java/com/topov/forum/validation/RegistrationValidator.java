@@ -1,4 +1,8 @@
 package com.topov.forum.validation;
 
-public class RegistrationValidator {
+import com.topov.forum.dto.request.registration.RegistrationRequest;
+
+public interface RegistrationValidator {
+    void validateToken(String token);
+    void validateRegistrationData(RegistrationRequest registrationRequest);
 }

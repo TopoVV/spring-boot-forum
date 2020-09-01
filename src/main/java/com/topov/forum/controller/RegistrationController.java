@@ -1,20 +1,16 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.controller.advice.InvalidInputException;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.InvalidInputResponse;
 import com.topov.forum.dto.response.OperationResponse;
 import com.topov.forum.dto.response.registration.AccountConfirmation;
 import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.service.registration.RegistrationService;
-import com.topov.forum.validation.UserValidationService;
 import com.topov.forum.dto.response.ValidationErrorResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

@@ -1,20 +1,20 @@
 package com.topov.forum.dto.response;
 
-import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.validation.ValidationResult;
+import com.topov.forum.validation.ValidationError;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ValidationErrorResponse extends OperationResponse {
-    private ValidationResult validationResult;
+public class ValidationErrorResponse extends ExceptionalResponse {
+    private final List<ValidationError> validationErrors;
 
-    public ValidationErrorResponse(ValidationResult validationResult) {
-        super("Validation error");
-        this.validationResult = validationResult;
+    public ValidationErrorResponse(String message, String description, List<ValidationError> validationErrors) {
+        super(message, description);
+        this.validationErrors = validationErrors;
     }
 }

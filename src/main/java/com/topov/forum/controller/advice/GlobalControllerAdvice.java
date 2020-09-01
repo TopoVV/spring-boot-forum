@@ -24,13 +24,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(exceptionalResponse);
     }
 
-//    @ExceptionHandler(value = InvalidInputException.class)
-//    public ResponseEntity<InvalidInputResponse> handleMethodArgumentNotValidException(InvalidInputException e) {
-//        final BindingResult bindingResult = e.getBindingResult();
-//        final InvalidInputResponse invalidInputResponse = new InvalidInputResponse(bindingResult);
-//        return ResponseEntity.badRequest().body(invalidInputResponse);
-//    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,

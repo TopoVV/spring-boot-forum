@@ -12,6 +12,7 @@ import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
+import com.topov.forum.validation.RegistrationValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,18 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final MailSender mailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final SuperuserTokenService superuserTokenService;
+    private final RegistrationValidator registrationValidator;
 
     public RegistrationServiceImpl(ConfirmationTokenService confirmationTokenService,
                                    SuperuserTokenService superuserTokenService,
+                                   RegistrationValidator registrationValidator,
                                    UserService userService,
                                    MailSender mailSender) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.confirmationTokenService = confirmationTokenService;
         this.superuserTokenService = superuserTokenService;
+        this.registrationValidator = registrationValidator;
     }
 
     @Transactional
@@ -44,7 +48,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
-
+            registrationValidator.validateRegistrationData(registrationRequest);
             userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
             return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
@@ -83,6 +87,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
+            registrationValidator.validateToken(registrationRequest.getToken());
+            registrationValidator.validateRegistrationData(registrationRequest);
             superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
             userService.createSuperuser(registrationRequest);
             return RegistrationResponse.superuserRegistrationSuccess();

@@ -1,9 +1,7 @@
 package com.topov.forum.validation;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
-import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.repository.UserRepository;
-import com.topov.forum.service.token.SuperuserTokenService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +30,6 @@ public class RegistrationDataValidator implements Validator<RegistrationRequest>
             errors.add(error);
         }
 
-        return new ValidationResult("Registration failed", "Account cannot be created", errors);
+        return new ValidationResult(errors);
     }
 }
