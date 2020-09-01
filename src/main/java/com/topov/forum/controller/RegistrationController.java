@@ -19,12 +19,10 @@ import javax.validation.Valid;
 @RestController
 public class RegistrationController {
     private final RegistrationService registrationService;
-    private final UserValidationService userValidationService;
 
     @Autowired
-    public RegistrationController(RegistrationService registrationService, UserValidationService userValidationService) {
+    public RegistrationController(RegistrationService registrationService) {
         this.registrationService = registrationService;
-        this.userValidationService = userValidationService;
     }
 
     @PostMapping(
@@ -33,13 +31,6 @@ public class RegistrationController {
     )
     public ResponseEntity<OperationResponse> regRegularUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         log.debug("Handling (POST) registration request: {}", registrationRequest);
-
-        final var validationResult = userValidationService.validateRegistration(registrationRequest);
-        if (validationResult.hasErrors()) {
-            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
-            return ResponseEntity.badRequest().body(validationErrorResponse);
-        }
-
         final RegistrationResponse response = registrationService.registerRegularUser(registrationRequest);
         return ResponseEntity.ok(response);
     }
@@ -50,13 +41,6 @@ public class RegistrationController {
     )
     public ResponseEntity<OperationResponse> regSuperuser(@Valid @RequestBody SuperuserRegistrationRequest registrationRequest) {
         log.debug("Handling (POST) superuser registration request: {}", registrationRequest);
-
-        final var validationResult = userValidationService.validateSuperuserRegistration(registrationRequest);
-        if (validationResult.hasErrors()) {
-            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
-            return ResponseEntity.badRequest().body(validationErrorResponse);
-        }
-
         RegistrationResponse response = registrationService.registerSuperuser(registrationRequest);
         return ResponseEntity.ok(response);
     }

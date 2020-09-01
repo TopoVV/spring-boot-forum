@@ -11,6 +11,7 @@ import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.dto.response.ValidationErrorResponse;
+import com.topov.forum.validation.ValidationResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,13 +29,11 @@ import java.net.URI;
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
     private final PostService postService;
-    private final PostValidationService postValidationService;
 
 
     @Autowired
-    public PostController(PostService postService, PostValidationService postValidationService) {
+    public PostController(PostService postService) {
         this.postService = postService;
-        this.postValidationService = postValidationService;
     }
 
     @GetMapping(value = "/posts/{postId}")
@@ -56,12 +55,6 @@ public class PostController {
     public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
-        final ValidationResult validationResult = postValidationService.validateCreatePost(postCreateRequest);
-        if (validationResult.hasErrors()) {
-            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
-            return ResponseEntity.badRequest().body(validationErrorResponse);
-        }
-
         final PostCreateResponse response = postService.createPost(postCreateRequest);
         final URI location = buildCreatedPostLocation(response);
         return ResponseEntity.created(location).body(response);
@@ -79,12 +72,6 @@ public class PostController {
     public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody PostEditRequest postEditRequest,
                                                       @PathVariable Long postId) {
         log.debug("Handling (PUT) post modification request");
-
-        final ValidationResult validationResult = postValidationService.validateEditPost(postEditRequest);
-        if(validationResult.hasErrors()) {
-            final var validationErrorResponse = new ValidationErrorResponse(validationResult);
-            return ResponseEntity.badRequest().body(validationErrorResponse);
-        }
 
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
         final PostEditResponse response = postService.editPost(postEditData);
