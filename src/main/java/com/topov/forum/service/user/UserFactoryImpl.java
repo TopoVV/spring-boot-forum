@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
-import static com.topov.forum.model.Role.*;
+import static com.topov.forum.model.Role.Roles;
 
 @Service
 public class UserFactoryImpl implements UserFactory {

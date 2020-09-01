@@ -1,9 +1,6 @@
 package com.topov.forum.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.math.BigInteger;
 
 @Data
 public class ShortPostDto {

@@ -2,11 +2,8 @@ package com.topov.forum.service.security;
 
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
-import com.topov.forum.model.Post;
 import com.topov.forum.repository.CommentRepository;
-import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.security.ForumUserDetails;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +33,7 @@ public class CommentServiceSecurity {
             .map(currentUserId::equals)
             .orElseThrow(() -> {
                 log.error("Comment with id={} doesn't exist", commentId);
-                return new RuntimeException(String.format("Post (id = %d) not found", commentId));
+                return new ResponseStatusException(HttpStatus.BAD_REQUEST, "The comment doesn't exist");
             });
     }
 }

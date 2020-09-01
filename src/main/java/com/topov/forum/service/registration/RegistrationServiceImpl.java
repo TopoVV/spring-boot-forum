@@ -14,6 +14,7 @@ import com.topov.forum.service.user.UserFactory;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
+import com.topov.forum.validation.RegistrationValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
@@ -23,26 +24,28 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Log4j2
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
-    private static final String SUCCESSFUL_REGISTRATION_TEMPLATE = "You've been successfully registered! " +
-        "Please, confirm your account by clicking the link that was sent to %s";
     private static final String CONFIRMATION_MAIL_TEMPLATE = "Welcome to Forum, %s. " +
         "To confirm your account follow this link: %s";
 
     private final UserService userService;
-    private final UserFactory userFactory;
     private final MailSender mailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final SuperuserTokenService superuserTokenService;
+    private final RegistrationValidator registrationValidator;
+    private final UserFactory userFactory;
 
     public RegistrationServiceImpl(ConfirmationTokenService confirmationTokenService,
                                    SuperuserTokenService superuserTokenService,
+                                   RegistrationValidator registrationValidator,
                                    UserService userService,
-                                   UserFactory userFactory, MailSender mailSender) {
+                                   MailSender mailSender,
+                                   UserFactory userFactory) {
         this.userService = userService;
-        this.userFactory = userFactory;
         this.mailSender = mailSender;
         this.confirmationTokenService = confirmationTokenService;
         this.superuserTokenService = superuserTokenService;
+        this.registrationValidator = registrationValidator;
+        this.userFactory = userFactory;
     }
 
     @Transactional
@@ -50,9 +53,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
-
-            final ForumUser user = userFactory.constructRegularUser(registrationRequest);
-            userService.saveUser(user);
+            registrationValidator.validateRegistrationData(registrationRequest);
+            final ForumUser forumUser = userFactory.constructRegularUser(registrationRequest);
+            userService.saveUser(forumUser);
             mailSender.sendMail(mail);
             return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
         } catch (MailException e) {
@@ -90,13 +93,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-            if(superuserTokenService.checkSuperuserToken(registrationRequest.getToken())) {
-                superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
-                final ForumUser forumUser = userFactory.constructSuperuser(registrationRequest);
-                userService.saveUser(forumUser);
-               return RegistrationResponse.superuserRegistrationSuccess();
-            }
-           return RegistrationResponse.invalidToken();
+            registrationValidator.validateToken(registrationRequest.getToken());
+            registrationValidator.validateRegistrationData(registrationRequest);
+            superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
+            final ForumUser forumUser = userFactory.constructSuperuser(registrationRequest);
+            userService.saveUser(forumUser);
+            return RegistrationResponse.superuserRegistrationSuccess();
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);

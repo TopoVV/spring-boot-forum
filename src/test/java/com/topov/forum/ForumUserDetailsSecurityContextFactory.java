@@ -7,10 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import static com.topov.forum.model.Role.*;
+import static com.topov.forum.model.Role.Roles;
 
 public class ForumUserDetailsSecurityContextFactory implements WithSecurityContextFactory<WithMockForumUserDetails> {
     @Override

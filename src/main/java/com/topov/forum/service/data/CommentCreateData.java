@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class CommentCreateData {
     private final String text;
-    private final Long postId;
+    private final Long targetPostId;
 
-    public CommentCreateData(CommentCreateRequest commentCreateRequest, Long postId) {
+    public CommentCreateData(CommentCreateRequest commentCreateRequest, Long targetPostId) {
         this.text = commentCreateRequest.getText();
-        this.postId = postId;
+        this.targetPostId = targetPostId;
     }
 }
