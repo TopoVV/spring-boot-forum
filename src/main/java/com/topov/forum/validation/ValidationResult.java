@@ -1,20 +1,18 @@
 package com.topov.forum.validation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class ValidationResult {
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private final String message;
+    private final String description;
     private final List<ValidationError> validationErrors;
 
-    public ValidationResult(List<ValidationError> validationErrors) {
-        this.validationErrors = validationErrors;
-    }
-
     public boolean hasErrors() {
-        return validationErrors.size() > 0;
+        return !validationErrors.isEmpty();
     }
 }
