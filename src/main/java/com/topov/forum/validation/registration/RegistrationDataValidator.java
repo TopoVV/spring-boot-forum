@@ -1,7 +1,10 @@
-package com.topov.forum.validation;
+package com.topov.forum.validation.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.repository.UserRepository;
+import com.topov.forum.validation.ValidationError;
+import com.topov.forum.validation.ValidationResult;
+import com.topov.forum.validation.Validator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 

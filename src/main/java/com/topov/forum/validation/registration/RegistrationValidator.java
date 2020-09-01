@@ -1,4 +1,4 @@
-package com.topov.forum.validation;
+package com.topov.forum.validation.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 

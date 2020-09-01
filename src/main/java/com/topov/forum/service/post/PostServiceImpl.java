@@ -16,6 +16,7 @@ import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.VisitService;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.user.UserService;
+import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,7 @@ public class PostServiceImpl implements PostService {
     @Autowired
     public PostServiceImpl(AuthenticationService authenticatedUserService,
                            PostRepository postRepository,
-                           VisitService visitService,
+                           PostValidator postValidator, VisitService visitService,
                            UserService userService,
                            PostMapper postMapper) {
         this.authenticatedUserService = authenticatedUserService;

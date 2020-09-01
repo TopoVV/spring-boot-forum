@@ -5,6 +5,7 @@ import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
+import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,12 +20,13 @@ import static com.topov.forum.model.Role.*;
 @Log4j2
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(AuthenticationService authenticationService,
-                           UserRepository userRepository, PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           UserRepository userRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

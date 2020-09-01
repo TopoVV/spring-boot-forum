@@ -1,7 +1,8 @@
-package com.topov.forum.validation;
+package com.topov.forum.validation.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.exception.ValidationException;
+import com.topov.forum.validation.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

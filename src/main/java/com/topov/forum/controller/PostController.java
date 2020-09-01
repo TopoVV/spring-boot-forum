@@ -10,6 +10,7 @@ import com.topov.forum.dto.response.post.PostDeleteResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
+import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,12 +27,15 @@ import java.net.URI;
 @RestController
 public class PostController {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
+
     private final PostService postService;
+    private final PostValidator postValidator;
 
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostValidator postValidator) {
         this.postService = postService;
+        this.postValidator = postValidator;
     }
 
     @GetMapping(value = "/posts/{postId}")
@@ -53,6 +57,8 @@ public class PostController {
     public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
+        postValidator.validatePostCreationRequest(postCreateRequest);
+
         final PostCreateResponse response = postService.createPost(postCreateRequest);
         final URI location = buildCreatedPostLocation(response);
         return ResponseEntity.created(location).body(response);
@@ -70,6 +76,8 @@ public class PostController {
     public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody PostEditRequest postEditRequest,
                                                       @PathVariable Long postId) {
         log.debug("Handling (PUT) post modification request");
+
+        postValidator.validatePostEditRequest(postEditRequest);
 
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
         final PostEditResponse response = postService.editPost(postEditData);
