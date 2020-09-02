@@ -4,6 +4,7 @@ import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
+import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.validation.post.PostValidator;
@@ -17,15 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @Log4j2
 @RestController
 public class PostController {
-    private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
-
     private final PostService postService;
     private final PostValidator postValidator;
-
 
     @Autowired
     public PostController(PostService postService, PostValidator postValidator) {
@@ -49,18 +48,12 @@ public class PostController {
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public void createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+    public ResponseEntity<PostCreateResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
-        postValidator.validatePostCreationRequest(postCreateRequest);
-
-//        final URI location = buildCreatedPostLocation(response);
+        final PostCreateResponse response = postService.createPost(postCreateRequest);
+        return ResponseEntity.created(response.getLocation()).body(response);
     }
-
-//    private URI buildCreatedPostLocation(PostCreateResult postCreateResponse) {
-//        final String location = String.format(POST_URI_TEMPLATE, postCreateResponse.getPostDto().getPostId());
-//        return URI.create(location);
-//    }
 
     @PutMapping(
         value = "/posts/{postId}",

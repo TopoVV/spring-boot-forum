@@ -1,4 +1,4 @@
-package com.topov.forum.email;
+package com.topov.forum.mail;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -23,6 +23,6 @@ public class AccountConfirmationController {
     public ResponseEntity<AccountConfirmationResponse> confirmAccountGet(@PathVariable String token) {
         log.debug("Handling (GET) account confirmation request");
         final AccountConfirmationResponse result = accountConfirmationService.confirmAccount(token);
-        return ResponseEntity.status(result.getCode()).body(result);
+        return ResponseEntity.status(result.getHttpCode()).body(result);
     }
 }

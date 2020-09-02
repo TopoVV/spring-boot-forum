@@ -1,8 +1,7 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.response.account_confirmation.AccountConfirmationFail;
+import com.topov.forum.dto.SimpleError;
 import com.topov.forum.dto.response.account_confirmation.AccountConfirmationResponse;
-import com.topov.forum.dto.response.account_confirmation.AccountConfirmationSuccess;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
@@ -47,10 +46,17 @@ public class AccountConfirmationServiceImpl implements AccountConfirmationServic
             if (accountConfirmationToken.isTokenValid()) {
                 userService.enableUser(accountConfirmationToken.getUsername());
                 accountConfirmationToken.revoke();
-                return new AccountConfirmationSuccess(HttpStatus.OK, "Account confirmed");
+                return AccountConfirmationResponse.builder()
+                    .code(HttpStatus.OK)
+                    .message("Account confirmed")
+                    .build();
             }
         }
 
-        return new AccountConfirmationFail(HttpStatus.BAD_REQUEST, "Account is not confirmed", "Invalid token");
+        return AccountConfirmationResponse.builder()
+            .code(HttpStatus.BAD_REQUEST)
+            .message("Account is not confirmed")
+            .errors(new SimpleError("Invalid token"))
+            .build();
     }
 }

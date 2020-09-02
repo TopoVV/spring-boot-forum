@@ -5,10 +5,12 @@ import com.topov.forum.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Profile("!test")
 public class UserInitialization implements ApplicationRunner {
     private final UserService userService;
 

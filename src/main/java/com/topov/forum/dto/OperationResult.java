@@ -1,22 +1,22 @@
 package com.topov.forum.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 @Getter
 public abstract class OperationResult {
-    private final Integer code;
-    private final OperationStatus status;
+    private final Integer httpCode;
     private final String message;
 
-    protected OperationResult(HttpStatus code, OperationStatus status, String message) {
-        this.code = code.value();
-        this.status = status;
-        this.message = message;
-    }
+    @JsonInclude(value = NON_NULL)
+    private final Errors errors;
 
-    public enum OperationStatus {
-        SUCCESS,
-        FAIL
+    protected OperationResult(HttpStatus httpCode, String message, Errors errors) {
+        this.httpCode = httpCode.value();
+        this.message = message;
+        this.errors = errors;
     }
 }

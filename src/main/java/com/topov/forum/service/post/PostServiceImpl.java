@@ -3,6 +3,7 @@ package com.topov.forum.service.post;
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
+import com.topov.forum.dto.response.post.PostCreateResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
@@ -13,6 +14,8 @@ import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.VisitService;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.user.UserService;
+import com.topov.forum.dto.ValidationErrors;
+import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+import java.net.URI;
 
 
 @Log4j2
 @Service
 public class PostServiceImpl implements PostService {
+    private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
+
     private final AuthenticationService authenticatedUserService;
+    private final PostValidator postValidator;
     private final PostRepository postRepository;
     private final VisitService visitService;
     private final UserService userService;
@@ -39,10 +46,12 @@ public class PostServiceImpl implements PostService {
     @Autowired
     public PostServiceImpl(AuthenticationService authenticatedUserService,
                            PostRepository postRepository,
-                           PostValidator postValidator, VisitService visitService,
+                           PostValidator postValidator,
+                           VisitService visitService,
                            UserService userService,
                            PostMapper postMapper) {
         this.authenticatedUserService = authenticatedUserService;
+        this.postValidator = postValidator;
         this.postRepository = postRepository;
         this.visitService = visitService;
         this.userService = userService;
@@ -70,9 +79,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void createPost(PostCreateRequest postCreateRequest) {
+    public PostCreateResponse<?> createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
+
+            final ValidationResult validationResult = postValidator.validatePostCreationRequest(postCreateRequest);
+            if (validationResult.isValid()) {
+                final ValidationErrors validationErrors = new ValidationErrors(validationResult.getValidationErrors());
+                return PostCreateResponse.builder()
+                    .httpCode(HttpStatus.BAD_REQUEST)
+                    .errors(validationErrors)
+                    .message("Post cannot be created")
+                    .build();
+            }
+
             final Post newPost = new Post();
             newPost.setTitle(postCreateRequest.getTitle());
             newPost.setText(postCreateRequest.getText());
@@ -84,11 +104,23 @@ public class PostServiceImpl implements PostService {
 
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
-//            return new PostCreateResult(postDto);
+            final URI location = buildCreatedPostLocation(postDto.getPostId());
+            return PostCreateResponse.builder()
+                .httpCode(HttpStatus.CREATED)
+                .data(postDto)
+                .location(location)
+                .message("A post has been created")
+                .build();
+
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
         }
+    }
+
+    private URI buildCreatedPostLocation(Long postId) {
+        final String location = String.format(POST_URI_TEMPLATE, postId);
+        return URI.create(location);
     }
 
     @Override

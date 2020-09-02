@@ -18,16 +18,13 @@ public class PostValidator {
         this.postEditValidator = postEditValidator;
     }
 
-    public void validatePostCreationRequest(PostCreateRequest request) {
-        final ValidationResult validated = postCreateValidator.validate(request);
-        if (!validated.isValid()) {
-            throw new ValidationException("Post creation failed", "", validated.getValidationErrors());
-        }
+    public ValidationResult validatePostCreationRequest(PostCreateRequest request) {
+        return postCreateValidator.validate(request);
     }
 
     public void validatePostEditRequest(PostEditRequest request) {
         final ValidationResult validated = postEditValidator.validate(request);
-        if (!validated.isValid()) {
+        if (validated.isValid()) {
             throw new ValidationException("Post modification failed", "", validated.getValidationErrors());
         }
     }

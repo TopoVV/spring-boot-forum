@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @MockBeans({ @MockBean(UserRepository.class) })
+@ActiveProfiles("test")
 class RegistrationControllerValidationUT {
     private final ObjectMapper mapper;
     private final MockMvc mvc;
@@ -37,7 +39,7 @@ class RegistrationControllerValidationUT {
     }
 
     @Test
-    void whenUsernameNotUnique_ThenResponseMustContainEmailBindingError() throws Exception {
+    void whenUsernameNotUnique_ThenResponseMustContainUsernameBindingError() throws Exception {
         final RegistrationRequest request = new RegistrationRequest("username", "password", "email@email.com");
         when(userRepository.existsByUsername("username")).thenReturn(true);
         final String jsonRequest = mapper.writeValueAsString(request);
@@ -45,34 +47,22 @@ class RegistrationControllerValidationUT {
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_JSON)
                                          .content(jsonRequest))
            .andDo(print())
-           .andExpect(jsonPath("$.inputErrors.username[0]", is("The specified username is already in use")));
+           .andExpect(jsonPath("$.errors.validationErrors[0].propertyName", is("username")))
+           .andExpect(jsonPath("$.errors.validationErrors[0].description", is("Specified username is already in use")));
 
     }
 
     @Test
-    void whenEmailNotUnique_ThenResponseMustContainUsernameBindingError() throws Exception {
+    void whenEmailNotUnique_ThenResponseMustContainEmailBindingError() throws Exception {
         final RegistrationRequest request = new RegistrationRequest("username", "password", "email@email.com");
         when(userRepository.existsByEmail("email@email.com")).thenReturn(true);
         final String jsonRequest = mapper.writeValueAsString(request);
 
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_JSON)
                                          .content(jsonRequest))
-           .andDo(print())
-           .andExpect(jsonPath("$.inputErrors.email[0]", is("The specified email is already in use")));
-
-    }
-
-    @Test
-    void whenInvalidToken_ThenNoOtherFieldsValidated() throws Exception {
-        final SuperuserRegistrationRequest request = new SuperuserRegistrationRequest("", "", "password", "email@email.com");
-        final String jsonRequest = mapper.writeValueAsString(request);
-
-        when(userRepository.existsByEmail("email@email.com")).thenReturn(true);
-
-        mvc.perform(post("/registration/superuser").contentType(MediaType.APPLICATION_JSON)
-                                                   .content(jsonRequest))
-           .andDo(print())
-           .andExpect(jsonPath("$.inputErrors.token", hasSize(1)));
+            .andDo(print())
+            .andExpect(jsonPath("$.errors.validationErrors[0].propertyName", is("email")))
+            .andExpect(jsonPath("$.errors.validationErrors[0].description", is("Specified email is already in use")));
 
     }
 }

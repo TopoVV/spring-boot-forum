@@ -2,8 +2,6 @@ package com.topov.forum.validation.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.exception.ValidationException;
-import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.validation.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,7 @@ public class RegistrationValidatorImpl implements RegistrationValidator {
     @Override
     public ValidationResult validateSuperuserRegistration(SuperuserRegistrationRequest registrationRequest) {
         final ValidationResult validated = superuserTokenValidator.validate(registrationRequest.getToken());
-        if (!validated.isValid()) {
+        if (validated.isValid()) {
             return validated;
         }
         return validateRegistrationData(registrationRequest);

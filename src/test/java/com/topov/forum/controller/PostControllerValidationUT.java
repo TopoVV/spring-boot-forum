@@ -53,14 +53,4 @@ class PostControllerValidationUT {
 
 
     }
-
-
-    @Test
-    @WithMockUser(roles = "SUPERUSER")
-    void test() throws Exception {
-        mockMvc.perform(get("/posts"))
-            .andDo(print())
-            .andReturn();
-    }
-
 }
