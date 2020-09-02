@@ -10,22 +10,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AccountConfirmationResponseTokenTest {
     @Test
     void whenCreatedMoreThen5MinutesAgo_ThenReturnFalse() {
-        ConfirmationToken confirmationToken = new ConfirmationToken("username");
-        confirmationToken.setCreationTime(LocalDateTime.now().minusMinutes(10));
-        assertFalse(confirmationToken.isTokenValid());
+        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
+        accountConfirmationToken.setCreationTime(LocalDateTime.now().minusMinutes(10));
+        assertFalse(accountConfirmationToken.isTokenValid());
     }
 
     @Test
     void whenCreatedLessThen5MinutesAgo_ThenReturnFalse() {
-        ConfirmationToken confirmationToken = new ConfirmationToken("username");
-        assertTrue(confirmationToken.isTokenValid());
+        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
+        assertTrue(accountConfirmationToken.isTokenValid());
     }
 
     @Test
     void whenTokenAlreadyUsed_ThenReturnFalse() {
-        ConfirmationToken confirmationToken = new ConfirmationToken("username");
-        confirmationToken.setIsEnabled(false);
-        assertFalse(confirmationToken.isTokenValid());
+        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
+        accountConfirmationToken.setIsEnabled(false);
+        assertFalse(accountConfirmationToken.isTokenValid());
     }
 
 }

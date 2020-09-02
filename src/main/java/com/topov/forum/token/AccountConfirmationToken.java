@@ -15,11 +15,11 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ConfirmationToken extends Token {
+public class AccountConfirmationToken extends Token {
     private static final int DEFAULT_LIFE_TIME_MINUTES = 5;
     private String username;
 
-    public ConfirmationToken(String forUser) {
+    public AccountConfirmationToken(String forUser) {
         this.creationTime = LocalDateTime.now();
         this.tokenValue = UUID.randomUUID().toString();
         this.isEnabled = true;

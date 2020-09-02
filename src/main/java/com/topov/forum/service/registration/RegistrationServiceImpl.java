@@ -5,7 +5,6 @@ import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
-import com.topov.forum.service.token.ConfirmationTokenService;
 import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.Token;
