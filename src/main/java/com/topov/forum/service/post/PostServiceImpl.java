@@ -1,11 +1,8 @@
 package com.topov.forum.service.post;
 
-import com.topov.forum.dto.PostDto;
-import com.topov.forum.dto.ShortPostDto;
+import com.topov.forum.dto.model.PostDto;
+import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
-import com.topov.forum.dto.response.post.PostCreateResponse;
-import com.topov.forum.dto.response.post.PostDeleteResponse;
-import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
@@ -73,7 +70,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
+    public void createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
             final Post newPost = new Post();
@@ -87,7 +84,7 @@ public class PostServiceImpl implements PostService {
 
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
-            return new PostCreateResponse(postDto);
+//            return new PostCreateResult(postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
@@ -97,7 +94,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
-    public PostEditResponse editPost(PostEditData postEditData) {
+    public void editPost(PostEditData postEditData) {
         log.debug("Editing post: {}", postEditData);
         try {
             final Post post = postRepository.findById(postEditData.getPostId())
@@ -106,7 +103,7 @@ public class PostServiceImpl implements PostService {
             post.setTitle(postEditData.getNewTitle());
             post.setText(postEditData.getText());
             final PostDto postDto = postMapper.toDto(post);
-            return new PostEditResponse(postDto);
+//            return new PostEditResult(postDto);
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -118,14 +115,14 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
-    public PostDeleteResponse deletePost(Long postId) {
+    public void deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
 
         final Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         postRepository.delete(post);
-        return PostDeleteResponse.deleted();
+//        return PostDeleteResult.deleted();
     }
 
     @Override

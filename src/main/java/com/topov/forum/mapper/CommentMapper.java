@@ -1,6 +1,6 @@
 package com.topov.forum.mapper;
 
-import com.topov.forum.dto.CommentDto;
+import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.model.Comment;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;

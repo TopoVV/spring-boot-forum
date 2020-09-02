@@ -1,8 +1,8 @@
 package com.topov.forum.mapper;
 
-import com.topov.forum.dto.CommentDto;
-import com.topov.forum.dto.PostDto;
-import com.topov.forum.dto.ShortPostDto;
+import com.topov.forum.dto.model.CommentDto;
+import com.topov.forum.dto.model.PostDto;
+import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.Post;
 import org.modelmapper.Converter;

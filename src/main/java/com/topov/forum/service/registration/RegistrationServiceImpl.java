@@ -2,15 +2,12 @@ package com.topov.forum.service.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.registration.AccountConfirmation;
-import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.email.Mail;
 import com.topov.forum.email.MailSender;
 import com.topov.forum.exception.RegistrationException;
 import com.topov.forum.service.token.ConfirmationTokenService;
 import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
-import com.topov.forum.token.ConfirmationToken;
 import com.topov.forum.token.Token;
 import com.topov.forum.validation.registration.RegistrationValidator;
 import lombok.extern.log4j.Log4j2;
@@ -42,13 +39,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Transactional
-    public RegistrationResponse registerRegularUser(RegistrationRequest registrationRequest) {
+    public void registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final Mail mail = createConfirmationMail(registrationRequest);
             userService.createRegularUser(registrationRequest);
             mailSender.sendMail(mail);
-            return RegistrationResponse.regularUserRegistrationSuccess(mail.getRecipient());
+//            return RegistrationResult.regularUserRegistrationSuccess(mail.getRecipient());
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
             throw new RegistrationException("Cannot register the user. Failed to send the account confirmation mail", e);
@@ -81,38 +78,15 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     @Transactional
-    public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
+    public void registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
             superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
             userService.createSuperuser(registrationRequest);
-            return RegistrationResponse.superuserRegistrationSuccess();
+//            return RegistrationResult.superuserRegistrationSuccess();
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);
         }
-    }
-
-    @Override
-    @Transactional
-    public AccountConfirmation confirmAccount(String token) {
-        log.debug("Confirmation of the account");
-        try {
-            return confirmationTokenService.getAccountConfirmationToken(token)
-                .map(this::doConfirmation)
-                .orElse(AccountConfirmation.invalidToken());
-        } catch (RuntimeException e) {
-            log.error("Error during the account confirmation", e);
-            throw new RegistrationException(String.format("Account confirmation failed! %s", e.getMessage()), e);
-        }
-    }
-
-    private AccountConfirmation doConfirmation(ConfirmationToken token) {
-        if(token.isTokenValid()) {
-            userService.enableUser(token.getUsername());
-            confirmationTokenService.revokeConfirmationToken(token.getTokenValue());
-            return AccountConfirmation.success();
-        }
-        return AccountConfirmation.invalidToken();
     }
 }

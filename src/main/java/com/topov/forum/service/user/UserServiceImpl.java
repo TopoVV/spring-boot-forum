@@ -5,7 +5,6 @@ import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Role;
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.security.AuthenticationService;
-import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
-import static com.topov.forum.model.Role.*;
+import static com.topov.forum.model.Role.Roles;
 
 
 @Log4j2

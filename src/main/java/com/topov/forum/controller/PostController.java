@@ -1,13 +1,9 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.PostDto;
-import com.topov.forum.dto.ShortPostDto;
+import com.topov.forum.dto.model.PostDto;
+import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.dto.response.OperationResponse;
-import com.topov.forum.dto.response.post.PostCreateResponse;
-import com.topov.forum.dto.response.post.PostDeleteResponse;
-import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.validation.post.PostValidator;
@@ -21,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @Log4j2
 @RestController
@@ -54,40 +49,34 @@ public class PostController {
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+    public void createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
         postValidator.validatePostCreationRequest(postCreateRequest);
 
-        final PostCreateResponse response = postService.createPost(postCreateRequest);
-        final URI location = buildCreatedPostLocation(response);
-        return ResponseEntity.created(location).body(response);
+//        final URI location = buildCreatedPostLocation(response);
     }
 
-    private URI buildCreatedPostLocation(PostCreateResponse postCreateResponse) {
-        final String location = String.format(POST_URI_TEMPLATE, postCreateResponse.getPostDto().getPostId());
-        return URI.create(location);
-    }
+//    private URI buildCreatedPostLocation(PostCreateResult postCreateResponse) {
+//        final String location = String.format(POST_URI_TEMPLATE, postCreateResponse.getPostDto().getPostId());
+//        return URI.create(location);
+//    }
 
     @PutMapping(
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<OperationResponse> editPost(@Valid @RequestBody PostEditRequest postEditRequest,
-                                                      @PathVariable Long postId) {
+    public void editPost(@Valid @RequestBody PostEditRequest postEditRequest,
+                                                    @PathVariable Long postId) {
         log.debug("Handling (PUT) post modification request");
 
         postValidator.validatePostEditRequest(postEditRequest);
 
         final PostEditData postEditData = new PostEditData(postEditRequest, postId);
-        final PostEditResponse response = postService.editPost(postEditData);
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping(value = "/posts/{postId}")
-    public ResponseEntity<OperationResponse> deletePost(@PathVariable Long postId) {
+    public void deletePost(@PathVariable Long postId) {
         log.debug("Handling (DELETE) post removal request");
-        final PostDeleteResponse response = postService.deletePost(postId);
-        return ResponseEntity.ok(response);
     }
 }

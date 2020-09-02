@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AccountConfirmationTokenTest {
+class AccountConfirmationResponseTokenTest {
     @Test
     void whenCreatedMoreThen5MinutesAgo_ThenReturnFalse() {
         ConfirmationToken confirmationToken = new ConfirmationToken("username");

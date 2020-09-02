@@ -1,4 +1,4 @@
-package com.topov.forum.dto;
+package com.topov.forum.dto.model;
 
 import lombok.Data;
 

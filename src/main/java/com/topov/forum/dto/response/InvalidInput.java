@@ -1,7 +1,7 @@
 package com.topov.forum.dto.response;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.topov.forum.dto.OperationResult;
+import lombok.Getter;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -10,15 +10,11 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.*;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class InvalidInputResponse extends ExceptionalResponse {
-    private static final String INVALID_INPUT = "Invalid input";
+@Getter
+public class InvalidInput {
+    private final Map<String, List<String>> inputErrors;
 
-    private Map<String, List<String>> inputErrors;
-
-    public InvalidInputResponse(BindingResult bindingResult) {
-        super(INVALID_INPUT, "Please, prove proper data");
+    public InvalidInput(BindingResult bindingResult) {
         this.inputErrors = bindingResult.getFieldErrors()
             .stream()
             .collect(groupingBy(
@@ -26,5 +22,4 @@ public class InvalidInputResponse extends ExceptionalResponse {
                 mapping(FieldError::getDefaultMessage, toList())
             ));
     }
-
 }

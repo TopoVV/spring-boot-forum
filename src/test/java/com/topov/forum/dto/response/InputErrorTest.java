@@ -36,7 +36,7 @@ class ValidationErrorTest {
         final BindingResult bindingResultMock = mock(BindingResult.class);
         when(bindingResultMock.getFieldErrors()).thenReturn(List.of(fieldError1, fieldError2, fieldError3));
 
-        final InvalidInputResponse response = new InvalidInputResponse(bindingResultMock);
+        final InvalidInput response = new InvalidInput(bindingResultMock);
         final Map<String, List<String>> inputErrors = response.getInputErrors();
 
         assertEquals(2, inputErrors.get(field1).size());
