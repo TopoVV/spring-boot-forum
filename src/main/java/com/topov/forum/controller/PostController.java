@@ -48,10 +48,10 @@ public class PostController {
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PostCreateResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+    public ResponseEntity<PostCreateResponse<?>> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
-        final PostCreateResponse response = postService.createPost(postCreateRequest);
+        final PostCreateResponse<?> response = postService.createPost(postCreateRequest);
         return ResponseEntity.created(response.getLocation()).body(response);
     }
 
@@ -59,13 +59,11 @@ public class PostController {
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public void editPost(@Valid @RequestBody PostEditRequest postEditRequest,
-                                                    @PathVariable Long postId) {
+    public void editPost(@PathVariable Long postId, @Valid @RequestBody PostEditRequest postEditRequest) {
         log.debug("Handling (PUT) post modification request");
 
-        postValidator.validatePostEditRequest(postEditRequest);
+        postService.editPost(postId, postEditRequest);
 
-        final PostEditData postEditData = new PostEditData(postEditRequest, postId);
     }
 
     @DeleteMapping(value = "/posts/{postId}")

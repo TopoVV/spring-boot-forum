@@ -129,6 +129,8 @@ public class PostServiceImpl implements PostService {
     public void editPost(PostEditData postEditData) {
         log.debug("Editing post: {}", postEditData);
         try {
+            postValidator.validatePostEditRequest();
+
             final Post post = postRepository.findById(postEditData.getPostId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
