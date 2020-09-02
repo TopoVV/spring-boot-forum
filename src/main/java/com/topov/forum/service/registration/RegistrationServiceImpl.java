@@ -1,11 +1,13 @@
 package com.topov.forum.service.registration;
 
+import com.topov.forum.dto.OperationResult;
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
-import com.topov.forum.dto.response.registration.RegistrationResponse;
 import com.topov.forum.mail.MailSender;
 import com.topov.forum.exception.RegistrationException;
-import com.topov.forum.service.AccountConfirmationService;
+import com.topov.forum.service.AccountService;
 import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.dto.ValidationErrors;
@@ -23,43 +25,44 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final MailSender mailSender;
     private final RegistrationValidator registrationValidator;
     private final SuperuserTokenService superuserTokenService;
-    private final AccountConfirmationService accountConfirmationService;
+    private final AccountService accountService;
 
     public RegistrationServiceImpl(SuperuserTokenService superuserTokenService,
                                    UserService userService,
                                    MailSender mailSender,
                                    RegistrationValidator registrationValidator,
-                                   AccountConfirmationService accountConfirmationService) {
+                                   AccountService accountService) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.superuserTokenService = superuserTokenService;
         this.registrationValidator = registrationValidator;
-        this.accountConfirmationService = accountConfirmationService;
+        this.accountService = accountService;
     }
 
     @Transactional
-    public RegistrationResponse registerRegularUser(RegistrationRequest registrationRequest) {
+    public OperationResult registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final var validationResult = registrationValidator.validateRegularUserRegistration(registrationRequest);
             if (validationResult.isValid()) {
                 final ValidationErrors validationErrors = new ValidationErrors(validationResult.getValidationErrors());
-                return RegistrationResponse.builder()
-                    .code(HttpStatus.BAD_REQUEST)
+                return OperationResultFail.builder()
+                    .httpCode(HttpStatus.BAD_REQUEST)
                     .message("User registration failed")
                     .errors(validationErrors)
                     .build();
             }
 
             final var accountConfirmationToken =
-                accountConfirmationService.createAccountConfirmationToken(registrationRequest.getUsername());
+                accountService.createAccountConfirmationToken(registrationRequest.getUsername());
 
             userService.createRegularUser(registrationRequest);
             mailSender.sendAccountConfirmationMail(registrationRequest, accountConfirmationToken.getTokenValue());
 
-            return RegistrationResponse.builder()
-                .code(HttpStatus.OK)
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.OK)
                 .message("You've been successfully registered")
+                .data("To confirm your account follow the link, which was sent to your email")
                 .build();
 
         } catch (MailException e) {
@@ -73,14 +76,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     @Transactional
-    public RegistrationResponse registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
+    public OperationResult registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
             final var validationResult = registrationValidator.validateSuperuserRegistration(registrationRequest);
             if (validationResult.isValid()) {
                 final ValidationErrors validationErrors = new ValidationErrors(validationResult.getValidationErrors());
-                return RegistrationResponse.builder()
-                    .code(HttpStatus.BAD_REQUEST)
+                return OperationResultFail.builder()
+                    .httpCode(HttpStatus.BAD_REQUEST)
                     .message("Superuser registration failed")
                     .errors(validationErrors)
                     .build();
@@ -89,9 +92,10 @@ public class RegistrationServiceImpl implements RegistrationService {
             superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());
             userService.createSuperuser(registrationRequest);
 
-            return RegistrationResponse.builder()
-                .code(HttpStatus.OK)
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.OK)
                 .message("You've been successfully registered")
+                .data("Welcome")
                 .build();
 
         } catch(RuntimeException e) {

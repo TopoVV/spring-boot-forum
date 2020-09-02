@@ -1,5 +1,6 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.dto.OperationResult;
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.service.data.CommentCreateData;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
     Page<CommentDto> getAllComments(Long postId, Pageable pageable);
-    void createComment(CommentCreateData createCommentRequest);
-    void editComment(CommentEditData editCommentRequest);
-    void deleteComment(CommentDeleteRequest commentId);
+    OperationResult createComment(CommentCreateData createCommentRequest);
+    OperationResult editComment(CommentEditData editCommentRequest);
+    OperationResult deleteComment(CommentDeleteRequest commentId);
 }

@@ -1,5 +1,8 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.dto.OperationResult;
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.exception.CommentException;
@@ -57,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void createComment(CommentCreateData commentCreateData) {
+    public OperationResult createComment(CommentCreateData commentCreateData) {
         log.debug("Creating comment: {}", commentCreateData);
         try {
             final Comment newComment = new Comment();
@@ -74,7 +77,11 @@ public class CommentServiceImpl implements CommentService {
 
             final Comment savedComment = commentRepository.save(newComment);
             final CommentDto commentDto = commentMapper.toDto(savedComment);
-//            return new CommentCreateResult(commentDto);
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.CREATED)
+                .message("Comment created")
+                .data(commentDto)
+                .build();
         } catch (RuntimeException e) {
             log.error("Error creating comment", e);
             throw new CommentException("Cannot create comment", e);
@@ -84,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.targetCommentId) or hasRole('SUPERUSER')")
-    public void editComment(CommentEditData commentEditData) {
+    public OperationResult editComment(CommentEditData commentEditData) {
         log.debug("Editing comment: {}", commentEditData);
         try {
             final Long targetCommentId = commentEditData.getTargetCommentId();
@@ -94,7 +101,11 @@ public class CommentServiceImpl implements CommentService {
 
             comment.setText(commentEditData.getNewText());
             final CommentDto commentDto = commentMapper.toDto(comment);
-//            return new CommentEditResult(commentDto);
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.OK)
+                .message("Comment has been edited")
+                .data(commentDto)
+                .build();
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -106,7 +117,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentDeleteRequest) or hasRole('SUPERUSER')")
-    public void deleteComment(CommentDeleteRequest commentDeleteRequest) {
+    public OperationResult deleteComment(CommentDeleteRequest commentDeleteRequest) {
         log.debug("Deleting comment with id={}", commentDeleteRequest);
         final Long targetCommentId = commentDeleteRequest.getTargetCommentId();
 
@@ -114,6 +125,9 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         commentRepository.delete(comment);
-//        return CommentDeleteResult.deleted();
+        return OperationResultSuccess.builder()
+            .httpCode(HttpStatus.OK)
+            .message("Comment has been deleted")
+            .build();
     }
 }

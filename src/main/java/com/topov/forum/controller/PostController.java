@@ -1,11 +1,10 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.dto.OperationResult;
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.dto.response.post.PostCreateResponse;
-import com.topov.forum.service.data.PostEditData;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @Log4j2
 @RestController
@@ -48,22 +46,22 @@ public class PostController {
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<PostCreateResponse<?>> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+    public ResponseEntity<OperationResult> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
 
-        final PostCreateResponse<?> response = postService.createPost(postCreateRequest);
-        return ResponseEntity.created(response.getLocation()).body(response);
+        final OperationResult response = postService.createPost(postCreateRequest);
+        return ResponseEntity.status(response.getHttpCode()).body(response);
     }
 
     @PutMapping(
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public void editPost(@PathVariable Long postId, @Valid @RequestBody PostEditRequest postEditRequest) {
+    public ResponseEntity<OperationResult> editPost(@PathVariable Long postId, @Valid @RequestBody PostEditRequest postEditRequest) {
         log.debug("Handling (PUT) post modification request");
 
-        postService.editPost(postId, postEditRequest);
-
+        final OperationResult response = postService.editPost(postId, postEditRequest);
+        return ResponseEntity.status(response.getHttpCode()).body(response);
     }
 
     @DeleteMapping(value = "/posts/{postId}")

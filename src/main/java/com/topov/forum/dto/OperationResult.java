@@ -11,12 +11,8 @@ public abstract class OperationResult {
     private final Integer httpCode;
     private final String message;
 
-    @JsonInclude(value = NON_NULL)
-    private final Errors errors;
-
-    protected OperationResult(HttpStatus httpCode, String message, Errors errors) {
+    protected OperationResult(HttpStatus httpCode, String message) {
         this.httpCode = httpCode.value();
         this.message = message;
-        this.errors = errors;
     }
 }

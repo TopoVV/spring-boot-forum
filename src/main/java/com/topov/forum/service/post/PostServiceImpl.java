@@ -1,9 +1,12 @@
 package com.topov.forum.service.post;
 
+import com.topov.forum.dto.OperationResult;
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
-import com.topov.forum.dto.response.post.PostCreateResponse;
+import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
@@ -79,14 +82,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostCreateResponse<?> createPost(PostCreateRequest postCreateRequest) {
+    public OperationResult createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
 
             final ValidationResult validationResult = postValidator.validatePostCreationRequest(postCreateRequest);
             if (validationResult.isValid()) {
                 final ValidationErrors validationErrors = new ValidationErrors(validationResult.getValidationErrors());
-                return PostCreateResponse.builder()
+                return OperationResultFail.builder()
                     .httpCode(HttpStatus.BAD_REQUEST)
                     .errors(validationErrors)
                     .message("Post cannot be created")
@@ -105,10 +108,9 @@ public class PostServiceImpl implements PostService {
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
             final URI location = buildCreatedPostLocation(postDto.getPostId());
-            return PostCreateResponse.builder()
+            return OperationResultSuccess.builder()
                 .httpCode(HttpStatus.CREATED)
                 .data(postDto)
-                .location(location)
                 .message("A post has been created")
                 .build();
 
@@ -126,18 +128,21 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
-    public void editPost(PostEditData postEditData) {
-        log.debug("Editing post: {}", postEditData);
+    public OperationResult editPost(Long postId, PostEditRequest postEditRequest) {
+        log.debug("Editing post: {}", postEditRequest);
         try {
-            postValidator.validatePostEditRequest();
 
-            final Post post = postRepository.findById(postEditData.getPostId())
+            final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
-            post.setTitle(postEditData.getNewTitle());
-            post.setText(postEditData.getText());
+            post.setTitle(postEditRequest.getNewTitle());
+            post.setText(postEditRequest.getText());
             final PostDto postDto = postMapper.toDto(post);
-//            return new PostEditResult(postDto);
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.OK)
+                .data(postDto)
+                .message("Post has been successfully edited")
+                .build();
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -149,14 +154,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
-    public void deletePost(Long postId) {
+    public OperationResult deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
 
         final Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         postRepository.delete(post);
-//        return PostDeleteResult.deleted();
+        return OperationResultSuccess.builder()
+            .httpCode(HttpStatus.OK)
+            .message("Post deleted")
+            .build();
     }
 
     @Override

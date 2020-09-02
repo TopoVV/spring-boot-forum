@@ -1,7 +1,8 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.SimpleError;
-import com.topov.forum.dto.response.account_confirmation.AccountConfirmationResponse;
+import com.topov.forum.dto.OperationResult;
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
@@ -15,13 +16,13 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class AccountConfirmationServiceImpl implements AccountConfirmationService {
+public class AccountServiceImpl implements AccountService {
     private final AccountConfirmationTokenRepository accountConfirmationTokenRepository;
     private final UserService userService;
 
     @Autowired
-    public AccountConfirmationServiceImpl(AccountConfirmationTokenRepository accountConfirmationTokenRepository,
-                                          UserService userService) {
+    public AccountServiceImpl(AccountConfirmationTokenRepository accountConfirmationTokenRepository,
+                              UserService userService) {
         this.accountConfirmationTokenRepository = accountConfirmationTokenRepository;
         this.userService = userService;
     }
@@ -35,7 +36,7 @@ public class AccountConfirmationServiceImpl implements AccountConfirmationServic
 
     @Override
     @Transactional
-    public AccountConfirmationResponse confirmAccount(String tokenValue) {
+    public OperationResult confirmAccount(String tokenValue) {
         log.debug("Confirmation of the account");
         final Optional<AccountConfirmationToken> optionalToken =
             accountConfirmationTokenRepository.findTokenByTokenValue(tokenValue);
@@ -46,17 +47,18 @@ public class AccountConfirmationServiceImpl implements AccountConfirmationServic
             if (accountConfirmationToken.isTokenValid()) {
                 userService.enableUser(accountConfirmationToken.getUsername());
                 accountConfirmationToken.revoke();
-                return AccountConfirmationResponse.builder()
-                    .code(HttpStatus.OK)
+                return OperationResultSuccess.builder()
+                    .httpCode(HttpStatus.OK)
+                    .data("Welcome")
                     .message("Account confirmed")
                     .build();
             }
         }
 
-        return AccountConfirmationResponse.builder()
-            .code(HttpStatus.BAD_REQUEST)
+        return OperationResultFail.builder()
+            .httpCode(HttpStatus.BAD_REQUEST)
             .message("Account is not confirmed")
-            .errors(new SimpleError("Invalid token"))
+            .errors("Provided token is invalid")
             .build();
     }
 }
