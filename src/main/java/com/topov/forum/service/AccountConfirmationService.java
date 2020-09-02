@@ -1,6 +1,6 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.AccountConfirmationResponse;
+import com.topov.forum.dto.response.account_confirmation.AccountConfirmationResponse;
 import com.topov.forum.token.AccountConfirmationToken;
 import org.springframework.transaction.annotation.Transactional;
 

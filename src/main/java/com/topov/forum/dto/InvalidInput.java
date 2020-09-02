@@ -1,4 +1,4 @@
-package com.topov.forum.dto.response;
+package com.topov.forum.dto;
 
 import com.topov.forum.dto.OperationResult;
 import lombok.Getter;

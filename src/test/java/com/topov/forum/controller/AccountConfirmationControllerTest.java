@@ -1,5 +1,6 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
 import org.junit.jupiter.api.Test;
@@ -22,18 +23,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @MockBeans({
-    @MockBean(ConfirmationTokenService.class),
+    @MockBean(AccountConfirmationTokenRepository.class),
     @MockBean(UserService.class)
 })
 class AccountConfirmationControllerTest {
-    private final ConfirmationTokenService confirmationService;
-    private final UserService userService;
+    private final AccountConfirmationTokenRepository confirmationTokenRepository;
     private final MockMvc mvc;
 
     @Autowired
-    AccountConfirmationControllerTest(ConfirmationTokenService confirmationService, UserService userService, MockMvc mvc) {
-        this.confirmationService = confirmationService;
-        this.userService = userService;
+    AccountConfirmationControllerTest(AccountConfirmationTokenRepository confirmationTokenRepository, MockMvc mvc) {
+        this.confirmationTokenRepository = confirmationTokenRepository;
         this.mvc = mvc;
     }
 
@@ -41,7 +40,7 @@ class AccountConfirmationControllerTest {
     public void confirmAccountGet() throws Exception {
         final AccountConfirmationToken mockToken = Mockito.mock(AccountConfirmationToken.class);
         when(mockToken.isTokenValid()).thenReturn(false);
-        when(confirmationService.getAccountConfirmationToken("1234456")).thenReturn(Optional.of(mockToken));
+        when(confirmationTokenRepository.findTokenByTokenValue("1234456")).thenReturn(Optional.of(mockToken));
 
         final MvcResult mvcResult = mvc.perform(get("/registration/1234456"))
             .andDo(print())

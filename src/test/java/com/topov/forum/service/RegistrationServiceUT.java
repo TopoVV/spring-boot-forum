@@ -26,23 +26,20 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockBeans({ @MockBean(UserServiceImpl.class), @MockBean(ConfirmationTokenServiceImpl.class) })
+@MockBeans({ @MockBean(UserServiceImpl.class)})
 @SpyBeans({ @SpyBean(MailSenderImpl.class) })
 class RegistrationServiceUT {
     private final RegistrationService registrationService;
     private final MailSender mailSender;
     private final UserService userService;
-    private final ConfirmationTokenService confirmationTokenService;
 
     @Autowired
     RegistrationServiceUT(RegistrationService registrationService,
                           MailSender mailSender,
-                          UserService userService,
-                          ConfirmationTokenService confirmationTokenService) {
+                          UserService userService) {
         this.registrationService = registrationService;
         this.mailSender = mailSender;
         this.userService = userService;
-        this.confirmationTokenService = confirmationTokenService;
     }
 
     @Test void whenUserServiceThrows_ThenRethrowException() {
@@ -66,7 +63,6 @@ class RegistrationServiceUT {
         final AccountConfirmationToken accountConfirmationTokenMock = mock(AccountConfirmationToken.class);
         when(accountConfirmationTokenMock.getTokenValue()).thenReturn("123456789");
 
-        when(confirmationTokenService.createAccountConfirmationToken(any())).thenReturn(accountConfirmationTokenMock);
 
         registrationService.registerRegularUser(registrationRequestMock);
 
@@ -83,7 +79,6 @@ class RegistrationServiceUT {
         when(accountConfirmationTokenMock.isTokenValid()).thenReturn(true);
         when(accountConfirmationTokenMock.getUsername()).thenReturn("username");
 
-        when(confirmationTokenService.getAccountConfirmationToken("token")).thenReturn(Optional.of(accountConfirmationTokenMock));
         doThrow(RuntimeException.class).when(userService).enableUser("username");
 
 //        assertThrows(RegistrationException.class, () -> registrationService.confirmAccount("token"));

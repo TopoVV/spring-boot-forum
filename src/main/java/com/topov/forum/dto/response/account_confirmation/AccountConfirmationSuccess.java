@@ -1,4 +1,4 @@
-package com.topov.forum.dto;
+package com.topov.forum.dto.response.account_confirmation;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

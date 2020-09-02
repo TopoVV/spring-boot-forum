@@ -1,5 +1,6 @@
 package com.topov.forum.dto.response;
 
+import com.topov.forum.dto.InvalidInput;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;

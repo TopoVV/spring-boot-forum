@@ -14,4 +14,9 @@ public abstract class OperationResult {
         this.status = status;
         this.message = message;
     }
+
+    public enum OperationStatus {
+        SUCCESS,
+        FAIL
+    }
 }

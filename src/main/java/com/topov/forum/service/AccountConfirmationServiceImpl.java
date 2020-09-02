@@ -1,8 +1,8 @@
 package com.topov.forum.service;
 
-import com.topov.forum.dto.AccountConfirmationFail;
-import com.topov.forum.dto.AccountConfirmationResponse;
-import com.topov.forum.dto.AccountConfirmationSuccess;
+import com.topov.forum.dto.response.account_confirmation.AccountConfirmationFail;
+import com.topov.forum.dto.response.account_confirmation.AccountConfirmationResponse;
+import com.topov.forum.dto.response.account_confirmation.AccountConfirmationSuccess;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;

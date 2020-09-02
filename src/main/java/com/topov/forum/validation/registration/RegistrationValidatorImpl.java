@@ -1,7 +1,9 @@
 package com.topov.forum.validation.registration;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
+import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.exception.ValidationException;
+import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.validation.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,26 +21,20 @@ public class RegistrationValidatorImpl implements RegistrationValidator {
     }
 
     @Override
-    public void validateToken(String token) {
-        final ValidationResult validated = superuserTokenValidator.validate(token);
+    public ValidationResult validateSuperuserRegistration(SuperuserRegistrationRequest registrationRequest) {
+        final ValidationResult validated = superuserTokenValidator.validate(registrationRequest.getToken());
         if (!validated.isValid()) {
-            throw new ValidationException(
-                "Registration failed",
-                "Provided superuser token is not accepted",
-                validated.getValidationErrors()
-            );
+            return validated;
         }
+        return validateRegistrationData(registrationRequest);
     }
 
     @Override
-    public void validateRegistrationData(RegistrationRequest registrationRequest) {
-        final ValidationResult validated = registrationDataValidator.validate(registrationRequest);
-        if (!validated.isValid()) {
-            throw new ValidationException(
-                "Registration failed",
-                "Provided account data is not valid",
-                validated.getValidationErrors()
-            );
-        }
+    public ValidationResult validateRegularUserRegistration(RegistrationRequest registrationRequest) {
+        return validateRegistrationData(registrationRequest);
+    }
+
+    private ValidationResult validateRegistrationData(RegistrationRequest registrationRequest) {
+        return registrationDataValidator.validate(registrationRequest);
     }
 }
