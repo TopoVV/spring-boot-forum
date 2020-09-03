@@ -1,6 +1,5 @@
 package com.topov.forum.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

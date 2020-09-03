@@ -1,11 +1,9 @@
 package com.topov.forum.controller;
 
 
-import com.topov.forum.dto.response.AccountConfirmationResponse;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.service.account.AccountServiceImpl;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

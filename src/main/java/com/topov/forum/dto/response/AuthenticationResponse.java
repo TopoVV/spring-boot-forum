@@ -1,7 +1,5 @@
 package com.topov.forum.dto.response;
 
-import com.topov.forum.security.jwt.JwtToken;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

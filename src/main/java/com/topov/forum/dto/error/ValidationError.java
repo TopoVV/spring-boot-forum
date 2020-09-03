@@ -1,10 +1,7 @@
 package com.topov.forum.dto.error;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class ValidationError extends Error {

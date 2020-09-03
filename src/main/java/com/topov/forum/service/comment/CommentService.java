@@ -1,22 +1,26 @@
 package com.topov.forum.service.comment;
 
-<<<<<<< HEAD
-import com.topov.forum.dto.result.OperationResult;
-=======
-import com.topov.forum.dto.OperationResult;
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.service.data.CommentCreateData;
 import com.topov.forum.service.data.CommentEditData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface CommentService {
+    @Transactional
     Page<CommentDto> getAllComments(Long postId, Pageable pageable);
-    OperationResult createComment(CommentCreateData createCommentRequest);
-    OperationResult editComment(CommentEditData editCommentRequest);
-    OperationResult deleteComment(CommentDeleteRequest commentId);
+
+    @Transactional
+    void createComment(CommentCreateData commentCreateData);
+
+    @Transactional
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentEditData.targetCommentId) or hasRole('SUPERUSER')")
+    void editComment(CommentEditData commentEditData);
+
+    @Transactional
+    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentDeleteRequest) or hasRole('SUPERUSER')")
+    void deleteComment(CommentDeleteRequest commentDeleteRequest);
 }

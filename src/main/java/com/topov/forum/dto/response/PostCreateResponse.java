@@ -1,7 +1,6 @@
 package com.topov.forum.dto.response;
 
 import com.topov.forum.dto.model.PostDto;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

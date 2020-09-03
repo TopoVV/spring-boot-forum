@@ -4,7 +4,6 @@ import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.response.PostDeleteResponse;
 import com.topov.forum.dto.result.OperationResult;
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

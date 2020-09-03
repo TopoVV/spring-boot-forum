@@ -1,7 +1,6 @@
 package com.topov.forum.dto.response;
 
 import com.topov.forum.dto.error.Error;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;

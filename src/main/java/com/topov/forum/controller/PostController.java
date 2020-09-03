@@ -1,14 +1,12 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.response.ApiResponse;
-import com.topov.forum.dto.result.OperationResult;
-
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
+import com.topov.forum.dto.response.ApiResponse;
+import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.service.post.PostService;
-import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

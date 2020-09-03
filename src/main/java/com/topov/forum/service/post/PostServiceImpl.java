@@ -1,23 +1,14 @@
 package com.topov.forum.service.post;
 
-<<<<<<< HEAD
 import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.result.OperationResult;
-=======
-import com.topov.forum.dto.OperationResult;
-import com.topov.forum.dto.OperationResultFail;
-import com.topov.forum.dto.OperationResultSuccess;
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
-<<<<<<< HEAD
+import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.dto.result.post.PostCreateResult;
 import com.topov.forum.dto.result.post.PostDeleteResult;
 import com.topov.forum.dto.result.post.PostEditResult;
-=======
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
@@ -25,15 +16,8 @@ import com.topov.forum.model.Post;
 import com.topov.forum.model.PostVisit;
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
-<<<<<<< HEAD
+import com.topov.forum.service.user.UserService;
 import com.topov.forum.service.visit.VisitService;
-import com.topov.forum.service.user.UserService;
-=======
-import com.topov.forum.service.VisitService;
-import com.topov.forum.service.data.PostEditData;
-import com.topov.forum.service.user.UserService;
-import com.topov.forum.dto.ValidationErrors;
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.post.PostValidator;
 import lombok.extern.log4j.Log4j2;
@@ -48,10 +32,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
 import java.net.URI;
-<<<<<<< HEAD
 import java.util.List;
-=======
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
+
 
 
 @Log4j2
@@ -105,22 +87,10 @@ public class PostServiceImpl implements PostService {
     public OperationResult createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
-<<<<<<< HEAD
             final ValidationResult validationResult = postValidator.validatePostCreationRequest(postCreateRequest);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostCreateResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be created");
-=======
-
-            final ValidationResult validationResult = postValidator.validatePostCreationRequest(postCreateRequest);
-            if (validationResult.isValid()) {
-                final ValidationErrors validationErrors = new ValidationErrors(validationResult.getValidationErrors());
-                return OperationResultFail.builder()
-                    .httpCode(HttpStatus.BAD_REQUEST)
-                    .errors(validationErrors)
-                    .message("Post cannot be created")
-                    .build();
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
             }
 
             final Post newPost = new Post();
@@ -135,16 +105,7 @@ public class PostServiceImpl implements PostService {
             final Post savedPost = postRepository.save(newPost);
             final PostDto postDto = postMapper.toDto(savedPost);
             final URI location = buildCreatedPostLocation(postDto.getPostId());
-<<<<<<< HEAD
             return new PostCreateResult(HttpStatus.CREATED, "The post has been saved", location, postDto);
-=======
-            return OperationResultSuccess.builder()
-                .httpCode(HttpStatus.CREATED)
-                .data(postDto)
-                .message("A post has been created")
-                .build();
-
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
             throw new PostException("Cannot create post", e);
@@ -162,14 +123,12 @@ public class PostServiceImpl implements PostService {
     public OperationResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {
-<<<<<<< HEAD
             final ValidationResult validationResult = postValidator.validatePostEditRequest(postEditRequest);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");
             }
-=======
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
+
 
             final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
@@ -177,15 +136,8 @@ public class PostServiceImpl implements PostService {
             post.setTitle(postEditRequest.getNewTitle());
             post.setText(postEditRequest.getText());
             final PostDto postDto = postMapper.toDto(post);
-<<<<<<< HEAD
             return new PostEditResult(HttpStatus.OK, "Post has been successfully edited", postDto);
-=======
-            return OperationResultSuccess.builder()
-                .httpCode(HttpStatus.OK)
-                .data(postDto)
-                .message("Post has been successfully edited")
-                .build();
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
+
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -199,23 +151,14 @@ public class PostServiceImpl implements PostService {
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public OperationResult deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
-<<<<<<< HEAD
-=======
 
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
         final Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         postRepository.delete(post);
-<<<<<<< HEAD
+
 
         return new PostDeleteResult(HttpStatus.OK, "Post deleted");
-=======
-        return OperationResultSuccess.builder()
-            .httpCode(HttpStatus.OK)
-            .message("Post deleted")
-            .build();
->>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
     }
 
     @Override

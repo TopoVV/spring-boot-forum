@@ -1,8 +1,8 @@
 package com.topov.forum.service.account;
 
 import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.result.account.AccountConfirmationResult;
 import com.topov.forum.dto.result.OperationResult;
+import com.topov.forum.dto.result.account.AccountConfirmationResult;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Log4j2
