@@ -1,9 +1,12 @@
 package com.topov.forum.controller;
 
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.dto.request.authentication.LoginRequest;
 import com.topov.forum.dto.result.authentication.AuthenticationResult;
+
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.security.jwt.JwtToken;
 import lombok.extern.log4j.Log4j2;

@@ -1,6 +1,10 @@
 package com.topov.forum.service.comment;
 
+<<<<<<< HEAD
 import com.topov.forum.dto.result.OperationResult;
+=======
+import com.topov.forum.dto.OperationResult;
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.service.data.CommentCreateData;

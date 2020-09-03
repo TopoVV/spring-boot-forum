@@ -1,6 +1,12 @@
 package com.topov.forum.service.comment;
 
+<<<<<<< HEAD
 import com.topov.forum.dto.result.OperationResult;
+=======
+import com.topov.forum.dto.OperationResult;
+import com.topov.forum.dto.OperationResultFail;
+import com.topov.forum.dto.OperationResultSuccess;
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.exception.CommentException;
@@ -75,12 +81,20 @@ public class CommentServiceImpl implements CommentService {
 
             final Comment savedComment = commentRepository.save(newComment);
             final CommentDto commentDto = commentMapper.toDto(savedComment);
+<<<<<<< HEAD
             return null;
 //            return ResponseSuccess.builder()
 //                .httpCode(HttpStatus.CREATED)
 //                .message("Comment created")
 //                .data(commentDto)
 //                .build();
+=======
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.CREATED)
+                .message("Comment created")
+                .data(commentDto)
+                .build();
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
         } catch (RuntimeException e) {
             log.error("Error creating comment", e);
             throw new CommentException("Cannot create comment", e);
@@ -100,12 +114,20 @@ public class CommentServiceImpl implements CommentService {
 
             comment.setText(commentEditData.getNewText());
             final CommentDto commentDto = commentMapper.toDto(comment);
+<<<<<<< HEAD
             return null;
 //            return ResponseSuccess.builder()
 //                .httpCode(HttpStatus.OK)
 //                .message("Comment has been edited")
 //                .data(commentDto)
 //                .build();
+=======
+            return OperationResultSuccess.builder()
+                .httpCode(HttpStatus.OK)
+                .message("Comment has been edited")
+                .data(commentDto)
+                .build();
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -125,10 +147,17 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         commentRepository.delete(comment);
+<<<<<<< HEAD
         return null;
 //        return ResponseSuccess.builder()
 //            .httpCode(HttpStatus.OK)
 //            .message("Comment has been deleted")
 //            .build();
+=======
+        return OperationResultSuccess.builder()
+            .httpCode(HttpStatus.OK)
+            .message("Comment has been deleted")
+            .build();
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
     }
 }

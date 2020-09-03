@@ -22,7 +22,15 @@ public class PostValidator {
         return postCreateValidator.validate(request);
     }
 
+<<<<<<< HEAD
     public ValidationResult validatePostEditRequest(PostEditRequest request) {
         return postEditValidator.validate(request);
+=======
+    public void validatePostEditRequest(PostEditRequest request) {
+        final ValidationResult validated = postEditValidator.validate(request);
+        if (validated.isValid()) {
+            throw new ValidationException("Post modification failed", "", validated.getValidationErrors());
+        }
+>>>>>>> 282c7c2d0776712c32790097da1739769a0824f5
     }
 }
