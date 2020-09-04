@@ -4,8 +4,8 @@ import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.validation.post.groups.PostCreationChecks;
-import com.topov.forum.validation.post.groups.PostModificationChecks;
+import com.topov.forum.validation.post.group.PostCreationChecks;
+import com.topov.forum.validation.post.group.PostModificationChecks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class PostValidator {
 
     public ValidationResult validate(PostEditRequest postEditRequest) {
         List<ValidationError> validationErrors = new ArrayList<>();
-        final Set<ConstraintViolation<PostEditRequest>> violations = validator.validate(postEditRequest, PostModificationChecks.class);
+        final var violations = validator.validate(postEditRequest, PostModificationChecks.class);
         for (final var violation : violations) {
             final String invalid = violation.getPropertyPath().toString();
             final String description = violation.getMessage();

@@ -1,7 +1,7 @@
-package com.topov.forum.dto.request.post;
+package com.topov.forum.validation.post.constraint;
 
-import com.topov.forum.validation.post.validators.UniqueTitleOnCreateConstraintValidator;
-import com.topov.forum.validation.post.validators.UniqueTitleOnEditConstraintValidator;
+import com.topov.forum.validation.post.validator.UniqueTitleOnCreateConstraintValidator;
+import com.topov.forum.validation.post.validator.UniqueTitleOnEditConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

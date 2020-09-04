@@ -16,6 +16,10 @@ public class RegistrationResult extends OperationResult {
         super(httpCode, errors, message);
     }
 
+    public RegistrationResult(HttpStatus httpCode, Error error, String message) {
+        super(httpCode, error, message);
+    }
+
     public RegistrationResult(HttpStatus httpCode, String message) {
         super(httpCode, message);
     }

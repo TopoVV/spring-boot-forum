@@ -25,14 +25,14 @@ import java.util.List;
 public class RegistrationServiceImpl implements RegistrationService {
     private final UserService userService;
     private final MailSender mailSender;
-    private final RegistrationValidator registrationValidator;
     private final SuperuserTokenService superuserTokenService;
+    private final RegistrationValidator registrationValidator;
     private final AccountService accountService;
 
     public RegistrationServiceImpl(SuperuserTokenService superuserTokenService,
+                                   RegistrationValidator registrationValidator,
                                    UserService userService,
                                    MailSender mailSender,
-                                   RegistrationValidator registrationValidator,
                                    AccountService accountService) {
         this.userService = userService;
         this.mailSender = mailSender;
@@ -45,7 +45,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public OperationResult registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
-            final var validationResult = registrationValidator.validateRegularUserRegistration(registrationRequest);
+            final var validationResult = registrationValidator.validate(registrationRequest);
             if (validationResult.containsErrors()) {
                 final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "User registration failed");
@@ -73,7 +73,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     public OperationResult registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-            final var validationResult = registrationValidator.validateSuperuserRegistration(registrationRequest);
+
+            if (!superuserTokenService.isSuperuserTokenValid(registrationRequest.getToken())) {
+                final Error error = new Error("Invalid token");
+                return new RegistrationResult(HttpStatus.BAD_REQUEST, error, "Superuser registration failed");
+            }
+
+            final var validationResult = registrationValidator.validate(registrationRequest);
             if (validationResult.containsErrors()) {
                 final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");

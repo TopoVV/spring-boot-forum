@@ -1,17 +1,13 @@
-package com.topov.forum.validation.post.validators;
+package com.topov.forum.validation.post.validator;
 
-import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.request.post.PostEditRequest;
-import com.topov.forum.dto.request.post.UniqueTitle;
+import com.topov.forum.validation.post.constraint.UniqueTitle;
 import com.topov.forum.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class UniqueTitleOnEditConstraintValidator implements ConstraintValidator<UniqueTitle, PostEditRequest> {

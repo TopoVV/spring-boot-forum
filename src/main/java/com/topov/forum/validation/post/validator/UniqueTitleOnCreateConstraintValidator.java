@@ -1,6 +1,6 @@
-package com.topov.forum.validation.post.validators;
+package com.topov.forum.validation.post.validator;
 
-import com.topov.forum.dto.request.post.UniqueTitle;
+import com.topov.forum.validation.post.constraint.UniqueTitle;
 import com.topov.forum.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
