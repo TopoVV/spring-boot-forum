@@ -2,11 +2,10 @@ package com.topov.forum.controller;
 
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
-import com.topov.forum.dto.request.comment.CommentDeleteRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
+import com.topov.forum.dto.response.ApiResponse;
+import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.service.comment.CommentService;
-import com.topov.forum.service.data.CommentCreateData;
-import com.topov.forum.service.data.CommentEditData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,23 +38,27 @@ public class CommentController {
         value = "/posts/{postId}/comments",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public void createComment(@Valid @RequestBody CommentCreateRequest commentCreateRequest,
-                                                         @PathVariable Long postId) {
+    public ResponseEntity<ApiResponse> createComment(@Valid @RequestBody CommentCreateRequest commentCreateRequest,
+                                                     @PathVariable Long postId) {
         log.debug("Handling (POST) comment creation request");
-        final CommentCreateData commentCreateData = new CommentCreateData(commentCreateRequest, postId);
+        final OperationResult result = commentService.createComment(postId, commentCreateRequest);
+        return result.createResponseEntity();
     }
 
     @PutMapping(
-        value = "/posts/{postId}/comments",
+        value = "/posts/{postId}/comments/{commentId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public void editComment(@Valid @RequestBody CommentEditRequest commentEditRequest,
-                                                       @PathVariable Long postId) {
+    public ResponseEntity<ApiResponse> editComment(@Valid @RequestBody CommentEditRequest commentEditRequest,
+                                                   @PathVariable Long commentId) {
         log.debug("Handling (PUT) comment edition request");
-        final CommentEditData commentEditData = new CommentEditData(commentEditRequest, postId);
+        final OperationResult result = commentService.editComment(commentId, commentEditRequest);
+        return result.createResponseEntity();
     }
 
-    @DeleteMapping(value = "/posts/{postId}/comments")
-    public void deleteComment(@RequestBody CommentDeleteRequest commentDeleteRequest) {
+    @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<ApiResponse> deleteComment(@PathVariable Long commentId) {
+        final OperationResult result = commentService.deleteComment(commentId);
+        return result.createResponseEntity();
     }
 }

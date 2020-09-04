@@ -119,7 +119,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    @PreAuthorize("@postServiceSecurity.checkOwnership(#postEditData.postId) or hasRole('SUPERUSER')")
+    @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public OperationResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {

@@ -2,6 +2,7 @@ package com.topov.forum.dto.result;
 
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.response.ApiResponse;
+import com.topov.forum.dto.response.ErrorResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +35,17 @@ public abstract class OperationResult {
     }
 
     public abstract ResponseEntity<ApiResponse> createResponseEntity();
+
+    protected boolean isSuccessful() {
+        return this.errors.isEmpty();
+    }
+
+    protected ResponseEntity<ApiResponse> errorResponse() {
+        final ErrorResponse error = new ErrorResponse(this.message, "error", this.errors);
+        return ResponseEntity.status(this.httpCode).body(error);
+    }
+
+    protected ResponseEntity<ApiResponse> successResponse(ApiResponse payload) {
+        return ResponseEntity.status(this.httpCode).body(payload);
+    }
 }

@@ -1,6 +1,7 @@
-package com.topov.forum.dto.response;
+package com.topov.forum.dto.response.post;
 
 import com.topov.forum.dto.model.PostDto;
+import com.topov.forum.dto.response.ApiResponse;
 import lombok.Getter;
 
 @Getter

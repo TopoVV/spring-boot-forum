@@ -3,8 +3,7 @@ package com.topov.forum.dto.result.post;
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.response.ApiResponse;
-import com.topov.forum.dto.response.ErrorResponse;
-import com.topov.forum.dto.response.PostEditResponse;
+import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.dto.result.OperationResult;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -27,12 +26,10 @@ public class PostEditResult extends OperationResult {
 
     @Override
     public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (!this.errors.isEmpty()) {
-            final ErrorResponse error = new ErrorResponse(this.message, "error", this.errors);
-            return ResponseEntity.status(this.httpCode).body(error);
-        } else {
+        if (super.isSuccessful()) {
             final PostEditResponse success = new PostEditResponse(this.message, "success", postDto);
-            return ResponseEntity.status(this.httpCode).body(success);
+            return super.successResponse(success);
         }
+        return super.errorResponse();
     }
 }

@@ -2,8 +2,7 @@ package com.topov.forum.dto.result.authentication;
 
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.response.ApiResponse;
-import com.topov.forum.dto.response.AuthenticationResponse;
-import com.topov.forum.dto.response.ErrorResponse;
+import com.topov.forum.dto.response.authentication.AuthenticationResponse;
 import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.security.jwt.JwtToken;
 import lombok.Getter;
@@ -36,14 +35,12 @@ public class AuthenticationResult extends OperationResult {
 
     @Override
     public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (!this.errors.isEmpty()) {
-            final ErrorResponse error = new ErrorResponse(this.message, "error", this.errors);
-            return ResponseEntity.status(this.httpCode).body(error);
-        } else {
+        if (super.isSuccessful()) {
             final String tokenValue = this.token.getTokenValue();
             final AuthenticationResponse success = new AuthenticationResponse(this.message, "success", tokenValue);
-            return ResponseEntity.status(this.httpCode).header("Authorization", jwtPrefix.concat(tokenValue)).body(success);
+            return super.successResponse(success);
         }
+        return super.errorResponse();
     }
 
 }
