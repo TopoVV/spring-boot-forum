@@ -31,9 +31,6 @@ public class CommentServiceSecurity {
             .map(Comment::getCreator)
             .map(ForumUser::getUserId)
             .map(currentUserId::equals)
-            .orElseThrow(() -> {
-                log.error("Comment with id={} doesn't exist", commentId);
-                return new ResponseStatusException(HttpStatus.BAD_REQUEST, "The comment doesn't exist");
-            });
+            .orElse(false);
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class PostEditResult extends OperationResult {
     private PostDto postDto;
 
-    public PostEditResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public PostEditResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

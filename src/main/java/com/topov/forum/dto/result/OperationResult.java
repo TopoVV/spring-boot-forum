@@ -17,7 +17,7 @@ public abstract class OperationResult {
 
     protected final List<Error> errors = new ArrayList<>();
 
-    protected OperationResult(HttpStatus httpCode, List<Error> errors, String message) {
+    protected OperationResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         this.httpCode = httpCode;
         this.message = message;
         this.errors.addAll(errors);

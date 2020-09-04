@@ -37,9 +37,7 @@ public class UserServiceImpl implements UserService {
         final String encodedPassword = passwordEncoder.encode(registrationRequest.getPassword());
         final ForumUser newUser = new ForumUser(registrationRequest.getUsername(), encodedPassword, registrationRequest.getEmail());
         newUser.addRole(new Role(Roles.USER));
-        newUser.addRole(new Role(Roles.ADMIN));
-        newUser.addRole(new Role(Roles.SUPERUSER));
-        newUser.setEnabled(true);
+        newUser.setEnabled(false);
         userRepository.save(newUser);
     }
 
@@ -50,7 +48,9 @@ public class UserServiceImpl implements UserService {
         final String encodedPassword = passwordEncoder.encode(registrationRequest.getPassword());
         final ForumUser newUser = new ForumUser(registrationRequest.getUsername(), encodedPassword, registrationRequest.getEmail());
         newUser.addRole(new Role(Roles.USER));
-        newUser.setEnabled(false);
+        newUser.addRole(new Role(Roles.ADMIN));
+        newUser.addRole(new Role(Roles.SUPERUSER));
+        newUser.setEnabled(true);
         userRepository.save(newUser);
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 public class CommentDeleteResult extends OperationResult {
-    public CommentDeleteResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public CommentDeleteResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

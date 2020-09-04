@@ -31,9 +31,6 @@ public class PostServiceSecurity {
             .map(Post::getCreator)
             .map(ForumUser::getUserId)
             .map(currentUserId::equals)
-            .orElseThrow(() -> {
-                log.error("Post with id={} doesn't exist", postId);
-                return new ResponseStatusException(HttpStatus.BAD_REQUEST, "The post doesn't exist");
-            });
+            .orElse(false);
     }
 }

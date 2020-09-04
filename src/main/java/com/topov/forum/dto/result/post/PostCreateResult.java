@@ -17,7 +17,7 @@ public class PostCreateResult extends OperationResult {
     private URI resourceLocation;
     private PostDto postDto;
 
-    public PostCreateResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public PostCreateResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

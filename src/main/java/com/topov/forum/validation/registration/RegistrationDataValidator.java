@@ -36,6 +36,6 @@ public class RegistrationDataValidator implements Validator<RegistrationRequest>
             errors.add(error);
         }
 
-        return new ValidationResult(errors);
+        return new ValidationResult(List.of());
     }
 }

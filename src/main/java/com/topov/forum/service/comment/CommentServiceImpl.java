@@ -1,5 +1,6 @@
 package com.topov.forum.service.comment;
 
+import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
@@ -112,12 +113,12 @@ public class CommentServiceImpl implements CommentService {
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
     public CommentDeleteResult deleteComment(Long commentId) {
         log.debug("Deleting comment with id={}", commentId);
-
-        final Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
-
-        commentRepository.delete(comment);
-
-        return new CommentDeleteResult(HttpStatus.OK, "The comment has been deleted");
+        if (commentRepository.existsById(commentId)) {
+            commentRepository.deleteById(commentId);
+            return new CommentDeleteResult(HttpStatus.OK, "The comment has been deleted");
+        } else {
+            final Error error = new Error("Comment not found");
+            return new CommentDeleteResult(HttpStatus.NOT_FOUND, error, "Cannot delete comment");
+        }
     }
 }

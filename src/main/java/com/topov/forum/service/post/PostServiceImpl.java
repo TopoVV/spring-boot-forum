@@ -1,6 +1,7 @@
 package com.topov.forum.service.post;
 
 import com.topov.forum.dto.error.Error;
+import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.model.PostDto;
 import com.topov.forum.dto.model.ShortPostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
@@ -18,8 +19,8 @@ import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.service.visit.VisitService;
-import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.post.PostValidator;
+import com.topov.forum.validation.ValidationResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,8 +43,8 @@ public class PostServiceImpl implements PostService {
     private static final String POST_URI_TEMPLATE = "http://localhost:8080/posts/%d";
 
     private final AuthenticationService authenticatedUserService;
-    private final PostValidator postValidator;
     private final PostRepository postRepository;
+    private final PostValidator postValidator;
     private final VisitService visitService;
     private final UserService userService;
     private final PostMapper postMapper;
@@ -51,13 +52,12 @@ public class PostServiceImpl implements PostService {
     @Autowired
     public PostServiceImpl(AuthenticationService authenticatedUserService,
                            PostRepository postRepository,
-                           PostValidator postValidator,
-                           VisitService visitService,
+                           PostValidator postValidator, VisitService visitService,
                            UserService userService,
                            PostMapper postMapper) {
         this.authenticatedUserService = authenticatedUserService;
-        this.postValidator = postValidator;
         this.postRepository = postRepository;
+        this.postValidator = postValidator;
         this.visitService = visitService;
         this.userService = userService;
         this.postMapper = postMapper;
@@ -87,11 +87,12 @@ public class PostServiceImpl implements PostService {
     public OperationResult createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
-            final ValidationResult validationResult = postValidator.validatePostCreationRequest(postCreateRequest);
+            final ValidationResult validationResult = postValidator.validate(postCreateRequest);
             if (validationResult.containsErrors()) {
-                final List<Error> errors = validationResult.getValidationErrors();
+                final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new PostCreateResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be created");
             }
+
 
             final Post newPost = new Post();
             newPost.setTitle(postCreateRequest.getTitle());
@@ -123,12 +124,11 @@ public class PostServiceImpl implements PostService {
     public OperationResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {
-            final ValidationResult validationResult = postValidator.validatePostEditRequest(postEditRequest);
+            final ValidationResult validationResult = postValidator.validate(postEditRequest);
             if (validationResult.containsErrors()) {
-                final List<Error> errors = validationResult.getValidationErrors();
+                final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");
             }
-
 
             final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
@@ -151,14 +151,13 @@ public class PostServiceImpl implements PostService {
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
     public OperationResult deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
-
-        final Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-
-        postRepository.delete(post);
-
-
-        return new PostDeleteResult(HttpStatus.OK, "Post deleted");
+        if (postRepository.existsById(postId)) {
+            postRepository.deleteById(postId);
+           return new PostDeleteResult(HttpStatus.OK, "Post deleted");
+        } else {
+            final Error error = new Error("Post nof found");
+            return new PostDeleteResult(HttpStatus.NOT_FOUND, error, "Cannot delete post");
+        }
     }
 
     @Override

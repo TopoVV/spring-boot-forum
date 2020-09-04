@@ -17,7 +17,7 @@ public class AuthenticationResult extends OperationResult {
     private String authorizationHeader;
     private String jwtPrefix;
 
-    public AuthenticationResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public AuthenticationResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 public class AccountConfirmationResult extends OperationResult {
-    public AccountConfirmationResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public AccountConfirmationResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

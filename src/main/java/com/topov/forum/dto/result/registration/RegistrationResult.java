@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 public class RegistrationResult extends OperationResult {
-    public RegistrationResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public RegistrationResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

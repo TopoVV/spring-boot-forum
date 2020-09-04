@@ -1,5 +1,6 @@
 package com.topov.forum.dto.request.post;
 
+import com.topov.forum.validation.post.groups.PostCreationChecks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class PostCreateRequest {
     @NotEmpty(message = "A post must contain text")
     @Size(message = "The post text must not contain more than 2500 symbols", max = 2500)
     private String text;
+    @UniqueTitle(groups = PostCreationChecks.class)
     @NotEmpty(message = "A post must have title")
     private String title;
 }

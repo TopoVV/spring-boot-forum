@@ -12,7 +12,8 @@ import java.util.List;
 
 @Getter
 public class PostDeleteResult extends OperationResult {
-    public PostDeleteResult(HttpStatus httpCode, List<Error> errors, String message) {
+
+    public PostDeleteResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 

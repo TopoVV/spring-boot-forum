@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationRequest {
+
     @NotEmpty(message = "The username must not be empty")
     protected String username;
     @NotEmpty(message = "The password must not be empty")

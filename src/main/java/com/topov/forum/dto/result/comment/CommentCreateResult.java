@@ -15,7 +15,7 @@ import java.util.List;
 public class CommentCreateResult extends OperationResult {
     private CommentDto commentDto;
 
-    public CommentCreateResult(HttpStatus httpCode, List<Error> errors, String message) {
+    public CommentCreateResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
         super(httpCode, errors, message);
     }
 
