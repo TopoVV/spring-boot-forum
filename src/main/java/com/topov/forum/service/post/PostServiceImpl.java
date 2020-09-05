@@ -6,9 +6,7 @@ import com.topov.forum.dto.model.post.PostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.result.OperationResult;
-import com.topov.forum.dto.result.post.PostCreateResult;
-import com.topov.forum.dto.result.post.PostDeleteResult;
-import com.topov.forum.dto.result.post.PostEditResult;
+import com.topov.forum.dto.result.post.*;
 import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
@@ -64,26 +62,27 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostDto getPost(Long postId) {
+    public PostGetResult getPost(Long postId) {
         final Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         final Long currentUserId = authenticatedUserService.getCurrentUserId();
         final PostDto postDto = postMapper.toDto(post);
         visitService.postVisited(new PostVisit(currentUserId, postId));
-        return postDto;
+        return new PostGetResult(HttpStatus.OK, postDto);
     }
 
     @Override
     @Transactional
-    public Page<PostDto> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable)
+    public PostGetAllResult getAllPosts(Pageable pageable) {
+        final Page<PostDto> posts = postRepository.findAll(pageable)
             .map(postMapper::toDto);
+        return new PostGetAllResult(HttpStatus.OK, posts);
     }
 
     @Override
     @Transactional
-    public OperationResult createPost(PostCreateRequest postCreateRequest) {
+    public PostCreateResult createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
             final ValidationResult validationResult = postValidator.validate(postCreateRequest);
@@ -120,7 +119,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
-    public OperationResult editPost(Long postId, PostEditRequest postEditRequest) {
+    public PostEditResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {
             final ValidationResult validationResult = postValidator.validate(postEditRequest);
@@ -148,7 +147,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     @PreAuthorize("@postServiceSecurity.checkOwnership(#postId) or hasRole('SUPERUSER')")
-    public OperationResult deletePost(Long postId) {
+    public PostDeleteResult deletePost(Long postId) {
         log.debug("Deleting post with id={}", postId);
         if (postRepository.existsById(postId)) {
             postRepository.deleteById(postId);

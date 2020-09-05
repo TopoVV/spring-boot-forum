@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Getter
 public class PostEditResponse extends ApiResponse {
-    @JsonView(PostViews.FullPostView.class)
     private final PostDto postDto;
     public PostEditResponse(String message, String status, PostDto postDto) {
         super(message, status);

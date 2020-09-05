@@ -34,6 +34,11 @@ public abstract class OperationResult {
         this.message = message;
     }
 
+    protected OperationResult(HttpStatus httpCode) {
+        this.message = "";
+        this.httpCode = httpCode;
+    }
+
     public abstract ResponseEntity<ApiResponse> createResponseEntity();
 
     protected boolean isSuccessful() {

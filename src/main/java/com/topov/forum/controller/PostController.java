@@ -7,7 +7,9 @@ import com.topov.forum.dto.model.post.views.PostViews;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.response.ApiResponse;
+import com.topov.forum.dto.response.post.PostGetResponse;
 import com.topov.forum.dto.result.OperationResult;
+import com.topov.forum.dto.result.post.*;
 import com.topov.forum.service.post.PostService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,42 +34,44 @@ public class PostController {
 
     @JsonView(PostViews.FullPostView.class)
     @GetMapping(value = "/posts/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
-        final PostDto post = postService.getPost(postId);
-        return ResponseEntity.ok(post);
+    public ResponseEntity<ApiResponse> getPost(@PathVariable Long postId) {
+        final PostGetResult result = postService.getPost(postId);
+        return result.createResponseEntity();
     }
 
     @JsonView(PostViews.ShortPostView.class)
     @GetMapping(value = "/posts")
-    public ResponseEntity<Page<PostDto>> getAllPosts(@PageableDefault(size = 3) Pageable pageable) {
-        final Page<PostDto> allPosts = postService.getAllPosts(pageable);
-        return ResponseEntity.ok(allPosts);
+    public ResponseEntity<ApiResponse> getAllPosts(@PageableDefault(size = 3) Pageable pageable) {
+        final PostGetAllResult result = postService.getAllPosts(pageable);
+        return result.createResponseEntity();
     }
 
+    @JsonView(value = PostViews.ShortPostView.class)
     @PostMapping(
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse> createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         log.debug("Handling (POST) post creation request");
-        final OperationResult operationResult = postService.createPost(postCreateRequest);
+        final PostCreateResult operationResult = postService.createPost(postCreateRequest);
         return operationResult.createResponseEntity();
     }
 
+    @JsonView(value = PostViews.FullPostView.class)
     @PutMapping(
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse> editPost(@PathVariable Long postId, @Valid @RequestBody PostEditRequest postEditRequest) {
         log.debug("Handling (PUT) post modification request");
-        final OperationResult operationResult = postService.editPost(postId, postEditRequest);
+        final PostEditResult operationResult = postService.editPost(postId, postEditRequest);
         return operationResult.createResponseEntity();
     }
 
     @DeleteMapping(value = "/posts/{postId}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Long postId) {
         log.debug("Handling (DELETE) post removal request");
-        final OperationResult operationResult = postService.deletePost(postId);
+        final PostDeleteResult operationResult = postService.deletePost(postId);
         return operationResult.createResponseEntity();
     }
 }

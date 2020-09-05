@@ -8,6 +8,7 @@ import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.dto.result.comment.CommentCreateResult;
 import com.topov.forum.dto.result.comment.CommentDeleteResult;
 import com.topov.forum.dto.result.comment.CommentEditResult;
+import com.topov.forum.dto.result.comment.CommentGetAllResult;
 import com.topov.forum.exception.CommentException;
 import com.topov.forum.mapper.CommentMapper;
 import com.topov.forum.model.Comment;
@@ -17,6 +18,8 @@ import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.user.UserService;
+import com.topov.forum.validation.ValidationResult;
+import com.topov.forum.validation.comment.CommentValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
+    private final CommentValidator commentValidator;
     private final CommentMapper commentMapper;
 
     private final UserService userService;
@@ -41,11 +45,13 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     public CommentServiceImpl(AuthenticationService authenticationService,
                               CommentRepository commentRepository,
+                              CommentValidator commentValidator,
                               CommentMapper commentMapper,
                               UserService userService,
                               PostService postService) {
         this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
+        this.commentValidator = commentValidator;
         this.commentMapper = commentMapper;
         this.userService = userService;
         this.postService = postService;
@@ -53,9 +59,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Page<CommentDto> getAllComments(Long postId, Pageable pageable) {
-        return commentRepository.findCommentsForPost(postId, pageable)
+    public CommentGetAllResult getAllComments(Long postId, Pageable pageable) {
+        if (commentValidator.validatePostExists(postId)) {
+            final Error error = new Error("Post not found");
+            return new CommentGetAllResult(HttpStatus.BAD_REQUEST, error, "Error getting comments");
+        }
+
+        final Page<CommentDto> comments = commentRepository.findCommentsForPost(postId, pageable)
             .map(commentMapper::toDto);
+
+        return new CommentGetAllResult(HttpStatus.OK, comments);
     }
 
     @Override
@@ -88,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
-    public OperationResult editComment(Long commentId, CommentEditRequest commentEditRequest) {
+    public CommentEditResult editComment(Long commentId, CommentEditRequest commentEditRequest) {
         log.debug("Editing comment: {}", commentEditRequest);
         try {
 

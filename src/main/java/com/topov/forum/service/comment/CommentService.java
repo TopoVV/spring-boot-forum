@@ -4,23 +4,18 @@ import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
 import com.topov.forum.dto.result.OperationResult;
+import com.topov.forum.dto.result.comment.CommentCreateResult;
+import com.topov.forum.dto.result.comment.CommentDeleteResult;
+import com.topov.forum.dto.result.comment.CommentEditResult;
+import com.topov.forum.dto.result.comment.CommentGetAllResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface CommentService {
-    @Transactional
-    Page<CommentDto> getAllComments(Long postId, Pageable pageable);
-
-    @Transactional
-    OperationResult createComment(Long postId, CommentCreateRequest commentCreateRequest);
-
-    @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
-    OperationResult editComment(Long commentId, CommentEditRequest commentEditRequest);
-
-    @Transactional
-    @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentDeleteRequest) or hasRole('SUPERUSER')")
-    OperationResult deleteComment(Long commentId);
+    CommentGetAllResult getAllComments(Long postId, Pageable pageable);
+    CommentCreateResult createComment(Long postId, CommentCreateRequest commentCreateRequest);
+    CommentEditResult editComment(Long commentId, CommentEditRequest commentEditRequest);
+    CommentDeleteResult deleteComment(Long commentId);
 }
