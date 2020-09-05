@@ -12,6 +12,7 @@ import lombok.Setter;
 public class PostCreateResponse extends ApiResponse {
     @JsonView(PostViews.ShortPostView.class)
     private PostDto postDto;
+
     public PostCreateResponse(String message, String status, PostDto postDto) {
         super(message, status);
         this.postDto = postDto;

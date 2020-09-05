@@ -4,9 +4,12 @@ spring:
     username: topovv
     password: admin
     driver-class-name: org.h2.Driver
+<<<<<<< HEAD
   jackson:
     mapper:
       DEFAULT_VIEW_INCLUSION: true
+=======
+>>>>>>> 62c9301537cce9a0a160ce1346ae5ab528423925
   jpa:
     show-sql: true
     hibernate:

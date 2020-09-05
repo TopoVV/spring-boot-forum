@@ -4,6 +4,7 @@ import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.repository.SuperuserTokenRepository;
 import com.topov.forum.token.SuperuserToken;
 import com.topov.forum.validation.registration.constraint.SuperuserTokenValid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

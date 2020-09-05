@@ -3,6 +3,7 @@ package com.topov.forum.validation.accout;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
 import com.topov.forum.validation.accout.constraint.AccountConfirmationTokenValid;
+
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

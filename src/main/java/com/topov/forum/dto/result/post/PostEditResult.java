@@ -2,6 +2,7 @@ package com.topov.forum.dto.result.post;
 
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.model.post.PostDto;
+
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.response.post.PostEditResponse;
 import com.topov.forum.dto.result.OperationResult;
