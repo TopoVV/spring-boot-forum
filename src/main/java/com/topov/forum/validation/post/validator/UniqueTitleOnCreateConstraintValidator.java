@@ -1,7 +1,7 @@
 package com.topov.forum.validation.post.validator;
 
-import com.topov.forum.validation.post.constraint.UniqueTitle;
 import com.topov.forum.repository.PostRepository;
+import com.topov.forum.validation.post.constraint.UniqueTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

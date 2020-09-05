@@ -1,6 +1,5 @@
 package com.topov.forum.service.registration;
 
-import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
@@ -11,6 +10,7 @@ import com.topov.forum.mail.MailSender;
 import com.topov.forum.service.account.AccountService;
 import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
+import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.registration.RegistrationValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -23,22 +23,22 @@ import java.util.List;
 @Log4j2
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
+    private final RegistrationValidator registrationValidator;
+    private final SuperuserTokenService superuserTokenService;
+    private final AccountService accountService;
     private final UserService userService;
     private final MailSender mailSender;
-    private final SuperuserTokenService superuserTokenService;
-    private final RegistrationValidator registrationValidator;
-    private final AccountService accountService;
 
-    public RegistrationServiceImpl(SuperuserTokenService superuserTokenService,
-                                   RegistrationValidator registrationValidator,
+    public RegistrationServiceImpl(RegistrationValidator registrationValidator,
+                                   SuperuserTokenService superuserTokenService,
                                    UserService userService,
                                    MailSender mailSender,
                                    AccountService accountService) {
-        this.userService = userService;
-        this.mailSender = mailSender;
         this.superuserTokenService = superuserTokenService;
         this.registrationValidator = registrationValidator;
         this.accountService = accountService;
+        this.userService = userService;
+        this.mailSender = mailSender;
     }
 
     @Transactional
@@ -58,7 +58,6 @@ public class RegistrationServiceImpl implements RegistrationService {
             mailSender.sendAccountConfirmationMail(registrationRequest, accountConfirmationToken.getTokenValue());
 
             return new RegistrationResult(HttpStatus.OK, "You've been successfully registered. To confirm your account follow the link, which was sent to your email");
-
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
             throw new RegistrationException("Cannot register the user. Failed to send the account confirmation mail", e);
@@ -73,13 +72,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public OperationResult registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-
-            if (!superuserTokenService.isSuperuserTokenValid(registrationRequest.getToken())) {
-                final Error error = new Error("Invalid token");
-                return new RegistrationResult(HttpStatus.BAD_REQUEST, error, "Superuser registration failed");
-            }
-
-            final var validationResult = registrationValidator.validate(registrationRequest);
+            final ValidationResult validationResult = registrationValidator.validate(registrationRequest);
             if (validationResult.containsErrors()) {
                 final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");
@@ -89,7 +82,6 @@ public class RegistrationServiceImpl implements RegistrationService {
             userService.createSuperuser(registrationRequest);
 
             return new RegistrationResult(HttpStatus.OK, "You've been successfully registered");
-
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the superuser. Please, try again later", e);

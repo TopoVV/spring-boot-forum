@@ -6,10 +6,8 @@ import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Log4j2
 @Component

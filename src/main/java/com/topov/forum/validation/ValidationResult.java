@@ -1,8 +1,6 @@
 package com.topov.forum.validation;
 
-import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.error.ValidationError;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;

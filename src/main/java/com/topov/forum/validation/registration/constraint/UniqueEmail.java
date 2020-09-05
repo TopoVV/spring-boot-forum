@@ -1,6 +1,5 @@
 package com.topov.forum.validation.registration.constraint;
 
-import com.topov.forum.validation.registration.group.RegistrationChecks;
 import com.topov.forum.validation.registration.validator.UniqueEmailConstraintValidator;
 
 import javax.validation.Constraint;
