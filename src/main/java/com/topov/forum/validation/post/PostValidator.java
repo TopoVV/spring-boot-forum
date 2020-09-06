@@ -4,7 +4,6 @@ import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
-import com.topov.forum.validation.post.group.PostCreationChecks;
 import com.topov.forum.validation.post.group.PostModificationChecks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,8 @@ public class PostValidator {
     }
 
     public ValidationResult validate(PostCreateRequest postCreateRequest) {
-        final var violations = validator.validate(postCreateRequest, PostCreationChecks.class);
+        final PostCreateValidation validation = new PostCreateValidation(postCreateRequest.getTitle());
+        final var violations = validator.validate(validation);
         return validationResultFactory.createValidationResult(violations);
     }
 
