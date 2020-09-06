@@ -56,9 +56,9 @@ public class AccountServiceImpl implements AccountService {
             final AccountConfirmationToken token = confirmationTokenService.getConfirmationToken(tokenValue);
 
             userService.enableUser(token.getUsername());
-            confirmationTokenService.revokeConfirmationToken(token.getTokenValue());
-            return new AccountConfirmationResult(HttpStatus.OK, "Account confirmed");
+            confirmationTokenService.revokeConfirmationToken(tokenValue);
 
+            return new AccountConfirmationResult(HttpStatus.OK, "Account confirmed");
         } catch (RuntimeException e) {
             log.error("Something gone wrong when confirming account", e);
             return new AccountConfirmationResult(HttpStatus.BAD_REQUEST, "Account not confirmed. Try again later");

@@ -132,6 +132,7 @@ public class PostServiceImpl implements PostService {
 
             post.setTitle(postEditRequest.getNewTitle());
             post.setText(postEditRequest.getText());
+
             final PostDto postDto = postMapper.toDto(post);
             return new PostEditResult(HttpStatus.OK, "Post has been successfully edited", postDto);
 

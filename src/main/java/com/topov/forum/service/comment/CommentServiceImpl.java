@@ -79,11 +79,16 @@ public class CommentServiceImpl implements CommentService {
     public CommentCreateResult createComment(Long postId, CommentCreateRequest commentCreateRequest) {
         log.debug("Creating comment: {}", commentCreateRequest);
         try {
+            final ValidationResult validationResult = commentValidator.validate(postId, commentCreateRequest);
+            if (validationResult.containsErrors()) {
+                final List<Error> validationErrors = validationResult.getValidationErrors();
+                return new CommentCreateResult(HttpStatus.CREATED, validationErrors, "Comment cannot be saved");
+            }
+
             final Comment newComment = new Comment();
             newComment.setText(commentCreateRequest.getText());
 
             final Long creatorId = authenticationService.getCurrentUserId();
-
             final ForumUser creator = userService.findUser(creatorId);
             final Post post = postService.findPost(postId);
 
@@ -94,10 +99,9 @@ public class CommentServiceImpl implements CommentService {
             final CommentDto commentDto = commentMapper.toDto(savedComment);
 
             return new CommentCreateResult(HttpStatus.CREATED, "The comment has been saved", commentDto);
-
         } catch (RuntimeException e) {
-            log.error("Error creating comment", e);
-            throw new CommentException("Cannot create comment", e);
+            log.error("Comment creation error");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -106,22 +110,13 @@ public class CommentServiceImpl implements CommentService {
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
     public CommentEditResult editComment(Long commentId, CommentEditRequest commentEditRequest) {
         log.debug("Editing comment: {}", commentEditRequest);
-        try {
+        final Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
-            final Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+        comment.setText(commentEditRequest.getNewText());
+        final CommentDto commentDto = commentMapper.toDto(comment);
 
-            comment.setText(commentEditRequest.getNewText());
-            final CommentDto commentDto = commentMapper.toDto(comment);
-
-            return new CommentEditResult(HttpStatus.OK, "The comment has been edited", commentDto);
-
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            log.error("Cannot edit comment", e);
-            throw new CommentException("Cannot edit comment", e);
-        }
+        return new CommentEditResult(HttpStatus.OK, "The comment has been edited", commentDto);
     }
 
     @Override
