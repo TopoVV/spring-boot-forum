@@ -1,14 +1,9 @@
 package com.topov.forum.dto.request.registration;
 
-import com.topov.forum.validation.registration.constraint.UniqueEmail;
-import com.topov.forum.validation.registration.constraint.UniqueUsername;
-import com.topov.forum.validation.registration.constraint.ValidRegistrationRequest;
-import com.topov.forum.validation.registration.group.RegistrationChecks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.ReportAsSingleViolation;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 

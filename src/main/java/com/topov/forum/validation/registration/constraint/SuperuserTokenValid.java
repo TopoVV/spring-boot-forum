@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface SuperuserTokenValid {
     String message() default "Provided superuser token is invalid";
     Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default { };
 }

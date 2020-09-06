@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
         try {
             final ValidationResult validationResult = postValidator.validate(postCreateRequest);
             if (validationResult.containsErrors()) {
-                final List<ValidationError> errors = validationResult.getValidationErrors();
+                final List<Error> errors = validationResult.getValidationErrors();
                 return new PostCreateResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be created");
             }
 
@@ -123,7 +123,7 @@ public class PostServiceImpl implements PostService {
         try {
             final ValidationResult validationResult = postValidator.validate(postId, postEditRequest);
             if (validationResult.containsErrors()) {
-                final List<ValidationError> errors = validationResult.getValidationErrors();
+                final List<Error> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");
             }
 

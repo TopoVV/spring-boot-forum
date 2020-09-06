@@ -2,13 +2,13 @@ package com.topov.forum.validation.registration.rules;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.validation.ValidationRule;
-import com.topov.forum.validation.registration.constraint.ValidRegistrationRequest;
+import com.topov.forum.validation.registration.constraint.RegistrationRequestValid;
 import lombok.Getter;
 
-import static com.topov.forum.validation.registration.rules.RegistrationValidation.*;
+import static com.topov.forum.validation.registration.rules.RegistrationValidation.RegistrationChecks;
 
 @Getter
-@ValidRegistrationRequest(groups = RegistrationChecks.class)
+@RegistrationRequestValid(groups = RegistrationChecks.class)
 public class RegistrationValidation extends ValidationRule {
     private final String username;
     private final String email;

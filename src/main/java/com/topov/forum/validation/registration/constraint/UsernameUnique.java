@@ -1,6 +1,6 @@
 package com.topov.forum.validation.registration.constraint;
 
-import com.topov.forum.validation.registration.validator.SuperuserTokenConstraintValidator;
+import com.topov.forum.validation.registration.validator.UniqueUsernameConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,11 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 @Target({ElementType.FIELD, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { SuperuserTokenConstraintValidator.class })
-public @interface ValidSuperuserToken {
-    String message() default "Provided superuser token is invalid";
+@Constraint(validatedBy = { UniqueUsernameConstraintValidator.class})
+public @interface UsernameUnique {
+    String message() default "The specified username is already in use";
     Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default { };
 }

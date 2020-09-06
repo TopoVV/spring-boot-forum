@@ -2,7 +2,6 @@ package com.topov.forum.dto.response.post;
 
 import com.topov.forum.dto.response.ApiResponse;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class PostDeleteResponse extends ApiResponse {

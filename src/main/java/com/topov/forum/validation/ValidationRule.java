@@ -1,4 +1,4 @@
 package com.topov.forum.validation;
 
-public class ValidationRule {
+public abstract class ValidationRule {
 }

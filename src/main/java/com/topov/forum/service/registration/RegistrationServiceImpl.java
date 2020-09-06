@@ -1,5 +1,6 @@
 package com.topov.forum.service.registration;
 
+import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
@@ -47,7 +48,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             final var validationResult = registrationValidator.validate(registrationRequest);
             if (validationResult.containsErrors()) {
-                final List<ValidationError> errors = validationResult.getValidationErrors();
+                final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "User registration failed");
             }
 
@@ -74,7 +75,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             final ValidationResult validationResult = registrationValidator.validate(registrationRequest);
             if (validationResult.containsErrors()) {
-                final List<ValidationError> errors = validationResult.getValidationErrors();
+                final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");
             }
 

@@ -1,12 +1,9 @@
 package com.topov.forum.dto.result.post;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.model.post.PostDto;
-import com.topov.forum.dto.model.post.views.PostViews;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.response.post.PostGetAllResponse;
-import com.topov.forum.dto.response.post.PostGetResponse;
 import com.topov.forum.dto.result.OperationResult;
 import lombok.Getter;
 import org.springframework.data.domain.Page;

@@ -5,15 +5,14 @@ import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
 import com.topov.forum.validation.registration.rules.RegistrationValidation;
-import com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.GroupSequence;
 import javax.validation.Validator;
 
-import static com.topov.forum.validation.registration.rules.RegistrationValidation.*;
-import static com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation.*;
+import static com.topov.forum.validation.registration.rules.RegistrationValidation.RegistrationChecks;
+import static com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation.TokenChecks;
 
 @Service
 public class RegistrationValidator {
@@ -33,7 +32,7 @@ public class RegistrationValidator {
     }
 
     public ValidationResult validate(SuperuserRegistrationRequest registrationRequest) {
-        final SuperuserRegistrationValidation validation = new SuperuserRegistrationValidation(registrationRequest);
+        final com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation validation = new com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation(registrationRequest);
         final var violations = validator.validate(validation, SuperuserRegistrationChecks.class);
         return validationResultFactory.createValidationResult(violations);
     }

@@ -1,22 +1,21 @@
 package com.topov.forum.validation.registration.validator;
 
-import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.repository.UserRepository;
-import com.topov.forum.validation.registration.constraint.UniqueUsername;
+import com.topov.forum.validation.registration.constraint.UsernameUnique;
+import com.topov.forum.validation.registration.rules.RegistrationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class UniqueUsernameConstraintValidator
-    implements ConstraintValidator<UniqueUsername, RegistrationRequest> {
+    implements ConstraintValidator<UsernameUnique, RegistrationValidation> {
 
     private UserRepository userRepository;
 
     @Override
-    public boolean isValid(RegistrationRequest registrationRequest, ConstraintValidatorContext ctx) {
-        if (userRepository.existsByUsername(registrationRequest.getUsername())) {
+    public boolean isValid(RegistrationValidation validation, ConstraintValidatorContext ctx) {
+        if (userRepository.existsByUsername(validation.getUsername())) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
                 .addPropertyNode("username")

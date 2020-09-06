@@ -1,5 +1,6 @@
 package com.topov.forum.validation;
 
+import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.error.ValidationError;
 import lombok.Getter;
 
@@ -8,9 +9,9 @@ import java.util.List;
 
 @Getter
 public class ValidationResult {
-    private final List<ValidationError> validationErrors = new ArrayList<>();
+    private final List<Error> validationErrors = new ArrayList<>();
 
-    public ValidationResult(List<ValidationError> validationErrors) {
+    public ValidationResult(List<Error> validationErrors) {
         this.validationErrors.addAll(validationErrors);
     }
 

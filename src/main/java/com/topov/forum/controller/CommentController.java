@@ -1,6 +1,5 @@
 package com.topov.forum.controller;
 
-import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
 import com.topov.forum.dto.response.ApiResponse;
@@ -9,7 +8,6 @@ import com.topov.forum.dto.result.comment.CommentGetAllResult;
 import com.topov.forum.service.comment.CommentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;

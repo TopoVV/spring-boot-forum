@@ -1,8 +1,5 @@
 package com.topov.forum.dto.request.registration;
 
-import com.topov.forum.validation.registration.constraint.SuperuserTokenValid;
-
-import com.topov.forum.validation.registration.group.TokenChecks;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

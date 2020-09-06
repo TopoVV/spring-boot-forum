@@ -1,19 +1,14 @@
 package com.topov.forum.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.topov.forum.dto.model.post.PostDto;
 import com.topov.forum.dto.model.post.views.PostViews;
-
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.response.ApiResponse;
-import com.topov.forum.dto.response.post.PostGetResponse;
-import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.dto.result.post.*;
 import com.topov.forum.service.post.PostService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;

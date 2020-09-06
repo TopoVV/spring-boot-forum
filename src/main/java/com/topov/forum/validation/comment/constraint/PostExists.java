@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface PostExists {
     String message() default "The post doesnt exist";
     Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default { };
 }

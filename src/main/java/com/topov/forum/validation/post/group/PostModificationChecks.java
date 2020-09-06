@@ -1,3 +1,4 @@
 package com.topov.forum.validation.post.group;
 
-public interface PostModificationChecks { }
+public interface PostModificationChecks {
+}

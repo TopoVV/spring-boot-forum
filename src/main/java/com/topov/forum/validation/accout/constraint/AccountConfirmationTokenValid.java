@@ -1,7 +1,6 @@
 package com.topov.forum.validation.accout.constraint;
 
 import com.topov.forum.validation.accout.validator.AccountConfirmationTokenConstraintValidator;
-import com.topov.forum.validation.registration.validator.UniqueEmailConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -16,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface AccountConfirmationTokenValid {
     String message() default "The specified email is already in use";
     Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default { };
 }

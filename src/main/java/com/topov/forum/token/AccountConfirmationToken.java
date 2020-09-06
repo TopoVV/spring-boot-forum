@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,6 +19,9 @@ import java.util.UUID;
 public class AccountConfirmationToken extends Token {
     private static final int DEFAULT_LIFE_TIME_MINUTES = 5;
     private String username;
+
+    @Version
+    private long version;
 
     public AccountConfirmationToken(String forUser) {
         this.creationTime = LocalDateTime.now();

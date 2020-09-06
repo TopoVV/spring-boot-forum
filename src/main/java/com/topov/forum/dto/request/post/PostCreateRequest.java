@@ -1,7 +1,5 @@
 package com.topov.forum.dto.request.post;
 
-import com.topov.forum.validation.post.constraint.UniqueTitle;
-import com.topov.forum.validation.post.group.PostCreationChecks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -6,8 +6,10 @@ import com.topov.forum.repository.PostRepository;
 import com.topov.forum.security.AuthenticationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Log4j2
 @Component
@@ -29,6 +31,6 @@ public class PostServiceSecurity {
             .map(Post::getCreator)
             .map(ForumUser::getUserId)
             .map(currentUserId::equals)
-            .orElse(false);
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
     }
 }

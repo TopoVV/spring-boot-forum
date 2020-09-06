@@ -4,7 +4,6 @@ import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.response.comment.CommentGetAllResponse;
-import com.topov.forum.dto.response.post.PostGetAllResponse;
 import com.topov.forum.dto.result.OperationResult;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -24,6 +23,10 @@ public class CommentGetAllResult extends OperationResult {
 
     public CommentGetAllResult(HttpStatus httpCode, Error error, String message) {
         super(httpCode, error, message);
+    }
+
+    public CommentGetAllResult(HttpStatus httpCode, List<? extends Error> errors, String message) {
+        super(httpCode, errors, message);
     }
 
     @Override

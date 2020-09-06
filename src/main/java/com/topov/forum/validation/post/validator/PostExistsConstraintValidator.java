@@ -2,8 +2,10 @@ package com.topov.forum.validation.post.validator;
 
 import com.topov.forum.repository.PostRepository;
 import com.topov.forum.validation.comment.constraint.PostExists;
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.lang.model.type.ErrorType;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -15,7 +17,7 @@ public class PostExistsConstraintValidator implements ConstraintValidator<PostEx
         if (!postRepository.existsById(postId)) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
-                .addPropertyNode("post")
+                .addPropertyNode("title")
                 .addConstraintViolation();
             return false;
         }
