@@ -1,0 +1,30 @@
+package com.topov.forum.validation.comment.validator;
+
+import com.topov.forum.repository.CommentRepository;
+import com.topov.forum.validation.comment.constraint.CommentExists;
+import com.topov.forum.validation.comment.validation.CommentEditValidation;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class CommentExistsConstraintValidator implements ConstraintValidator<CommentExists, CommentEditValidation> {
+    private CommentRepository commentRepository;
+
+    @Override
+    public boolean isValid(CommentEditValidation validation, ConstraintValidatorContext ctx) {
+        if (!commentRepository.existsById(validation.getCommentId())) {
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
+                .addPropertyNode("comment")
+                .addConstraintViolation();
+            return false;
+        }
+        return true;
+    }
+
+    @Autowired
+    public void setCommentRepository(CommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
+}

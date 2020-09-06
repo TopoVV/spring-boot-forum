@@ -1,6 +1,6 @@
 package com.topov.forum.validation.comment.validation;
 
-import com.topov.forum.validation.comment.constraint.PostExists;
+import com.topov.forum.validation.post.constraint.PostExists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

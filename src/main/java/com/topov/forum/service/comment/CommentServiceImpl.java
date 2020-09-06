@@ -30,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -110,13 +112,24 @@ public class CommentServiceImpl implements CommentService {
     @PreAuthorize("@commentServiceSecurity.checkOwnership(#commentId) or hasRole('SUPERUSER')")
     public CommentEditResult editComment(Long commentId, CommentEditRequest commentEditRequest) {
         log.debug("Editing comment: {}", commentEditRequest);
-        final Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+        try {
+            final ValidationResult validationResult = commentValidator.validate(commentId, commentEditRequest);
+            if (validationResult.containsErrors()) {
+                final List<Error> errors = validationResult.getValidationErrors();
+                return new CommentEditResult(HttpStatus.BAD_REQUEST, errors, "The comment cannot be edited");
+            }
 
-        comment.setText(commentEditRequest.getNewText());
-        final CommentDto commentDto = commentMapper.toDto(comment);
+            final Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(EntityExistsException::new);
 
-        return new CommentEditResult(HttpStatus.OK, "The comment has been edited", commentDto);
+            comment.setText(commentEditRequest.getNewText());
+            final CommentDto commentDto = commentMapper.toDto(comment);
+
+            return new CommentEditResult(HttpStatus.OK, "The comment has been edited", commentDto);
+        } catch (RuntimeException e) {
+            log.error("Comment modification error", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @Override

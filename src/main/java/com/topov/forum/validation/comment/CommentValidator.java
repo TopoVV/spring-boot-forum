@@ -1,10 +1,13 @@
 package com.topov.forum.validation.comment;
 
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
+import com.topov.forum.dto.request.comment.CommentEditRequest;
+import com.topov.forum.dto.result.comment.CommentEditResult;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.comment.validation.CommentCreateValidation;
+import com.topov.forum.validation.comment.validation.CommentEditValidation;
 import com.topov.forum.validation.comment.validation.CommentsGetAllValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,11 +34,19 @@ public class CommentValidator {
     }
 
     /**
-     *
      * @param commentCreateRequest - comment data (temporary not needed for validation)
      */
     public ValidationResult validate(Long postId, CommentCreateRequest commentCreateRequest) {
         final CommentCreateValidation validation = new CommentCreateValidation(postId);
+        final var violations = validator.validate(validation);
+        return validationResultFactory.createValidationResult(violations);
+    }
+
+    /**
+     * @param commentEditRequest - comment data (temporary not needed for validation)
+     */
+    public ValidationResult validate(Long commentId, CommentEditRequest commentEditRequest) {
+        final CommentEditValidation validation = new CommentEditValidation(commentId);
         final var violations = validator.validate(validation);
         return validationResultFactory.createValidationResult(violations);
     }

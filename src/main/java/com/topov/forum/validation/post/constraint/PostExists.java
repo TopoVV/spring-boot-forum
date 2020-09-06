@@ -1,4 +1,4 @@
-package com.topov.forum.validation.comment.constraint;
+package com.topov.forum.validation.post.constraint;
 
 import com.topov.forum.validation.post.validator.PostExistsConstraintValidator;
 

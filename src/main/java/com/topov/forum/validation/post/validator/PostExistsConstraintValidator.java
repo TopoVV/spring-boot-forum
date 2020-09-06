@@ -1,11 +1,9 @@
 package com.topov.forum.validation.post.validator;
 
 import com.topov.forum.repository.PostRepository;
-import com.topov.forum.validation.comment.constraint.PostExists;
-import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import com.topov.forum.validation.post.constraint.PostExists;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.lang.model.type.ErrorType;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
