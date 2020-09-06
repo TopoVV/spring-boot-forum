@@ -11,5 +11,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @AllArgsConstructor
 public class PostCreateValidation extends ValidationRule {
+    @UniqueTitle
     private final String title;
 }

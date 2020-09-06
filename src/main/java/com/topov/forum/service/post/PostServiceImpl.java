@@ -121,7 +121,7 @@ public class PostServiceImpl implements PostService {
     public PostEditResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {
-            final ValidationResult validationResult = postValidator.validate(postEditRequest);
+            final ValidationResult validationResult = postValidator.validate(postId, postEditRequest);
             if (validationResult.containsErrors()) {
                 final List<ValidationError> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");

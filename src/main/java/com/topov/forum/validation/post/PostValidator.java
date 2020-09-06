@@ -28,8 +28,9 @@ public class PostValidator {
         return validationResultFactory.createValidationResult(violations);
     }
 
-    public ValidationResult validate(PostEditRequest postEditRequest) {
-        final var violations = validator.validate(postEditRequest, PostModificationChecks.class);
+    public ValidationResult validate(Long postId, PostEditRequest postEditRequest) {
+        final PostEditValidation validation = new PostEditValidation(postId, postEditRequest.getNewTitle(), postEditRequest.getOldTitle());
+        final var violations = validator.validate(validation);
         return validationResultFactory.createValidationResult(violations);
     }
 }
