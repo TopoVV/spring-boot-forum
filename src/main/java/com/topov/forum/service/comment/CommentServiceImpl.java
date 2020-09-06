@@ -35,7 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
-    private final CommentValidator commentValidator;
+//    private final CommentValidator commentValidator;
     private final CommentMapper commentMapper;
 
     private final UserService userService;
@@ -45,13 +45,13 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     public CommentServiceImpl(AuthenticationService authenticationService,
                               CommentRepository commentRepository,
-                              CommentValidator commentValidator,
+//                              CommentValidator commentValidator,
                               CommentMapper commentMapper,
                               UserService userService,
                               PostService postService) {
         this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
-        this.commentValidator = commentValidator;
+//        this.commentValidator = commentValidator;
         this.commentMapper = commentMapper;
         this.userService = userService;
         this.postService = postService;
@@ -60,15 +60,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentGetAllResult getAllComments(Long postId, Pageable pageable) {
-        if (commentValidator.validatePostExists(postId)) {
+//        if (commentValidator.validatePostExists(postId)) {
             final Error error = new Error("Post not found");
             return new CommentGetAllResult(HttpStatus.BAD_REQUEST, error, "Error getting comments");
-        }
-
-        final Page<CommentDto> comments = commentRepository.findCommentsForPost(postId, pageable)
-            .map(commentMapper::toDto);
-
-        return new CommentGetAllResult(HttpStatus.OK, comments);
+//        }
+//
+//        final Page<CommentDto> comments = commentRepository.findCommentsForPost(postId, pageable)
+//            .map(commentMapper::toDto);
+//
+//        return new CommentGetAllResult(HttpStatus.OK, comments);
     }
 
     @Override

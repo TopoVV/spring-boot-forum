@@ -1,8 +1,6 @@
 package com.topov.forum.validation.comment.constraint;
 
-import com.topov.forum.validation.comment.validator.PostExistsConstraintValidator;
-import com.topov.forum.validation.post.validator.UniqueTitleOnCreateConstraintValidator;
-import com.topov.forum.validation.post.validator.UniqueTitleOnEditConstraintValidator;
+import com.topov.forum.validation.post.validator.PostExistsConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

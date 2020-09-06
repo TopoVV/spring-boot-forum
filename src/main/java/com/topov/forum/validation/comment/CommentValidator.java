@@ -10,25 +10,16 @@ import javax.validation.Validator;
 
 @Service
 public class CommentValidator {
-    private final Validator validator;
-
-    @Autowired
-    public CommentValidator(Validator validator) {
-        this.validator = validator;
-    }
-
-    public boolean validatePostExists(Long postId) {
-        ValidationRule rule = new PostExistsRule(postId);
-        final var violations = validator.validate(rule);
-        return violations.isEmpty();
-    }
-
-    @Getter
-    @PostExists
-    public static final class PostExistsRule extends ValidationRule {
-        private final Long postId;
-        private PostExistsRule(Long postId) {
-            this.postId = postId;
-        }
-    }
+//    private final Validator validator;
+//
+//    @Autowired
+//    public CommentValidator(Validator validator) {
+//        this.validator = validator;
+//    }
+//
+//    public boolean validatePostExists(Long postId) {
+//        ValidationRule rule = new PostExistsValidation(postId);
+//        final var violations = validator.validate(rule);
+//        return violations.isEmpty();
+//    }
 }

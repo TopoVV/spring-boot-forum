@@ -1,4 +1,4 @@
-package com.topov.forum.validation.post;
+package com.topov.forum.validation.post.rules;
 
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.post.constraint.UniqueTitle;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @AllArgsConstructor
+@UniqueTitle
 public class PostCreateValidation extends ValidationRule {
-    @UniqueTitle
     private final String title;
 }

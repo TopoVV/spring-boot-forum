@@ -71,3 +71,25 @@ Main~createDefaultWorkingDir - Default working dir creation already attempted
 1598867304896 main info "Main~AppEvents - Received booted event for process shared"
 1598867309309 main info "WindowManager~closeHandler - Closed Window (id: 3 )"
 1598867309458 main info "Quitting app"
+Picked up _JAVA_OPTIONS: -Xmx2048m
+(electron) 'getName function' is deprecated and will be removed. Please use 'name property' instead.
+Not disabling GPU
+ProtocolHandler~setDefaultProtocolClient: Command failed: xdg-mime default Postman.desktop x-scheme-handler/postman
+/bin/sh: 1: xdg-mime: not found
+
+Error org.freedesktop.DBus.Error.Failed: cannot use setting "default-url-scheme-handler": not allowed
+Main~createDefaultWorkingDir - Default working dir creation already attempted
+1599407332592 main info "Booting Postman 7.31.1, linux-5.4.0-45-generic on x64"
+1599407332594 main info "EventBus~initialize - Success"
+1599407332598 main warn "CloudProxyManager~init: Error while reading proxy configuration from user data - ",{"errno":-2,"code":"ENOENT","syscall":"open","path":"/home/topovv/snap/postman/123/.config/Postman/Postman_Config/proxy","name":"Error","message":"ENOENT: no such file or directory, open '/home/topovv/snap/postman/123/.config/Postman/Postman_Config/proxy'","stack":"Error: ENOENT: no such file or directory, open '/home/topovv/snap/postman/123/.config/Postman/Postman_Config/proxy'"}
+1599407332600 main info "CloudProxyManager~init - Success"
+1599407332608 main info "UpdateHandler~init - Success"
+1599407335149 main info "RuntimeIPCAgent~started: Success"
+1599407336496 main info "LinuxAutoUpdater~Cleanup - Initial cleanup successful"
+1599407337074 main info "Bootstrap-models~bootstrap - Success"
+1599407341915 main info "window-manager~newSharedWindow: Shell loaded"
+1599407349731 main info "Main~AppEvents - Received booted event for process shared"
+INTERCEPTOR CONNECTIVITY: Connecting to Interceptor Bridge
+InterceptorBridge: Trying to connect Native App IPC~Interceptor Bridge
+1599407355232 main info "Main~AppEvents - Received booted event for process requester"
+IPCClient ~ WindowHandler: New event is received { type: 'window-opened' }

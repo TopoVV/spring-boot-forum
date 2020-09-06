@@ -51,11 +51,11 @@ public class RegistrationServiceImpl implements RegistrationService {
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "User registration failed");
             }
 
-            final var accountConfirmationToken =
+            final var confirmationToken =
                 accountService.createAccountConfirmationToken(registrationRequest.getUsername());
 
             userService.createRegularUser(registrationRequest);
-            mailSender.sendAccountConfirmationMail(registrationRequest, accountConfirmationToken.getTokenValue());
+            mailSender.sendAccountConfirmationMail(registrationRequest, confirmationToken.getTokenValue());
 
             return new RegistrationResult(HttpStatus.OK, "You've been successfully registered. To confirm your account follow the link, which was sent to your email");
         } catch (MailException e) {

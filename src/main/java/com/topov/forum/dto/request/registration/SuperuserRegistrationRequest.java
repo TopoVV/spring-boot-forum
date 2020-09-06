@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@SuperuserTokenValid(groups = { TokenChecks.class })
 public class SuperuserRegistrationRequest extends RegistrationRequest {
     @NotNull(message = "The token must not be empty")
     private String token;

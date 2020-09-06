@@ -33,12 +33,13 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public JwtToken createTokenForUser(ForumUserDetails user) {
         log.debug("Creating token for user: {}", user);
-        Date now = new Date();
+        final Date now = new Date();
+        final Date expiresAt = new Date(now.getTime() + 50 * 1000 * 60);
         String token =  Jwts.builder()
             .setClaims(generateClaims(user))
-            .setIssuedAt(now)
             .setSubject(user.getUsername())
-            .setExpiration(new Date(now.getTime() + 50*1000*60))
+            .setIssuedAt(now)
+            .setExpiration(expiresAt)
             .signWith(SignatureAlgorithm.HS256, secret)
             .compact();
         return new JwtToken(token);
