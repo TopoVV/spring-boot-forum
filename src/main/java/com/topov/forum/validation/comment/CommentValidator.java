@@ -27,27 +27,18 @@ public class CommentValidator {
         this.validationResultFactory = validationResultFactory;
     }
 
-    public ValidationResult validatePostExists(Long postId) {
-        ValidationRule validation = new CommentsGetAllValidation(postId);
-        final var violations = validator.validate(validation);
+    public ValidationResult validatePostExists(CommentsGetAllValidation validationRule) {
+        final var violations = validator.validate(validationRule);
         return validationResultFactory.createValidationResult(violations);
     }
 
-    /**
-     * @param commentCreateRequest - comment data (temporary not needed for validation)
-     */
-    public ValidationResult validate(Long postId, CommentCreateRequest commentCreateRequest) {
-        final CommentCreateValidation validation = new CommentCreateValidation(postId);
-        final var violations = validator.validate(validation);
+    public ValidationResult validate(CommentCreateValidation validationRule) {
+        final var violations = validator.validate(validationRule);
         return validationResultFactory.createValidationResult(violations);
     }
 
-    /**
-     * @param commentEditRequest - comment data (temporary not needed for validation)
-     */
-    public ValidationResult validate(Long commentId, CommentEditRequest commentEditRequest) {
-        final CommentEditValidation validation = new CommentEditValidation(commentId);
-        final var violations = validator.validate(validation);
+    public ValidationResult validate(CommentEditValidation validationRule) {
+        final var violations = validator.validate(validationRule);
         return validationResultFactory.createValidationResult(violations);
     }
 }

@@ -1,17 +1,12 @@
 package com.topov.forum.validation.post;
 
-import com.topov.forum.dto.request.post.PostCreateRequest;
-import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
-import com.topov.forum.validation.post.group.PostModificationChecks;
-import com.topov.forum.validation.post.group.PostPreModificationChecks;
-import com.topov.forum.validation.post.rules.PostCreateValidation;
-import com.topov.forum.validation.post.rules.PostEditValidation;
+import com.topov.forum.validation.post.validation.PostCreateValidationRule;
+import com.topov.forum.validation.post.validation.PostEditValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.GroupSequence;
 import javax.validation.Validator;
 
 
@@ -26,18 +21,13 @@ public class PostValidator {
         this.validationResultFactory = validationResultFactory;
     }
 
-    public ValidationResult validate(PostCreateRequest postCreateRequest) {
-        final PostCreateValidation validation = new PostCreateValidation(postCreateRequest.getTitle());
-        final var violations = validator.validate(validation);
+    public ValidationResult validate(PostCreateValidationRule validationRule) {
+        final var violations = validator.validate(validationRule);
         return validationResultFactory.createValidationResult(violations);
     }
 
-    public ValidationResult validate(Long postId, PostEditRequest postEditRequest) {
-        final PostEditValidation validation = new PostEditValidation(postId, postEditRequest);
-        final var violations = validator.validate(validation, ModificationValidationSequence.class);
+    public ValidationResult validate(PostEditValidationRule validationRule) {
+        final var violations = validator.validate(validationRule, validationRule.getValidationSequence());
         return validationResultFactory.createValidationResult(violations);
     }
-
-    @GroupSequence({PostPreModificationChecks.class, PostModificationChecks.class})
-    private interface ModificationValidationSequence {}
 }

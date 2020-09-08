@@ -1,7 +1,6 @@
 package com.topov.forum.service.post;
 
 import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.model.post.PostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
@@ -17,6 +16,8 @@ import com.topov.forum.service.user.UserService;
 import com.topov.forum.service.visit.VisitService;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.post.PostValidator;
+import com.topov.forum.validation.post.validation.PostCreateValidationRule;
+import com.topov.forum.validation.post.validation.PostEditValidationRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -84,7 +85,8 @@ public class PostServiceImpl implements PostService {
     public PostCreateResult createPost(PostCreateRequest postCreateRequest) {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
-            final ValidationResult validationResult = postValidator.validate(postCreateRequest);
+            final PostCreateValidationRule validationRule = new PostCreateValidationRule(postCreateRequest);
+            final ValidationResult validationResult = postValidator.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostCreateResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be created");
@@ -121,7 +123,8 @@ public class PostServiceImpl implements PostService {
     public PostEditResult editPost(Long postId, PostEditRequest postEditRequest) {
         log.debug("Editing post: {}", postEditRequest);
         try {
-            final ValidationResult validationResult = postValidator.validate(postId, postEditRequest);
+            final PostEditValidationRule validationRule = new PostEditValidationRule(postId, postEditRequest);
+            final ValidationResult validationResult = postValidator.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");

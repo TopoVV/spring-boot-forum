@@ -27,7 +27,7 @@ public class SuperuserTokenServiceImpl implements SuperuserTokenService {
     @Override
     @Transactional
     public void revokeSuperuserToken(String token) {
-        log.debug("Revoking a token");
+        log.debug("Revoking the superuser token");
         superuserTokenRepository.findTokenByTokenValue(token)
             .ifPresent(SuperuserToken::revoke);
     }

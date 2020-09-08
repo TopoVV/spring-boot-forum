@@ -1,7 +1,6 @@
 package com.topov.forum.service.registration;
 
 import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.dto.result.OperationResult;
@@ -13,11 +12,14 @@ import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.registration.RegistrationValidator;
+import com.topov.forum.validation.registration.validation.RegistrationValidationRule;
+import com.topov.forum.validation.registration.validation.SuperuserRegistrationValidationRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -46,7 +48,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public OperationResult registerRegularUser(RegistrationRequest registrationRequest) {
         log.debug("Registration of the user {}", registrationRequest);
         try {
-            final var validationResult = registrationValidator.validate(registrationRequest);
+            final RegistrationValidationRule validationRule = new RegistrationValidationRule(registrationRequest);
+            final var validationResult = registrationValidator.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "User registration failed");
@@ -61,7 +64,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             return new RegistrationResult(HttpStatus.OK, "You've been successfully registered. To confirm your account follow the link, which was sent to your email");
         } catch (MailException e) {
             log.error("Error during sending the account confirmation email", e);
-            throw new RegistrationException("Cannot register the user. Failed to send the account confirmation mail", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Confirmation email cannot be sent");
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
             throw new RegistrationException("Cannot register the user. Please, try again later", e);
@@ -73,7 +76,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     public OperationResult registerSuperuser(SuperuserRegistrationRequest registrationRequest) {
         log.debug("Superuser registration");
         try {
-            final ValidationResult validationResult = registrationValidator.validate(registrationRequest);
+            final SuperuserRegistrationValidationRule validationRule =
+                new SuperuserRegistrationValidationRule(registrationRequest);
+            final ValidationResult validationResult = registrationValidator.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");

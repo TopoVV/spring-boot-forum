@@ -26,5 +26,6 @@ public class Comment {
     @JoinColumn(name = "creator_id")
     private ForumUser creator;
 
-
+    @Version
+    private long version;
 }

@@ -1,18 +1,13 @@
 package com.topov.forum.validation.registration;
 
-import com.topov.forum.dto.request.registration.RegistrationRequest;
-import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationResultFactory;
-import com.topov.forum.validation.registration.rules.RegistrationValidation;
+import com.topov.forum.validation.registration.validation.RegistrationValidationRule;
+import com.topov.forum.validation.registration.validation.SuperuserRegistrationValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.GroupSequence;
 import javax.validation.Validator;
-
-import static com.topov.forum.validation.registration.rules.RegistrationValidation.RegistrationChecks;
-import static com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation.TokenChecks;
 
 @Service
 public class RegistrationValidator {
@@ -25,18 +20,14 @@ public class RegistrationValidator {
         this.validationResultFactory = validationResultFactory;
     }
 
-    public ValidationResult validate(RegistrationRequest registrationRequest) {
-        final RegistrationValidation validation = new RegistrationValidation(registrationRequest);
-        final var violations = validator.validate(validation, RegistrationChecks.class);
+    public ValidationResult validate(RegistrationValidationRule validationRule) {
+        final var violations = validator.validate(validationRule, validationRule.getValidationSequence());
         return validationResultFactory.createValidationResult(violations);
     }
 
-    public ValidationResult validate(SuperuserRegistrationRequest registrationRequest) {
-        final com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation validation = new com.topov.forum.validation.registration.rules.SuperuserRegistrationValidation(registrationRequest);
-        final var violations = validator.validate(validation, SuperuserRegistrationChecks.class);
+    public ValidationResult validate(SuperuserRegistrationValidationRule validationRule) {
+        final var violations = validator.validate(validationRule, validationRule.getValidationSequence());
         return validationResultFactory.createValidationResult(violations);
     }
 
-    @GroupSequence({ TokenChecks.class, RegistrationChecks.class })
-    private interface SuperuserRegistrationChecks {}
 }
