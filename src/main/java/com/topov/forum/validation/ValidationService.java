@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import javax.validation.Validator;
 
 @Service
-public class AccountValidator_V2 {
+public class ValidationService {
     private final Validator validator;
     private final ValidationResultFactory validationResultFactory;
 
     @Autowired
-    public AccountValidator_V2(Validator validator, ValidationResultFactory validationResultFactory) {
+    public ValidationService(Validator validator, ValidationResultFactory validationResultFactory) {
         this.validator = validator;
         this.validationResultFactory = validationResultFactory;
     }

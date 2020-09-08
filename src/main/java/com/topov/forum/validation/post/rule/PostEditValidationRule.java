@@ -1,14 +1,14 @@
-package com.topov.forum.validation.post.validation;
+package com.topov.forum.validation.post.rule;
 
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.post.constraint.PostExists;
 import com.topov.forum.validation.post.constraint.TitleUnique;
-import com.topov.forum.validation.post.group.PostModificationChecks;
-import com.topov.forum.validation.post.group.PostPreModificationChecks;
 import lombok.Getter;
 
 import javax.validation.GroupSequence;
+
+import static com.topov.forum.validation.post.rule.PostEditValidationRule.*;
 
 @Getter
 @TitleUnique(groups = PostModificationChecks.class)
@@ -28,6 +28,9 @@ public class PostEditValidationRule extends ValidationRule {
     public Class<?> getValidationSequence() {
         return PostEditValidationSequence.class;
     }
+
+    public interface PostPreModificationChecks {}
+    public interface PostModificationChecks {}
 
     @GroupSequence({PostPreModificationChecks.class, PostModificationChecks.class})
     private interface PostEditValidationSequence {}

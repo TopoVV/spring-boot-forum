@@ -1,9 +1,8 @@
-package com.topov.forum.validation.accout.validation;
+package com.topov.forum.validation.accout.rule;
 
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.accout.constraint.AccountConfirmationTokenValid;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @AccountConfirmationTokenValid

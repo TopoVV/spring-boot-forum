@@ -14,7 +14,7 @@ public class PostExistsConstraintValidator implements ConstraintValidator<PostEx
     public boolean isValid(Long postId, ConstraintValidatorContext ctx) {
         if (!postRepository.existsById(postId)) {
             ctx.disableDefaultConstraintViolation();
-            ctx.buildConstraintViolationWithTemplate(ctx.getDefaultConstraintMessageTemplate())
+            ctx.buildConstraintViolationWithTemplate("The post doesn't exist")
                 .addPropertyNode("title")
                 .addConstraintViolation();
             return false;

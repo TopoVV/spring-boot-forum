@@ -6,9 +6,9 @@ import com.topov.forum.dto.result.account.AccountConfirmationResult;
 import com.topov.forum.service.token.AccountConfirmationTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
+import com.topov.forum.validation.ValidationService;
 import com.topov.forum.validation.ValidationResult;
-import com.topov.forum.validation.accout.AccountValidator;
-import com.topov.forum.validation.accout.validation.ConfirmationTokenValidationRule;
+import com.topov.forum.validation.accout.rule.ConfirmationTokenValidationRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,16 +21,16 @@ import java.util.List;
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountConfirmationTokenService confirmationTokenService;
+    private final ValidationService validationService;
     private final UserService userService;
-    private final AccountValidator accountValidator;
 
     @Autowired
     public AccountServiceImpl(AccountConfirmationTokenService confirmationTokenService,
-                              UserService userService,
-                              AccountValidator accountValidator) {
+                              ValidationService validationService,
+                              UserService userService) {
         this.confirmationTokenService = confirmationTokenService;
+        this.validationService = validationService;
         this.userService = userService;
-        this.accountValidator = accountValidator;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
         log.debug("Confirmation of the account");
         try {
             final ConfirmationTokenValidationRule validationRule = new ConfirmationTokenValidationRule(tokenValue);
-            final ValidationResult validationResult = accountValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> validationErrors = validationResult.getValidationErrors();
                 return new AccountConfirmationResult(HttpStatus.BAD_REQUEST, validationErrors, "Account is not confirmed");

@@ -1,9 +1,8 @@
-package com.topov.forum.validation.post.validation;
+package com.topov.forum.validation.post.rule;
 
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.post.constraint.TitleUnique;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

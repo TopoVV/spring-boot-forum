@@ -11,9 +11,9 @@ import com.topov.forum.service.account.AccountService;
 import com.topov.forum.service.token.SuperuserTokenService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.validation.ValidationResult;
-import com.topov.forum.validation.registration.RegistrationValidator;
-import com.topov.forum.validation.registration.validation.RegistrationValidationRule;
-import com.topov.forum.validation.registration.validation.SuperuserRegistrationValidationRule;
+import com.topov.forum.validation.ValidationService;
+import com.topov.forum.validation.registration.rule.RegistrationValidationRule;
+import com.topov.forum.validation.registration.rule.SuperuserRegistrationValidationRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
@@ -26,19 +26,19 @@ import java.util.List;
 @Log4j2
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
-    private final RegistrationValidator registrationValidator;
+    private final ValidationService validationService;
     private final SuperuserTokenService superuserTokenService;
     private final AccountService accountService;
     private final UserService userService;
     private final MailSender mailSender;
 
-    public RegistrationServiceImpl(RegistrationValidator registrationValidator,
+    public RegistrationServiceImpl(ValidationService validationService,
                                    SuperuserTokenService superuserTokenService,
                                    UserService userService,
                                    MailSender mailSender,
                                    AccountService accountService) {
         this.superuserTokenService = superuserTokenService;
-        this.registrationValidator = registrationValidator;
+        this.validationService = validationService;
         this.accountService = accountService;
         this.userService = userService;
         this.mailSender = mailSender;
@@ -49,7 +49,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         log.debug("Registration of the user {}", registrationRequest);
         try {
             final RegistrationValidationRule validationRule = new RegistrationValidationRule(registrationRequest);
-            final var validationResult = registrationValidator.validate(validationRule);
+            final var validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "User registration failed");
@@ -78,7 +78,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         try {
             final SuperuserRegistrationValidationRule validationRule =
                 new SuperuserRegistrationValidationRule(registrationRequest);
-            final ValidationResult validationResult = registrationValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");

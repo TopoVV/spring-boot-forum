@@ -2,7 +2,7 @@ package com.topov.forum.validation.comment.validator;
 
 import com.topov.forum.repository.CommentRepository;
 import com.topov.forum.validation.comment.constraint.CommentExists;
-import com.topov.forum.validation.comment.validation.CommentEditValidation;
+import com.topov.forum.validation.comment.rule.CommentEditValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

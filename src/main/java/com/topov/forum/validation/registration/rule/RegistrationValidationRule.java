@@ -1,11 +1,11 @@
-package com.topov.forum.validation.registration.validation;
+package com.topov.forum.validation.registration.rule;
 
 import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.registration.constraint.RegistrationRequestValid;
 import lombok.Getter;
 
-import static com.topov.forum.validation.registration.validation.RegistrationValidationRule.RegistrationChecks;
+import static com.topov.forum.validation.registration.rule.RegistrationValidationRule.RegistrationChecks;
 
 @Getter
 @RegistrationRequestValid(groups = RegistrationChecks.class)

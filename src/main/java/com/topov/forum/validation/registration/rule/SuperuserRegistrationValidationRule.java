@@ -1,4 +1,4 @@
-package com.topov.forum.validation.registration.validation;
+package com.topov.forum.validation.registration.rule;
 
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.validation.registration.constraint.SuperuserTokenValid;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import javax.validation.GroupSequence;
 
-import static com.topov.forum.validation.registration.validation.SuperuserRegistrationValidationRule.TokenChecks;
+import static com.topov.forum.validation.registration.rule.SuperuserRegistrationValidationRule.TokenChecks;
 
 @Getter
 @SuperuserTokenValid(groups = { TokenChecks.class })

@@ -3,7 +3,7 @@ package com.topov.forum.validation.registration.validator;
 import com.topov.forum.repository.SuperuserTokenRepository;
 import com.topov.forum.token.SuperuserToken;
 import com.topov.forum.validation.registration.constraint.SuperuserTokenValid;
-import com.topov.forum.validation.registration.validation.SuperuserRegistrationValidationRule;
+import com.topov.forum.validation.registration.rule.SuperuserRegistrationValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

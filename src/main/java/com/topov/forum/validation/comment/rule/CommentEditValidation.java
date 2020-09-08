@@ -1,4 +1,4 @@
-package com.topov.forum.validation.comment.validation;
+package com.topov.forum.validation.comment.rule;
 
 import com.topov.forum.validation.ValidationRule;
 import com.topov.forum.validation.comment.constraint.CommentExists;

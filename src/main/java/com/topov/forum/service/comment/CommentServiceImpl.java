@@ -1,7 +1,6 @@
 package com.topov.forum.service.comment;
 
 import com.topov.forum.dto.error.Error;
-import com.topov.forum.dto.error.ValidationError;
 import com.topov.forum.dto.model.CommentDto;
 import com.topov.forum.dto.request.comment.CommentCreateRequest;
 import com.topov.forum.dto.request.comment.CommentEditRequest;
@@ -9,7 +8,6 @@ import com.topov.forum.dto.result.comment.CommentCreateResult;
 import com.topov.forum.dto.result.comment.CommentDeleteResult;
 import com.topov.forum.dto.result.comment.CommentEditResult;
 import com.topov.forum.dto.result.comment.CommentGetAllResult;
-import com.topov.forum.exception.CommentException;
 import com.topov.forum.mapper.CommentMapper;
 import com.topov.forum.model.Comment;
 import com.topov.forum.model.ForumUser;
@@ -19,11 +17,10 @@ import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.validation.ValidationResult;
-import com.topov.forum.validation.ValidationRule;
-import com.topov.forum.validation.comment.CommentValidator;
-import com.topov.forum.validation.comment.validation.CommentCreateValidation;
-import com.topov.forum.validation.comment.validation.CommentEditValidation;
-import com.topov.forum.validation.comment.validation.CommentsGetAllValidation;
+import com.topov.forum.validation.ValidationService;
+import com.topov.forum.validation.comment.rule.CommentCreateValidation;
+import com.topov.forum.validation.comment.rule.CommentEditValidation;
+import com.topov.forum.validation.comment.rule.CommentsGetAllValidation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,14 +33,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityExistsException;
 import java.util.List;
-import java.util.Optional;
 
 @Log4j2
 @Service
 public class CommentServiceImpl implements CommentService {
     private final AuthenticationService authenticationService;
     private final CommentRepository commentRepository;
-    private final CommentValidator commentValidator;
+    private final ValidationService validationService;
     private final CommentMapper commentMapper;
 
     private final UserService userService;
@@ -53,13 +49,13 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     public CommentServiceImpl(AuthenticationService authenticationService,
                               CommentRepository commentRepository,
-                              CommentValidator commentValidator,
+                              ValidationService validationService,
                               CommentMapper commentMapper,
                               UserService userService,
                               PostService postService) {
         this.authenticationService = authenticationService;
         this.commentRepository = commentRepository;
-        this.commentValidator = commentValidator;
+        this.validationService = validationService;
         this.commentMapper = commentMapper;
         this.userService = userService;
         this.postService = postService;
@@ -68,8 +64,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentGetAllResult getAllComments(Long postId, Pageable pageable) {
-        CommentsGetAllValidation validationRule = new CommentsGetAllValidation(postId);
-        final ValidationResult validationResult = commentValidator.validatePostExists(validationRule);
+        final CommentsGetAllValidation validationRule = new CommentsGetAllValidation(postId);
+        final ValidationResult validationResult = validationService.validate(validationRule);
         if (validationResult.containsErrors()) {
             final List<Error> errors = validationResult.getValidationErrors();
             return new CommentGetAllResult(HttpStatus.BAD_REQUEST, errors, "Error getting comments");
@@ -87,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
         log.debug("Creating comment: {}", commentCreateRequest);
         try {
             final CommentCreateValidation validationRule = new CommentCreateValidation(postId);
-            final ValidationResult validationResult = commentValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> validationErrors = validationResult.getValidationErrors();
                 return new CommentCreateResult(HttpStatus.CREATED, validationErrors, "Comment cannot be saved");
@@ -120,7 +116,7 @@ public class CommentServiceImpl implements CommentService {
         log.debug("Editing comment: {}", commentEditRequest);
         try {
             final CommentEditValidation validationRule = new CommentEditValidation(commentId);
-            final ValidationResult validationResult = commentValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new CommentEditResult(HttpStatus.BAD_REQUEST, errors, "The comment cannot be edited");

@@ -15,9 +15,9 @@ import com.topov.forum.security.AuthenticationService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.service.visit.VisitService;
 import com.topov.forum.validation.ValidationResult;
-import com.topov.forum.validation.post.PostValidator;
-import com.topov.forum.validation.post.validation.PostCreateValidationRule;
-import com.topov.forum.validation.post.validation.PostEditValidationRule;
+import com.topov.forum.validation.ValidationService;
+import com.topov.forum.validation.post.rule.PostCreateValidationRule;
+import com.topov.forum.validation.post.rule.PostEditValidationRule;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,20 +41,21 @@ public class PostServiceImpl implements PostService {
 
     private final AuthenticationService authenticatedUserService;
     private final PostRepository postRepository;
-    private final PostValidator postValidator;
+    private final ValidationService validationService;
     private final VisitService visitService;
     private final UserService userService;
     private final PostMapper postMapper;
 
     @Autowired
     public PostServiceImpl(AuthenticationService authenticatedUserService,
+                           ValidationService validationService,
                            PostRepository postRepository,
-                           PostValidator postValidator, VisitService visitService,
+                           VisitService visitService,
                            UserService userService,
                            PostMapper postMapper) {
         this.authenticatedUserService = authenticatedUserService;
+        this.validationService = validationService;
         this.postRepository = postRepository;
-        this.postValidator = postValidator;
         this.visitService = visitService;
         this.userService = userService;
         this.postMapper = postMapper;
@@ -86,7 +87,7 @@ public class PostServiceImpl implements PostService {
         log.debug("Creating a post: {}", postCreateRequest);
         try {
             final PostCreateValidationRule validationRule = new PostCreateValidationRule(postCreateRequest);
-            final ValidationResult validationResult = postValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostCreateResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be created");
@@ -124,7 +125,7 @@ public class PostServiceImpl implements PostService {
         log.debug("Editing post: {}", postEditRequest);
         try {
             final PostEditValidationRule validationRule = new PostEditValidationRule(postId, postEditRequest);
-            final ValidationResult validationResult = postValidator.validate(validationRule);
+            final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new PostEditResult(HttpStatus.BAD_REQUEST, errors, "Post cannot be edited");

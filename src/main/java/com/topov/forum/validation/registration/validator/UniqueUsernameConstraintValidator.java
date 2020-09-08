@@ -2,7 +2,7 @@ package com.topov.forum.validation.registration.validator;
 
 import com.topov.forum.repository.UserRepository;
 import com.topov.forum.validation.registration.constraint.UsernameUnique;
-import com.topov.forum.validation.registration.validation.RegistrationValidationRule;
+import com.topov.forum.validation.registration.rule.RegistrationValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
