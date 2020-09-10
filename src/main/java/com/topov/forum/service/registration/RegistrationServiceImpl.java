@@ -5,7 +5,6 @@ import com.topov.forum.dto.request.registration.RegistrationRequest;
 import com.topov.forum.dto.request.registration.SuperuserRegistrationRequest;
 import com.topov.forum.dto.result.OperationResult;
 import com.topov.forum.dto.result.registration.RegistrationResult;
-import com.topov.forum.exception.RegistrationException;
 import com.topov.forum.mail.MailSender;
 import com.topov.forum.service.account.AccountService;
 import com.topov.forum.service.token.SuperuserTokenService;
@@ -67,7 +66,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Confirmation email cannot be sent");
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
-            throw new RegistrationException("Cannot register the user. Please, try again later", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot register the user. Please, try again later", e);
         }
     }
 
@@ -90,7 +89,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             return new RegistrationResult(HttpStatus.OK, "You've been successfully registered");
         } catch(RuntimeException e) {
             log.error("Error during registration", e);
-            throw new RegistrationException("Cannot register the superuser. Please, try again later", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot register the superuser. Please, try again later", e);
         }
     }
 }

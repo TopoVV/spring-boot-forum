@@ -1,7 +1,5 @@
 package com.topov.forum.validation;
 
-import com.topov.forum.validation.accout.constraint.AccountConfirmationTokenValid;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

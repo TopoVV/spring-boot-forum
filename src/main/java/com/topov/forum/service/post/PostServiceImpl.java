@@ -5,7 +5,6 @@ import com.topov.forum.dto.model.post.PostDto;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.result.post.*;
-import com.topov.forum.exception.PostException;
 import com.topov.forum.mapper.PostMapper;
 import com.topov.forum.model.ForumUser;
 import com.topov.forum.model.Post;
@@ -109,7 +108,7 @@ public class PostServiceImpl implements PostService {
             return new PostCreateResult(HttpStatus.CREATED, "The post has been saved", location, postDto);
         } catch (RuntimeException e) {
             log.error("Cannot create post", e);
-            throw new PostException("Cannot create post", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot create post", e);
         }
     }
 
@@ -144,7 +143,7 @@ public class PostServiceImpl implements PostService {
             throw e;
         } catch (RuntimeException e) {
             log.error("Cannot edit post", e);
-            throw new PostException("Cannot edit post", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot edit post", e);
         }
     }
 

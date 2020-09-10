@@ -8,7 +8,7 @@ import lombok.Getter;
 
 import javax.validation.GroupSequence;
 
-import static com.topov.forum.validation.post.rule.PostEditValidationRule.*;
+import static com.topov.forum.validation.post.rule.PostEditValidationRule.PostModificationChecks;
 
 @Getter
 @TitleUnique(groups = PostModificationChecks.class)

@@ -1,6 +1,5 @@
 package com.topov.forum.validation.comment.constraint;
 
-import com.topov.forum.validation.accout.validator.AccountConfirmationTokenConstraintValidator;
 import com.topov.forum.validation.comment.validator.CommentExistsConstraintValidator;
 
 import javax.validation.Constraint;
