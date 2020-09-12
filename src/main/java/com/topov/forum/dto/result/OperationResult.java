@@ -39,10 +39,16 @@ public abstract class OperationResult {
         this.httpCode = httpCode;
     }
 
-    public abstract ResponseEntity<ApiResponse> createResponseEntity();
-
     protected boolean isSuccessful() {
         return this.errors.isEmpty();
+    }
+
+    public ResponseEntity<ApiResponse> createResponseEntity() {
+        if (isSuccessful()) {
+            return successResponse();
+        } else {
+            return errorResponse();
+        }
     }
 
     protected ResponseEntity<ApiResponse> errorResponse() {
@@ -50,7 +56,5 @@ public abstract class OperationResult {
         return ResponseEntity.status(this.httpCode).body(error);
     }
 
-    protected ResponseEntity<ApiResponse> successResponse(ApiResponse payload) {
-        return ResponseEntity.status(this.httpCode).body(payload);
-    }
+    protected abstract ResponseEntity<ApiResponse> successResponse();
 }

@@ -1,5 +1,6 @@
 package com.topov.forum.token;
 
+import com.topov.forum.validation.accout.rule.ConfirmationTokenValidationRule;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -10,22 +11,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AccountConfirmationOperationResultTokenTest {
     @Test
     void whenCreatedMoreThen5MinutesAgo_ThenReturnFalse() {
-        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
-        accountConfirmationToken.setCreationTime(LocalDateTime.now().minusMinutes(10));
-        assertFalse(accountConfirmationToken.isTokenValid());
+        AccountConfirmationToken confirmationTokenValidationRule = new AccountConfirmationToken("username");
+        confirmationTokenValidationRule.setCreationTime(LocalDateTime.now().minusMinutes(10));
+        assertFalse(confirmationTokenValidationRule.isTokenValid());
     }
 
     @Test
     void whenCreatedLessThen5MinutesAgo_ThenReturnFalse() {
-        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
-        assertTrue(accountConfirmationToken.isTokenValid());
+        AccountConfirmationToken confirmationToken = new AccountConfirmationToken("username");
+        assertTrue(confirmationToken.isTokenValid());
     }
 
     @Test
     void whenTokenAlreadyUsed_ThenReturnFalse() {
-        AccountConfirmationToken accountConfirmationToken = new AccountConfirmationToken("username");
-        accountConfirmationToken.setIsEnabled(false);
-        assertFalse(accountConfirmationToken.isTokenValid());
+        AccountConfirmationToken confirmationToken = new AccountConfirmationToken("username");
+        confirmationToken.setIsEnabled(false);
+        assertFalse(confirmationToken.isTokenValid());
     }
 
 }

@@ -29,12 +29,8 @@ public class PostGetResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final PostGetResponse success = new PostGetResponse("success", this.postDto);
-            return ResponseEntity.status(this.httpCode).body(success);
-        }
-        return ResponseEntity.badRequest().body(null);
-
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final PostGetResponse payload = new PostGetResponse("success", this.postDto);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

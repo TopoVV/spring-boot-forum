@@ -30,11 +30,8 @@ public class CommentGetAllResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final CommentGetAllResponse success = new CommentGetAllResponse("success", this.comments);
-            return ResponseEntity.status(this.httpCode).body(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final CommentGetAllResponse payload = new CommentGetAllResponse("success", this.comments);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

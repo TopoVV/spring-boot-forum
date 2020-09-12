@@ -30,8 +30,8 @@ public class PostGetAllResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        final PostGetAllResponse success = new PostGetAllResponse("success", this.posts);
-        return ResponseEntity.status(this.httpCode).body(success);
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final PostGetAllResponse payload = new PostGetAllResponse("success", this.posts);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

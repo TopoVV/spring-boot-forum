@@ -25,11 +25,8 @@ public class RegistrationResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final RegistrationResponse success = new RegistrationResponse(this.message, "success");
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final RegistrationResponse payload = new RegistrationResponse(this.message, "success");
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

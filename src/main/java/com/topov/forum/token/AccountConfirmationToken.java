@@ -32,7 +32,8 @@ public class AccountConfirmationToken extends Token {
 
     @Override
     public boolean isTokenValid() {
-        final long timeLived = Duration.between(creationTime, LocalDateTime.now()).toMinutes();
+        final long timeLived = Duration.between(creationTime, LocalDateTime.now())
+            .toMinutes();
         return isEnabled && timeLived < DEFAULT_LIFE_TIME_MINUTES;
     }
 }

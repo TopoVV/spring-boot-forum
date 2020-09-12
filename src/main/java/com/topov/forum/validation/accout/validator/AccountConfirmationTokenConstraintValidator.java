@@ -3,19 +3,20 @@ package com.topov.forum.validation.accout.validator;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.token.AccountConfirmationToken;
 import com.topov.forum.validation.accout.constraint.AccountConfirmationTokenValid;
+import com.topov.forum.validation.accout.rule.ConfirmationTokenValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class AccountConfirmationTokenConstraintValidator
-    implements ConstraintValidator<AccountConfirmationTokenValid, AccountConfirmationToken> {
+    implements ConstraintValidator<AccountConfirmationTokenValid, ConfirmationTokenValidationRule> {
 
     private AccountConfirmationTokenRepository confirmationTokenRepository;
 
     @Override
-    public boolean isValid(AccountConfirmationToken accountConfirmationToken, ConstraintValidatorContext ctx) {
-        final String tokenValue = accountConfirmationToken.getTokenValue();
+    public boolean isValid(ConfirmationTokenValidationRule confirmationTokenValidationRule, ConstraintValidatorContext ctx) {
+        final String tokenValue = confirmationTokenValidationRule.getTokenValue();
         final var optionalToken = confirmationTokenRepository.findTokenByTokenValue(tokenValue);
         if (optionalToken.isPresent()) {
             final AccountConfirmationToken confirmationToken = optionalToken.get();

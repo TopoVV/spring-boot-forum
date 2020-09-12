@@ -28,16 +28,8 @@ public class PostCreateResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final PostCreateResponse success = new PostCreateResponse(this.message, "success", postDto);
-            return this.successResponse(success);
-        }
-        return super.errorResponse();
-    }
-
-    @Override
-    protected ResponseEntity<ApiResponse> successResponse(ApiResponse payload) {
-        return ResponseEntity.status(this.httpCode).location(resourceLocation).body(payload);
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final PostCreateResponse payload = new PostCreateResponse(this.message, "success", postDto);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

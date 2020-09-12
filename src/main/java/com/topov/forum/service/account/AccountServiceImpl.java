@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
         } catch (RuntimeException e) {
             log.error("Something gone wrong when confirming account", e);
-            return new AccountConfirmationResult(HttpStatus.BAD_REQUEST, "Account not confirmed. Try again later");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error during the account confirmation");
         }
     }
 }

@@ -25,11 +25,8 @@ public class PostEditResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final PostEditResponse success = new PostEditResponse(this.message, "success", postDto);
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final PostEditResponse payload = new PostEditResponse(this.message, "success", postDto);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

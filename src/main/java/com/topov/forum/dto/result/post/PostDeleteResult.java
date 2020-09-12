@@ -26,11 +26,8 @@ public class PostDeleteResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final PostDeleteResponse success = new PostDeleteResponse(this.message, "success");
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final PostDeleteResponse payload = new PostDeleteResponse(this.message, "success");
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

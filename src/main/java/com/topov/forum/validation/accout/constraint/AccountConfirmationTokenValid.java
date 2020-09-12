@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = { AccountConfirmationTokenConstraintValidator.class})
 public @interface AccountConfirmationTokenValid {
-    String message() default "The specified email is already in use";
+    String message() default "The provided confirmation token is invalid";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default { };
 }

@@ -3,6 +3,7 @@ package com.topov.forum.controller;
 import com.topov.forum.repository.AccountConfirmationTokenRepository;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.token.AccountConfirmationToken;
+import com.topov.forum.validation.accout.rule.ConfirmationTokenValidationRule;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CommentCreateValidation extends ValidationRule {
+public class CommentCreateValidationRule extends ValidationRule {
     @PostExists
     private final Long postId;
 }

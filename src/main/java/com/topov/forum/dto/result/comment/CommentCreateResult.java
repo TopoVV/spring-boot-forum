@@ -29,11 +29,8 @@ public class CommentCreateResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            CommentCreateResponse success = new CommentCreateResponse(this.message, "success", this.commentDto);
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        CommentCreateResponse payload = new CommentCreateResponse(this.message, "success", this.commentDto);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

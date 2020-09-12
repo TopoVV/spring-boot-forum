@@ -3,6 +3,7 @@ package com.topov.forum.dto.result.comment;
 import com.topov.forum.dto.error.Error;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.response.comment.CommentDeleteResponse;
+import com.topov.forum.dto.response.comment.CommentEditResponse;
 import com.topov.forum.dto.result.OperationResult;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -25,11 +26,8 @@ public class CommentDeleteResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final CommentDeleteResponse success = new CommentDeleteResponse(this.message, "success");
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final CommentDeleteResponse payload = new CommentDeleteResponse(this.message, "success");
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 }

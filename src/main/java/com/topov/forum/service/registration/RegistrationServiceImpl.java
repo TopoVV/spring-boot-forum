@@ -81,6 +81,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();
                 return new RegistrationResult(HttpStatus.BAD_REQUEST, errors, "Superuser registration failed");
+
             }
 
             superuserTokenService.revokeSuperuserToken(registrationRequest.getToken());

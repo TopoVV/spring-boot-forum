@@ -18,8 +18,8 @@ import com.topov.forum.service.post.PostService;
 import com.topov.forum.service.user.UserService;
 import com.topov.forum.validation.ValidationResult;
 import com.topov.forum.validation.ValidationService;
-import com.topov.forum.validation.comment.rule.CommentCreateValidation;
-import com.topov.forum.validation.comment.rule.CommentEditValidation;
+import com.topov.forum.validation.comment.rule.CommentCreateValidationRule;
+import com.topov.forum.validation.comment.rule.CommentEditValidationRule;
 import com.topov.forum.validation.comment.rule.CommentsGetAllValidation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentCreateResult createComment(Long postId, CommentCreateRequest commentCreateRequest) {
         log.debug("Creating comment: {}", commentCreateRequest);
         try {
-            final CommentCreateValidation validationRule = new CommentCreateValidation(postId);
+            final CommentCreateValidationRule validationRule = new CommentCreateValidationRule(postId);
             final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> validationErrors = validationResult.getValidationErrors();
@@ -115,7 +115,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentEditResult editComment(Long commentId, CommentEditRequest commentEditRequest) {
         log.debug("Editing comment: {}", commentEditRequest);
         try {
-            final CommentEditValidation validationRule = new CommentEditValidation(commentId);
+            final CommentEditValidationRule validationRule = new CommentEditValidationRule(commentId);
             final ValidationResult validationResult = validationService.validate(validationRule);
             if (validationResult.containsErrors()) {
                 final List<Error> errors = validationResult.getValidationErrors();

@@ -34,13 +34,10 @@ public class AuthenticationResult extends OperationResult {
     }
 
     @Override
-    public ResponseEntity<ApiResponse> createResponseEntity() {
-        if (super.isSuccessful()) {
-            final String tokenValue = this.token.getTokenValue();
-            final AuthenticationResponse success = new AuthenticationResponse(this.message, "success", tokenValue);
-            return super.successResponse(success);
-        }
-        return super.errorResponse();
+    protected ResponseEntity<ApiResponse> successResponse() {
+        final String tokenValue = this.token.getTokenValue();
+        final AuthenticationResponse payload = new AuthenticationResponse(this.message, "success", tokenValue);
+        return ResponseEntity.status(this.httpCode).body(payload);
     }
 
 }
