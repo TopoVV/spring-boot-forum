@@ -89,6 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		configuration.setAllowedHeaders(
 		    Arrays.asList(
 		        "Content-Type",
+		        "Authorization",
                 "X-Requested-With",
                 "accept",
                 "Origin",

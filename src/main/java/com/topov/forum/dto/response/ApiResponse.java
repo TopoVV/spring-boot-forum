@@ -1,5 +1,6 @@
 package com.topov.forum.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
 @Getter
@@ -15,5 +16,10 @@ public class ApiResponse {
     protected ApiResponse(String status) {
         this.message = "";
         this.status = status;
+    }
+
+    @JsonIgnore
+    public Class<?> getJsonView() {
+        return null;
     }
 }

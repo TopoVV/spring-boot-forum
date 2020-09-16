@@ -1,6 +1,7 @@
 package com.topov.forum.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.topov.forum.WithMockForumUserDetails;
 import com.topov.forum.dto.request.post.PostCreateRequest;
 import com.topov.forum.repository.PostRepository;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,20 +38,17 @@ class PostControllerValidationUT {
     }
 
     @Test
+    @WithMockForumUserDetails
     void whenTitleNotUnique_ThenValidationError() throws Exception {
         final PostCreateRequest postCreateRequest = new PostCreateRequest("post text", "post title");
 
         when(postRepository.existsByTitle("post title")).thenReturn(true);
         final String json = mapper.writeValueAsString(postCreateRequest);
-        final MvcResult mvcResult = mockMvc.perform(post("/posts")
+        mockMvc.perform(post("/posts")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(json))
             .andDo(print())
-            .andExpect(jsonPath("inputErrors", hasKey("title")))
+            .andExpect(jsonPath("$.errors[0].invalidProperty", is("title")))
             .andReturn();
-
-        System.out.println(mvcResult);
-
-
     }
 }

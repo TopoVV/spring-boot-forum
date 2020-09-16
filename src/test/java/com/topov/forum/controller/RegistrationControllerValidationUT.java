@@ -46,8 +46,8 @@ class RegistrationControllerValidationUT {
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_JSON)
                                          .content(jsonRequest))
            .andDo(print())
-           .andExpect(jsonPath("$.errors.validationErrors[0].propertyName", is("username")))
-           .andExpect(jsonPath("$.errors.validationErrors[0].description", is("Specified username is already in use")));
+           .andExpect(jsonPath("$.errors[0].invalidProperty", is("username")))
+           .andExpect(jsonPath("$.errors[0].error", is("The specified username is already in use")));
 
     }
 
@@ -60,8 +60,8 @@ class RegistrationControllerValidationUT {
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_JSON)
                                          .content(jsonRequest))
             .andDo(print())
-            .andExpect(jsonPath("$.errors.validationErrors[0].propertyName", is("email")))
-            .andExpect(jsonPath("$.errors.validationErrors[0].description", is("Specified email is already in use")));
+            .andExpect(jsonPath("$.errors[0].invalidProperty", is("email")))
+            .andExpect(jsonPath("$.errors[0].error", is("The specified email is already in use")));
 
     }
 }

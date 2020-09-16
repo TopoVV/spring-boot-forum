@@ -2,6 +2,7 @@ package com.topov.forum.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.topov.forum.dto.model.post.PostDto;
+import com.topov.forum.dto.model.post.views.PostViews;
 import com.topov.forum.dto.response.ApiResponse;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -14,5 +15,10 @@ public class PostGetAllResponse extends ApiResponse {
     public PostGetAllResponse(String status, Page<PostDto> posts) {
         super(status);
         this.posts = posts;
+    }
+
+    @Override
+    public Class<?> getJsonView() {
+        return PostViews.ShortPostView.class;
     }
 }

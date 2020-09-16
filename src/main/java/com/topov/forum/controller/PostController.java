@@ -7,6 +7,7 @@ import com.topov.forum.dto.request.post.PostEditRequest;
 import com.topov.forum.dto.response.ApiResponse;
 import com.topov.forum.dto.result.post.*;
 import com.topov.forum.service.post.PostService;
+import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -27,21 +28,18 @@ public class PostController {
         this.postService = postService;
     }
 
-    @JsonView(PostViews.FullPostView.class)
     @GetMapping(value = "/posts/{postId}")
     public ResponseEntity<ApiResponse> getPost(@PathVariable Long postId) {
         final PostGetResult result = postService.getPost(postId);
         return result.createResponseEntity();
     }
 
-    @JsonView(PostViews.ShortPostView.class)
     @GetMapping(value = "/posts")
     public ResponseEntity<ApiResponse> getAllPosts(@PageableDefault(size = 3) Pageable pageable) {
         final PostGetAllResult result = postService.getAllPosts(pageable);
         return result.createResponseEntity();
     }
 
-    @JsonView(value = PostViews.ShortPostView.class)
     @PostMapping(
         value = "/posts",
         consumes = MediaType.APPLICATION_JSON_VALUE
@@ -52,7 +50,6 @@ public class PostController {
         return operationResult.createResponseEntity();
     }
 
-    @JsonView(value = PostViews.FullPostView.class)
     @PutMapping(
         value = "/posts/{postId}",
         consumes = MediaType.APPLICATION_JSON_VALUE
