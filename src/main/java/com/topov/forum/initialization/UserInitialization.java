@@ -22,17 +22,17 @@ public class UserInitialization implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-//        RegistrationRequest superuser = new RegistrationRequest();
-//        superuser.setUsername("super");
-//        superuser.setPassword("super");
-//        superuser.setEmail("email1@email.com");
-//        userService.createSuperuser(superuser);
-//
-//        RegistrationRequest user = new RegistrationRequest();
-//        user.setUsername("user");
-//        user.setPassword("user");
-//        user.setEmail("email2@email.com");
-//        userService.createRegularUser(user);
-//        userService.enableUser(user.getUsername());
+        RegistrationRequest superuser = new RegistrationRequest();
+        superuser.setUsername("super");
+        superuser.setPassword("super");
+        superuser.setEmail("email1@email.com");
+        userService.createSuperuser(superuser);
+
+        RegistrationRequest user = new RegistrationRequest();
+        user.setUsername("user");
+        user.setPassword("user");
+        user.setEmail("email2@email.com");
+        userService.createRegularUser(user);
+        userService.enableUser(user.getUsername());
     }
 }

@@ -7,10 +7,6 @@
 
     <includeAll path="db/changelog/changes"/>
 
-    <changeSet id="0" author="topov">
-        <tagDatabase tag="db_init"/>
-    </changeSet>
-
     <include file="changes/v-1.0/db.changelog-v.1.0.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

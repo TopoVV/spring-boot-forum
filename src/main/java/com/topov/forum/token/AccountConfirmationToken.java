@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "registration_tokens")
+@Table(name = "account_confirmation_tokens")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

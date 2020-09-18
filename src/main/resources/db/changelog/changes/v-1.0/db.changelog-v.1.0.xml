@@ -5,11 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="topov">
-        <tagDatabase tag="create-users-table"/>
+    <changeSet id="0" author="topov">
+        <tagDatabase tag="db_init"/>
     </changeSet>
 
-    <changeSet id="2" author="topov">
+    <changeSet id="1" author="topov">
         <createTable tableName="forum_users">
             <column type="integer" name="user_id"/>
             <column type="varchar(50)" name="username"/>
@@ -17,11 +17,170 @@
             <column type="varchar(20)" name="email"/>
             <column type="boolean" name="enabled"/>
         </createTable>
+        <createSequence sequenceName="user_id_seq" startValue="1" incrementBy="1"/>
         <addPrimaryKey tableName="forum_users" columnNames="user_id"/>
         <addUniqueConstraint tableName="forum_users" constraintName="unique_username" columnNames="username"/>
+        <addUniqueConstraint tableName="forum_users" constraintName="unique_email" columnNames="email"/>
         <rollback>
+            <dropSequence sequenceName="user_id_seq"/>
             <dropTable tableName="forum_users"/>
         </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="topov">
+        <tagDatabase tag="create-users-table"/>
+    </changeSet>
+
+    <changeSet id="3" author="topov">
+        <createTable tableName="roles">
+            <column type="integer" name="role_id"/>
+            <column type="varchar(20)" name="role_name"/>
+        </createTable>
+        <addPrimaryKey tableName="roles" columnNames="role_id"/>
+        <addUniqueConstraint tableName="roles" columnNames="role_name"/>
+        <createTable tableName="user_role">
+            <column type="integer" name="user_id"/>
+            <column type="integer" name="role_id"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_role"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_id"
+                                 referencedTableName="forum_users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="user_role"
+                                 baseColumnNames="role_id"
+                                 constraintName="fk_role_id"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="role_id"/>
+        <rollback>
+            <dropTable tableName="user_role"/>
+            <dropTable tableName="roles"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="topov">
+        <tagDatabase tag="create-roles-table"/>
+    </changeSet>
+
+    <changeSet id="5" author="topov">
+        <createTable tableName="posts">
+            <column type="integer" name="post_id"/>
+            <column type="varchar(50)" name="title"/>
+            <column type="varchar(2500)" name="text"/>
+            <column type="integer" name="creator_id"/>
+        </createTable>
+        <createSequence sequenceName="post_id_seq" startValue="1" incrementBy="1"/>
+        <addPrimaryKey tableName="posts" columnNames="post_id"/>
+        <addUniqueConstraint tableName="posts" columnNames="title"/>
+        <addForeignKeyConstraint baseTableName="posts"
+                                 baseColumnNames="creator_id"
+                                 constraintName="fk_post_creator"
+                                 referencedTableName="forum_users"
+                                 referencedColumnNames="user_id"/>
+        <rollback>
+            <dropSequence sequenceName="post_id_seq"/>
+            <dropTable tableName="posts"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="topov">
+        <tagDatabase tag="create-posts-table"/>
+    </changeSet>
+
+    <changeSet id="7" author="topov">
+        <createTable tableName="comments">
+            <column type="integer" name="comment_id"/>
+            <column type="varchar(500)" name="text"/>
+            <column type="integer" name="post_id"/>
+            <column type="integer" name="creator_id"/>
+            <column type="integer" name="version"/>
+        </createTable>
+        <createSequence sequenceName="comment_id_seq" startValue="1" incrementBy="1"/>
+        <addPrimaryKey tableName="comments" columnNames="comment_id"/>
+        <addForeignKeyConstraint baseTableName="comments"
+                                 baseColumnNames="post_id"
+                                 constraintName="fk_post_id"
+                                 referencedTableName="posts"
+                                 referencedColumnNames="post_id"/>
+        <addForeignKeyConstraint baseTableName="comments"
+                                 baseColumnNames="creator_id"
+                                 constraintName="fk_creator_id"
+                                 referencedTableName="forum_users"
+                                 referencedColumnNames="user_id"/>
+        <rollback>
+            <dropSequence sequenceName="comment_id_seq"/>
+            <dropTable tableName="comments"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="8" author="topov">
+        <tagDatabase tag="create-comments-table"/>
+    </changeSet>
+    
+    <changeSet id="9" author="topov">
+        <createTable tableName="post_visit">
+            <column type="integer" name="visit_id"/>
+            <column type="integer" name="visitor_id"/>
+            <column type="integer" name="visited_post_id"/>
+        </createTable>
+        <addPrimaryKey tableName="post_visit" columnNames="visit_id"/>
+        <addForeignKeyConstraint baseTableName="post_visit"
+                                 baseColumnNames="visitor_id"
+                                 constraintName="fk_visitor_id"
+                                 referencedTableName="forum_users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="post_visit"
+                                 baseColumnNames="visited_post_id"
+                                 constraintName="fk_post_id"
+                                 referencedTableName="posts"
+                                 referencedColumnNames="post_id"/>
+        <rollback>
+            <dropTable tableName="post_visit"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="10" author="topov">
+        <tagDatabase tag="create-post-visits-table"/>
+    </changeSet>
+
+    <changeSet id="11" author="topov">
+        <createTable tableName="account_confirmation_tokens">
+            <column type="integer" name="token_id" autoIncrement="true"/>
+            <column type="varchar(500)" name="token_value"/>
+            <column type="DATETIME" name="created_at"/>
+            <column type="boolean" name="is_enabled"/>
+            <column type="varchar(20)" name="username"/>
+            <column type="integer" name="version"/>
+        </createTable>
+        <addPrimaryKey tableName="account_confirmation_tokens" columnNames="token_id"/>
+        <rollback>
+            <dropTable tableName="account_confirmation_tokens"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="12" author="topov">
+        <tagDatabase tag="create-account-confirmation-token-table"/>
+    </changeSet>
+
+    <changeSet id="13" author="topov">
+        <createTable tableName="superuser_tokens">
+            <column type="integer" name="token_id" autoIncrement="true"/>
+            <column type="varchar(500)" name="token_value"/>
+            <column type="DATETIME" name="created_at"/>
+            <column type="boolean" name="is_enabled"/>
+        </createTable>
+        <addPrimaryKey tableName="superuser_tokens" columnNames="token_id"/>
+        <rollback>
+            <dropTable tableName="superuser_tokens"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="14" author="topov">
+        <tagDatabase tag="create-superuser-token-table"/>
+    </changeSet>
+
+    <changeSet id="15" author="topov">
+        <addAutoIncrement tableName="post_visit" columnName="visit_id"/>
     </changeSet>
 
 </databaseChangeLog>

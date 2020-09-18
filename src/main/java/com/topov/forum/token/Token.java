@@ -13,7 +13,6 @@ public abstract class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
     protected Long tokenId;
-    @Column(name = "token")
     protected String tokenValue;
     @Column(name = "created_at")
     protected LocalDateTime creationTime;

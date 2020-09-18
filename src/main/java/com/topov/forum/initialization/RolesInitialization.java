@@ -24,12 +24,12 @@ public class RolesInitialization implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-//        log.debug("Initializations of access roles.");
-//        roleRepository.saveAll(List.of(
-//            new Role(Role.Roles.USER),
-//            new Role(Role.Roles.ADMIN),
-//            new Role(Role.Roles.SUPERUSER)
-//        ));
-//        log.debug("Access roles have been initialized.");
+        log.debug("Initializations of access roles.");
+        roleRepository.saveAll(List.of(
+            new Role(Role.Roles.USER),
+            new Role(Role.Roles.ADMIN),
+            new Role(Role.Roles.SUPERUSER)
+        ));
+        log.debug("Access roles have been initialized.");
     }
 }
