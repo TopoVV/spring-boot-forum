@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="topov">
+        <tagDatabase tag="create-users-table"/>
+    </changeSet>
+
+    <changeSet id="2" author="topov">
+        <createTable tableName="forum_users">
+            <column type="integer" name="user_id"/>
+            <column type="varchar(50)" name="username"/>
+            <column type="varchar(500)" name="password"/>
+            <column type="varchar(20)" name="email"/>
+            <column type="boolean" name="enabled"/>
+        </createTable>
+        <addPrimaryKey tableName="forum_users" columnNames="user_id"/>
+        <addUniqueConstraint tableName="forum_users" constraintName="unique_username" columnNames="username"/>
+        <rollback>
+            <dropTable tableName="forum_users"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

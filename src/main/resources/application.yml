@@ -1,16 +1,16 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/h2/databases/forum-test-db
-    username: topovv
+    url: jdbc:postgresql://localhost:5432/forum
+    username: postgres
     password: admin
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
   jackson:
     mapper:
       DEFAULT_VIEW_INCLUSION: true
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -19,3 +19,6 @@ spring:
     port: 587
     username: f7c6241b14b772
     password: 0fbc58b10fc5d9
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

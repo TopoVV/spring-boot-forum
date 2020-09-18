@@ -13,9 +13,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJacksonResponseBodyAdvice;
 
-@RestControllerAdvice(assignableTypes = PostController.class)
-public class PostControllerAdvice extends AbstractMappingJacksonResponseBodyAdvice {
-
+@RestControllerAdvice
+public class MappingControllerAdvice extends AbstractMappingJacksonResponseBodyAdvice {
     @Override
     protected void beforeBodyWriteInternal(MappingJacksonValue mappingJacksonValue, MediaType mediaType, MethodParameter methodParameter, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         ApiResponse responseObject = (ApiResponse) mappingJacksonValue.getValue();
